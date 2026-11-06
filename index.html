@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>הבית של משפחת בן משה</title>
+<meta name="description" content="הסרט האישי מקרמיקה בשאראת: תשע הדמויות המולבשות באריחים, ואחריהן הצעת המחיר האישית עם אישור הזמנה בוואטסאפ.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: three screens on a phone. Entry with the family name, the film full screen with a dedication title, then the quote. The night look of ״ארץ האריחים״ (night, brass, stone). The quote is rendered from data carried in the link; without it, the Ben Moshe example. */
+:root{
+  --night:#0F1114; --deep:#171A1E; --panel:#14171B; --stone:#F3EEE6; --mist:#ADA89F; --brass:#E2A866; --light:#FFDDA8;
+  --line:rgba(226,168,102,.38); --ok:#5fc48f;
+  --he:"Heebo","Assistant","Arial Hebrew",Arial,sans-serif; --la:"Secular One","Heebo",Arial,sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ color-scheme:dark } }
+:root[data-theme="dark"]{ color-scheme:dark }
+*{box-sizing:border-box}
+html{background:var(--night)}
+body{margin:0;background:var(--night);color:var(--stone);font-family:var(--he);font-weight:400;line-height:1.55;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+p,ul{margin:0}
+h1,h2,h3{margin:0;font-weight:400;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer}
+.num{direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums;white-space:nowrap}
+[hidden]{display:none!important}
+
+/* ---------- entry ---------- */
+#entry{position:fixed;inset:0;z-index:30;background:var(--night);display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}
+#entry .bg{position:absolute;inset:0;background:#000 center/cover no-repeat;background-image:url(m/cast_v.jpg);opacity:.85}
+@media (orientation:landscape){ #entry .bg{background-image:url(m/cast_h.jpg)} }
+#entry .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(15,17,20,.96) 0%,rgba(15,17,20,.78) 28%,rgba(15,17,20,.15) 60%,rgba(15,17,20,.35) 100%)}
+#entry .top{position:relative;z-index:1;padding:calc(14px + env(safe-area-inset-top,0px)) 20px 0;display:flex;justify-content:center}
+#entry .top img{height:64px;width:auto;filter:drop-shadow(0 4px 14px rgba(0,0,0,.6))}
+#entry .mid{position:relative;z-index:1}
+#entry .bot{position:relative;z-index:1;padding:0 22px calc(26px + env(safe-area-inset-bottom,0px));display:grid;gap:12px;justify-items:center;text-align:center}
+.eyebrow{font-size:14px;letter-spacing:.06em;color:var(--brass)}
+#entry h1{font-family:var(--la);font-size:clamp(30px,8.5vw,44px);line-height:1.1;color:var(--light);text-shadow:0 2px 18px rgba(0,0,0,.7)}
+#entry .sub{color:var(--stone);font-size:15.5px;max-width:34ch}
+.big{display:inline-flex;align-items:center;justify-content:center;min-height:60px;padding:0 34px;border-radius:999px;border:0;background:var(--brass);color:var(--night);font-family:var(--la);font-size:21px;box-shadow:0 14px 40px rgba(0,0,0,.5);margin-top:6px}
+.big:active{transform:scale(.98)}
+#entry .hint{color:var(--mist);font-size:12.5px}
+@media (orientation:landscape){
+  #entry .top img{height:48px}
+  #entry .bot{padding-bottom:18px;gap:8px}
+  #entry h1{font-size:clamp(26px,5vw,40px)}
+}
+
+/* ---------- film ---------- */
+#film{position:fixed;inset:0;z-index:20;background:#000;display:grid;place-items:center}
+#film video{width:100%;height:100%;object-fit:contain;background:#000;display:block}
+#film .bar{position:absolute;top:0;inset-inline:0;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 0;display:flex;justify-content:space-between;align-items:center;gap:10px;z-index:3}
+.pill{display:inline-flex;align-items:center;min-height:38px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(15,17,20,.55);color:#fff;font-family:var(--la);font-size:15px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);text-decoration:none}
+.pill.gold{border-color:var(--brass);color:var(--light)}
+#skip{opacity:0;pointer-events:none;transition:opacity .5s}
+#skip.on{opacity:1;pointer-events:auto}
+#prog{position:absolute;bottom:0;inset-inline:0;height:4px;background:rgba(255,255,255,.18);z-index:3}
+#prog i{display:block;height:100%;width:0;background:var(--brass)}
+#tap{position:absolute;inset:0;z-index:4;display:grid;place-items:center;background:rgba(0,0,0,.35)}
+#tap span{font-family:var(--la);font-size:22px;color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:12px 26px;background:rgba(15,17,20,.6)}
+#ded{position:absolute;inset:0;z-index:2;display:grid;place-items:center;align-content:center;text-align:center;pointer-events:none;opacity:0;transition:opacity 1.1s ease;padding:0 24px;background:radial-gradient(ellipse at center,rgba(0,0,0,.42) 0%,rgba(0,0,0,.72) 100%)}
+#ded.on{opacity:1}
+#ded .l{font-family:var(--he);font-weight:300;font-size:clamp(14px,2.6vmin,20px);letter-spacing:.14em;color:var(--brass);text-shadow:0 2px 14px rgba(0,0,0,.9)}
+#ded .n{font-family:var(--la);font-size:clamp(28px,6.4vmin,56px);line-height:1.15;color:var(--light);text-shadow:0 2px 18px rgba(0,0,0,.95),0 0 40px rgba(0,0,0,.7)}
+#ded .r{width:64px;height:1px;background:var(--brass);margin:10px auto 0;box-shadow:0 0 12px rgba(226,168,102,.8)}
+@media (prefers-reduced-motion:reduce){ #ded,#skip{transition:none} }
+
+/* ---------- quote ---------- */
+#quote{padding-block:0 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:620px;margin:0 auto}
+.qbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 0 4px}
+.qbar .pill{min-height:36px;font-size:14px;background:transparent;color:var(--stone)}
+.qbar .pill.gold{color:var(--light)}
+.qbar .t{color:var(--mist);font-size:13px}
+
+header.q{padding:14px 0 14px;border-bottom:1px solid var(--line);display:grid;gap:10px}
+header.q .lg{height:72px;width:auto}
+header.q .row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+header.q h2{font-family:var(--la);font-size:32px;line-height:1.1;color:var(--light)}
+.meta{color:var(--mist);font-size:14px;line-height:1.5}
+.meta b{color:var(--stone);font-weight:500}
+.demo{display:inline-block;font-size:12px;letter-spacing:.04em;color:var(--brass);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin-top:4px}
+
+.who{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+.who h3{font-size:13px;color:var(--brass);letter-spacing:.04em;margin-bottom:4px;font-family:var(--he)}
+.who p{font-size:15px}
+.who a{color:var(--stone);text-decoration:none;border-bottom:1px dotted var(--line)}
+@media (max-width:380px){.who{grid-template-columns:1fr}}
+
+.items{display:grid;gap:14px;padding:18px 0 6px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.item .pic{position:relative;aspect-ratio:16/10;background:#1b1f24}
+.item .pic img.room{width:100%;height:100%;object-fit:cover}
+.item .pic .tile{position:absolute;left:14px;bottom:-18px;width:78px;height:130px;object-fit:cover;border-radius:8px;border:2px solid var(--brass);box-shadow:0 14px 30px rgba(0,0,0,.55)}
+.item .pic .k{position:absolute;right:14px;top:12px;font-family:var(--la);font-size:14px;color:var(--night);background:var(--brass);border-radius:999px;padding:3px 12px}
+.item .pic.none{aspect-ratio:16/6;display:grid;place-items:center;background:radial-gradient(ellipse at 30% 20%,rgba(226,168,102,.22),rgba(20,23,27,0) 60%),var(--panel)}
+.item .pic.none .mono{font-family:var(--la);font-size:28px;color:var(--light);letter-spacing:.02em}
+.item .body{padding:14px 16px 16px;display:grid;gap:8px}
+.item h3{font-family:var(--la);font-size:22px;line-height:1.15;color:var(--light)}
+.item .pic:not(.none) + .body h3,.item .pic:not(.none) + .body .sub{padding-left:96px}
+.item .sub{color:var(--mist);font-size:14px}
+.item .calc{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:15.5px;margin-top:6px;padding-top:10px;border-top:1px dashed var(--line)}
+.item .calc .t{color:var(--mist)}
+.item .calc .sum{font-family:var(--la);font-size:22px;color:var(--light);grid-column:1/-1;display:flex;justify-content:space-between;align-items:baseline;margin-top:4px}
+
+.total{margin-top:18px;padding:18px 18px 16px;border-radius:16px;border:1px solid var(--brass);background:linear-gradient(180deg,rgba(226,168,102,.12),rgba(226,168,102,.04))}
+.total .line{display:flex;justify-content:space-between;gap:12px;font-size:15.5px;color:var(--mist);padding:3px 0}
+.total .grand{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:8px;padding-top:12px;border-top:1px solid var(--line)}
+.total .grand b{font-family:var(--la);font-weight:400;font-size:20px;color:var(--stone)}
+.total .grand .num{font-family:var(--la);font-size:34px;color:var(--light)}
+.total .fine{color:var(--mist);font-size:13px;margin-top:10px;line-height:1.5}
+
+.acts{display:grid;gap:10px;margin-top:18px}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:0 18px;border-radius:999px;text-decoration:none;font-family:var(--la);font-size:19px;border:1px solid var(--brass);color:var(--stone);background:transparent}
+.btn.go{background:var(--brass);color:var(--night)}
+.btn.wa{border-color:var(--ok);color:#dff7e8}
+.btn small{font-family:var(--he);font-size:13px;color:inherit;opacity:.8}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row2 .btn{min-height:46px;font-size:16px}
+
+.terms{margin-top:22px;color:var(--mist);font-size:13.5px;line-height:1.6;display:grid;gap:6px}
+.terms b{color:var(--stone);font-weight:500}
+footer{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--mist);font-size:12.5px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
+:focus-visible{outline:2px solid var(--light);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<!-- 1 · entry -->
+<section id="entry" aria-label="פתיחה">
+  <div class="bg" aria-hidden="true"></div>
+  <div class="top"><img src="m/logo.png" alt="קרמיקה בשאראת" width="414" height="372"></div>
+  <div class="mid"></div>
+  <div class="bot">
+    <p class="eyebrow">קרמיקה בשאראת מגישים</p>
+    <h1 id="h1">הבית של משפחת בן משה</h1>
+    <p class="sub">הסרט שלכם, 43 שניות, ואחריו הצעת המחיר שלכם.</p>
+    <button class="big" id="start" type="button">לחצו כדי להתחיל</button>
+    <p class="hint">עם סאונד. אפשר לסובב את הטלפון לרוחב.</p>
+  </div>
+</section>
+
+<!-- 2 · film -->
+<section id="film" aria-label="הסרט" hidden>
+  <video id="v" playsinline webkit-playsinline preload="metadata" poster="m/poster_v.jpg"></video>
+  <div id="ded" aria-live="polite"><div class="l">לכבוד</div><div class="n" id="dedn">משפחת בן משה</div><div class="r"></div></div>
+  <div id="tap" hidden><span>לחצו להפעלה</span></div>
+  <div class="bar">
+    <button class="pill" id="back" type="button">אחורה</button>
+    <button class="pill gold" id="skip" type="button">להצעת המחיר</button>
+  </div>
+  <div id="prog" aria-hidden="true"><i></i></div>
+</section>
+
+<!-- 3 · quote -->
+<main id="quote" hidden>
+<div class="wrap">
+  <div class="qbar">
+    <button class="pill gold" id="again" type="button">לצפות שוב</button>
+    <span class="t" id="qt">הצעת מחיר · משפחת בן משה</span>
+  </div>
+
+  <header class="q">
+    <img class="lg" src="m/logo.png" alt="קרמיקה בשאראת" width="414" height="372">
+    <div class="row">
+      <div>
+        <h2>הצעת מחיר</h2>
+        <p class="meta" id="meta"></p>
+      </div>
+      <p class="meta">קרמיקה בשאראת · אולם תצוגה<br>רחוב 3, מספר 115, יפיע<br><span class="num">04-6508600</span></p>
+    </div>
+    <span class="demo">הדגמה · cinemacome</span>
+  </header>
+
+  <section class="who" aria-label="פרטי הלקוח" id="who"></section>
+  <section class="items" aria-label="הפריטים" id="items"></section>
+  <section class="total" aria-label="סיכום" id="total"></section>
+
+  <div class="acts">
+    <a class="btn go" id="approve" href="#" target="_blank" rel="noopener">לאשר את ההזמנה <small>בוואטסאפ</small></a>
+    <div class="row2">
+      <a class="btn" href="tel:046508600">להתקשר לאולם</a>
+      <a class="btn" href="https://waze.com/ul?ll=32.6817269%2C35.2710996&navigate=yes" target="_blank" rel="noopener">לאולם ביפיע</a>
+    </div>
+    <a class="btn wa" id="share" href="#" target="_blank" rel="noopener">לשלוח למשפחה ולחבר שמשפץ</a>
+  </div>
+
+  <section class="terms">
+    <p><b>תוקף:</b> ההצעה בתוקף 14 יום. המחירים לפי מלאי קיים באולם.</p>
+    <p><b>אספקה:</b> איסוף מהאולם או הובלה בתיאום. זמן אספקה נמסר באישור ההזמנה.</p>
+    <p><b>תשלום:</b> מקדמה באישור ההזמנה, היתרה לפני האספקה. אפשר בוואטסאפ, בטלפון או באולם.</p>
+  </section>
+
+  <footer>
+    <span>קרמיקה בשאראת · רחוב 3, מספר 115, יפיע</span>
+    <span dir="ltr">cinemacome</span>
+  </footer>
+</div>
+</main>
+
+<script>
+(function(){
+  var $=function(s){return document.querySelector(s)};
+  var WA_BIZ='972522699099';
+
+  /* ---- the data: from the link (#q=...) or the Ben Moshe example ---- */
+  var DEFAULT={v:1,fam:'בן משה',name:'זיו בן משה',phone:'0524476717',addr:'האדמון 9, נוף הגליל',
+    no:'1106-01',date:'6.11.2026',until:'20.11.2026',work:'ריצוף לכל הבית',
+    items:[
+      {t:'ונוס גריי',s:'120/60',k:'ריצוף פורצלן · גימור מט',q:120,p:55,room:'m/r_venus.jpg',tile:'m/t_venus.jpg'},
+      {t:'סמנט בז׳',s:'120/60',k:'ריצוף פורצלן · גימור מט',q:160,p:68,room:'m/r_cement.jpg',tile:'m/t_cement.jpg'}
+    ]};
+  function b64d(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; var b=atob(s); var u=new Uint8Array(b.length); for(var i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return new TextDecoder().decode(u); }
+  function fromLink(){
+    try{
+      var h=location.hash||''; var m=h.match(/[#&]q=([A-Za-z0-9_\-]+)/);
+      if(!m){ var s=location.search||''; m=s.match(/[?&]q=([A-Za-z0-9_\-]+)/); }
+      if(!m){ var r=document.referrer||''; m=r.match(/[?&#]q=([A-Za-z0-9_\-]+)/); }
+      if(!m) return null;
+      var d=JSON.parse(b64d(m[1]));
+      if(!d||!d.fam||!d.items||!d.items.length) return null;
+      return d;
+    }catch(e){ return null; }
+  }
+  var D=fromLink()||DEFAULT;
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function money(n){ return Math.round(n).toLocaleString('he-IL')+' ₪'; }
+  function telLink(p){ return String(p||'').replace(/[^\d+]/g,''); }
+  function telShow(p){ var d=String(p||'').replace(/\D/g,''); return d.length===10 ? d.slice(0,3)+'-'+d.slice(3) : p; }
+
+  function render(){
+    var fam='משפחת '+D.fam;
+    document.title='הבית של '+fam;
+    $('#h1').textContent='הבית של '+fam;
+    $('#dedn').textContent=fam;
+    $('#qt').textContent='הצעת מחיר · '+fam;
+    $('#meta').innerHTML='מספר <b class="num">'+esc(D.no||'')+'</b> · <b>'+esc(D.date||'')+'</b>'+(D.until?' · בתוקף עד <b>'+esc(D.until)+'</b>':'');
+    var qty=0; D.items.forEach(function(it){ qty+=(+it.q||0); });
+    var sizes=[]; D.items.forEach(function(it){ if(it.s&&sizes.indexOf(it.s)<0) sizes.push(it.s); });
+    $('#who').innerHTML=
+      '<div><h3>לכבוד</h3><p><b>'+esc(D.name||fam)+'</b>'+(D.addr?'<br>'+esc(D.addr):'')+(D.phone?'<br><a class="num" href="tel:'+esc(telLink(D.phone))+'">'+esc(telShow(D.phone))+'</a>':'')+'</p></div>'+
+      '<div><h3>העבודה</h3><p>'+esc(D.work||'ריצוף וחיפוי')+'<br>'+qty+' מ״ר, '+D.items.length+(D.items.length===1?' אריח':' אריחים')+(sizes.length?' '+esc(sizes.join(', ')):'')+'<br>אספקה מהאולם ביפיע</p></div>';
+    var html='', total=0, lines='';
+    D.items.forEach(function(it,i){
+      var sum=(+it.q||0)*(+it.p||0); total+=sum;
+      var pic;
+      if(it.room||it.tile){
+        pic='<div class="pic">'+(it.room?'<img class="room" src="'+esc(it.room)+'" alt="" loading="lazy">':'')+'<span class="k">'+(i+1)+'</span>'+(it.tile?'<img class="tile" src="'+esc(it.tile)+'" alt="">':'')+'</div>';
+      } else {
+        pic='<div class="pic none"><span class="k">'+(i+1)+'</span><span class="mono num">'+esc(it.s||'')+'</span></div>';
+      }
+      html+='<article class="item">'+pic+'<div class="body"><h3>'+esc(it.t)+'</h3><p class="sub">'+esc([it.k,it.s?it.s+' ס״מ':''].filter(Boolean).join(' · '))+'</p>'+
+        '<div class="calc"><span class="t">כמות</span><span class="num">'+esc(it.q)+' מ״ר</span><span class="t">מחיר למ״ר</span><span class="num">'+esc(it.p)+' ₪</span>'+
+        '<span class="sum"><span>סה״כ לפריט</span><span class="num">'+money(sum)+'</span></span></div></div></article>';
+      lines+='<div class="line"><span>'+esc(it.t)+' · '+esc(it.q)+' מ״ר</span><span class="num">'+money(sum)+'</span></div>';
+    });
+    $('#items').innerHTML=html;
+    $('#total').innerHTML=lines+'<div class="grand"><b>סה״כ לתשלום</b><span class="num">'+money(total)+'</span></div><p class="fine">'+esc(D.note||'המחירים כוללים מע״מ. הובלה, פחת חיתוך ואביזרים נקבעים מול נציג האולם.')+'</p>';
+    var msg='שלום, '+(D.name||fam)+'. ראיתי את הסרט ואת הצעת המחיר'+(D.no?' מספר '+D.no:'')+' ('+money(total)+') ואני רוצה לאשר את ההזמנה.';
+    $('#approve').href='https://wa.me/'+WA_BIZ+'?text='+encodeURIComponent(msg);
+  }
+  render();
+
+  /* ---- the screens ---- */
+  var entry=$('#entry'), film=$('#film'), quote=$('#quote'), v=$('#v'), tap=$('#tap');
+  var start=$('#start'), back=$('#back'), skip=$('#skip'), again=$('#again'), prog=$('#prog i'), share=$('#share'), ded=$('#ded');
+  var SRC={v:'m/film_v.mp4', h:'m/film_h.mp4'}, POSTER={v:'m/poster_v.jpg', h:'m/poster_h.jpg'};
+  var mq=window.matchMedia('(orientation: portrait)');
+  var cur=null, skipTimer=null;
+
+  function want(){ return mq.matches ? 'v' : 'h'; }
+  function setSrc(keepTime){
+    var k=want(); if(k===cur) return;
+    var t=keepTime ? v.currentTime : 0, playing=keepTime && !v.paused && !v.ended;
+    cur=k; v.poster=POSTER[k]; v.src=SRC[k];
+    v.addEventListener('loadedmetadata',function f(){ v.removeEventListener('loadedmetadata',f);
+      try{ if(t>0.05) v.currentTime=t; }catch(e){}
+      if(playing) tryPlay();
+    });
+    v.load();
+  }
+  function tryPlay(){ var p=v.play(); if(p&&p.catch) p.catch(function(){ tap.hidden=false; }); }
+  function goFull(){
+    var el=document.documentElement;
+    try{ var f=el.requestFullscreen||el.webkitRequestFullscreen;
+      if(f && !document.fullscreenElement){ var r=f.call(el,{navigationUI:'hide'}); if(r&&r.catch) r.catch(function(){}); } }catch(e){}
+  }
+  function show(which){
+    entry.hidden = which!=='entry'; film.hidden = which!=='film'; quote.hidden = which!=='quote';
+    document.body.style.overflow = which==='quote' ? '' : 'hidden';
+    if(which==='quote') window.scrollTo(0,0);
+  }
+  function playFilm(){
+    show('film'); setSrc(false); tap.hidden=true; ded.classList.remove('on');
+    try{ v.currentTime=0; }catch(e){}
+    tryPlay();
+    skip.classList.remove('on'); clearTimeout(skipTimer);
+    skipTimer=setTimeout(function(){ skip.classList.add('on'); },8000);
+  }
+
+  start.addEventListener('click',function(){ goFull(); playFilm(); });
+  tap.addEventListener('click',function(){ tap.hidden=true; tryPlay(); });
+  back.addEventListener('click',function(){ v.pause(); show('entry'); });
+  skip.addEventListener('click',function(){ v.pause(); show('quote'); });
+  again.addEventListener('click',function(){ goFull(); playFilm(); });
+  v.addEventListener('ended',function(){ show('quote'); });
+  v.addEventListener('timeupdate',function(){
+    if(v.duration) prog.style.width=(100*v.currentTime/v.duration)+'%';
+    var t=v.currentTime, on=t>0.35 && t<4.6;
+    if(on!==ded.classList.contains('on')) ded.classList.toggle('on',on);
+  });
+
+  var onOrient=function(){ if(!film.hidden) setSrc(true); };
+  if(mq.addEventListener) mq.addEventListener('change',onOrient); else if(mq.addListener) mq.addListener(onOrient);
+
+  var wasPlaying=false;
+  document.addEventListener('visibilitychange',function(){
+    if(document.hidden){ wasPlaying=!film.hidden && !v.paused && !v.ended; if(wasPlaying) v.pause(); }
+    else if(wasPlaying){ wasPlaying=false; tryPlay(); }
+  });
+
+  share.addEventListener('click',function(){
+    try{ share.href='https://wa.me/?text='+encodeURIComponent('תראו מה קיבלנו מקרמיקה בשאראת, הבית שלנו בסרט: '+location.href); }catch(e){}
+  });
+
+  document.body.style.overflow='hidden';
+})();
+</script>
+</body>
+</html>
