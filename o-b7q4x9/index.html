@@ -67,6 +67,8 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-o
 .cat .c .noimg{height:150px;display:grid;place-items:center;font-family:var(--la);color:var(--brass);font-size:16px}
 .cat .c:active,.cat .c:focus-visible{border-color:var(--brass)}
 .busy{opacity:.6;pointer-events:none}
+#which{display:none}
+#which.on{display:grid}
 
 .out{display:none;gap:10px}
 .out.on{display:grid}
@@ -129,6 +131,15 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-o
     <label>הערה בהצעה (לא חובה)<textarea name="note" rows="2" style="min-height:60px" placeholder="המחירים כוללים מע״מ. הובלה, פחת חיתוך ואביזרים נקבעים מול נציג האולם."></textarea></label>
     <button class="go" type="submit" id="go">צור את הסרט האישי</button>
   </form>
+
+  <div id="which" style="position:fixed;inset:0;z-index:50;background:rgba(15,17,20,.92);place-items:center;padding:16px">
+    <div class="card" style="width:100%;max-width:520px;max-height:85vh;overflow:auto">
+      <h2>איזה פריט בהצעה זה?</h2>
+      <div id="whichlist" class="grid"></div>
+      <button class="btn sm" type="button" id="whichother" style="margin-top:10px">פריט אחר (להקליד שם)</button>
+      <button class="btn sm" type="button" id="whichcancel" style="margin-top:6px;border-color:rgba(255,255,255,.25)">ביטול</button>
+    </div>
+  </div>
 
   <section class="card out" id="out">
     <h2>מוכן. ככה זה יוצא ללקוח:</h2>
@@ -259,6 +270,18 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-o
     });
     drawHeroes();
   }
+  /* which quote item does this picture belong to? */
+  function askWhich(img,defaultName,defaultSize){
+    var items=readRows(); var box=$('#which'), list=$('#whichlist');
+    function done(t,sz){ box.classList.remove('on'); if(heroes.length>=4) heroes.shift(); heroes.push({t:t,s:sz||'',img:img}); drawHeroes(); }
+    function guessSize(t){ var m=String(t).match(/\d{2,3}\s*[\/x×X]\s*\d{2,3}/); return m?m[0].replace(/\s+/g,''):(defaultSize||''); }
+    if(!items.length){ var n=prompt('שם האריח כמו שהלקוח מכיר אותו:',defaultName||''); if(n===null) return; var sz=prompt('מידה (למשל 120/60):',defaultSize||'')||''; done(n||defaultName||'אריח',sz); return; }
+    list.innerHTML=items.map(function(it,i){ return '<button class="btn sm" type="button" data-i="'+i+'" style="justify-content:space-between"><span style="text-align:right;overflow:hidden;text-overflow:ellipsis">'+esc(it.t)+'</span><span class="num" style="color:var(--mist);font-family:var(--he);font-size:13px">'+esc(it.q)+' × '+esc(it.p)+'</span></button>'; }).join('');
+    list.querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ var it=items[+b.dataset.i]; var t=it.t.replace(/\s*\d{2,3}\s*[\/x×X]\s*\d{2,3}.*$/,'').trim()||it.t; done(t,guessSize(it.t)); }); });
+    $('#whichother').onclick=function(){ var n=prompt('שם האריח כמו שהלקוח מכיר אותו:',defaultName||''); if(n===null) return; var sz=prompt('מידה (למשל 120/60):',defaultSize||'')||''; done(n||defaultName||'אריח',sz); };
+    $('#whichcancel').onclick=function(){ box.classList.remove('on'); };
+    box.classList.add('on');
+  }
   function drawHeroes(){
     heroesEl.innerHTML=heroes.map(function(h,i){ return '<div class="hero">'+(h.img?'<img src="'+esc(h.img)+'" alt="">':'<div class="noimg">'+esc(h.s||'')+'</div>')+'<div class="n">'+esc(h.t)+'</div><button class="x" type="button" data-i="'+i+'" aria-label="הסרה">×</button></div>'; }).join('');
     heroesEl.querySelectorAll('.x').forEach(function(b){ b.addEventListener('click',function(){ heroes.splice(+b.dataset.i,1); drawHeroes(); }); });
@@ -266,7 +289,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-o
   function drawCat(q){
     var ws=words(q); var list=CAT.filter(function(c){ if(!ws.length) return true; var s=(c.full+' '+c.s+' '+c.l+' '+c.f).toLowerCase(); return ws.every(function(w){return s.indexOf(w)>=0;}); }).slice(0,80);
     $('#cat').innerHTML=list.map(function(c){ return '<div class="c" role="button" tabindex="0" data-id="'+c.id+'">'+(c.img?'<span class="im" style="background-image:url(\''+esc(catUrl(c))+'\')"></span>':'<span class="noimg">'+esc(c.s||'')+'</span>')+'<span class="t">'+esc(c.n)+(c.s?' · '+esc(c.s):'')+'</span></div>'; }).join('');
-    $('#cat').querySelectorAll('.c').forEach(function(b){ var pick=function(){ var c=CAT.find(function(x){return x.id==b.dataset.id;}); if(!c) return; var name=prompt('שם האריח כמו שהלקוח מכיר אותו:', c.n.replace(/^אריח(י)? פורצלן /,'').slice(0,40)); if(name===null) return; if(heroes.length>=4) heroes.shift(); heroes.push({t:name||c.n,s:c.s,img:catUrl(c)}); drawHeroes(); $('#pick').classList.remove('on'); }; b.addEventListener('click',pick); b.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pick(); } }); });
+    $('#cat').querySelectorAll('.c').forEach(function(b){ var pick=function(){ var c=CAT.find(function(x){return x.id==b.dataset.id;}); if(!c) return; $('#pick').classList.remove('on'); askWhich(catUrl(c), c.n.replace(/^אריח(י)? פורצלן /,'').slice(0,40), c.s); }; b.addEventListener('click',pick); b.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pick(); } }); });
   }
   $('#openpick').addEventListener('click',function(){ $('#pick').classList.add('on'); drawCat($('#q').value); $('#q').focus(); });
   $('#closepick').addEventListener('click',function(){ $('#pick').classList.remove('on'); });
@@ -282,8 +305,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-o
       var r=await fetch('https://api.cloudinary.com/v1_1/'+CLOUD+'/image/upload',{method:'POST',body:fd});
       var j=await r.json(); if(!j.secure_url) throw new Error(j.error&&j.error.message||'upload');
       var url=j.secure_url.replace('/upload/','/upload/f_auto,q_auto,w_1200/');
-      var name=prompt('שם האריח שצילמת:','')||'אריח'; var size=prompt('מידה (למשל 120/60):','')||'';
-      if(heroes.length>=4) heroes.shift(); heroes.push({t:name,s:size,img:url}); drawHeroes();
+      askWhich(url,'','');
     }catch(e){ alert('ההעלאה לא הצליחה. אפשר לנסות שוב, או לשלוח את התמונה בוואטסאפ ליד הקישור.'); }
     lbl.classList.remove('busy'); lbl.firstChild.textContent='צלם אריח';
   });
