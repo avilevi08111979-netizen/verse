@@ -106,7 +106,9 @@ header.q h2{font-family:var(--la);font-size:32px;line-height:1.1;color:var(--lig
 .item .calc .sum{font-family:var(--la);font-size:22px;color:var(--light);grid-column:1/-1;display:flex;justify-content:space-between;align-items:baseline;margin-top:4px}
 
 .total{margin-top:18px;padding:18px 18px 16px;border-radius:16px;border:1px solid var(--brass);background:linear-gradient(180deg,rgba(226,168,102,.12),rgba(226,168,102,.04))}
-.total .line{display:flex;justify-content:space-between;gap:12px;font-size:15.5px;color:var(--mist);padding:3px 0}
+.total .line{display:flex;justify-content:space-between;gap:12px;font-size:14.5px;color:var(--mist);padding:4px 0;border-bottom:1px dashed rgba(226,168,102,.18)}
+.total .line span:first-child{min-width:0;overflow-wrap:anywhere}
+.total .th{font-family:var(--la);font-weight:400;font-size:17px;color:var(--brass);margin:0 0 8px}
 .total .grand{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:8px;padding-top:12px;border-top:1px solid var(--line)}
 .total .grand b{font-family:var(--la);font-weight:400;font-size:20px;color:var(--stone)}
 .total .grand .num{font-family:var(--la);font-size:34px;color:var(--light)}
@@ -213,19 +215,30 @@ footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
       {t:'ונוס גריי',s:'120/60',k:'ריצוף פורצלן · גימור מט',q:120,p:55,room:'m/r_venus.jpg',tile:'m/t_venus.jpg'},
       {t:'סמנט בז׳',s:'120/60',k:'ריצוף פורצלן · גימור מט',q:160,p:68,room:'m/r_cement.jpg',tile:'m/t_cement.jpg'}
     ]};
-  function b64d(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; var b=atob(s); var u=new Uint8Array(b.length); for(var i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return new TextDecoder().decode(u); }
-  function fromLink(){
+  function b64u8(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; var b=atob(s); var u=new Uint8Array(b.length); for(var i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return u; }
+  function codeFromLink(){
+    var h=location.hash||''; var m=h.match(/[#&]q=([A-Za-z0-9_\-]+)/);
+    if(!m){ var q=location.search||''; m=q.match(/[?&]q=([A-Za-z0-9_\-]+)/); }
+    return m?m[1]:null;
+  }
+  async function fromLink(){
     try{
-      var h=location.hash||''; var m=h.match(/[#&]q=([A-Za-z0-9_\-]+)/);
-      if(!m){ var s=location.search||''; m=s.match(/[?&]q=([A-Za-z0-9_\-]+)/); }
-      if(!m){ var r=document.referrer||''; m=r.match(/[?&#]q=([A-Za-z0-9_\-]+)/); }
-      if(!m) return null;
-      var d=JSON.parse(b64d(m[1]));
-      if(!d||!d.fam||!d.items||!d.items.length) return null;
+      var c=codeFromLink(); if(!c) return null;
+      var json;
+      if(c.charAt(0)==='z'){
+        if(!window.DecompressionStream) return null;
+        var ds=new DecompressionStream('deflate-raw'); var w=ds.writable.getWriter(); w.write(b64u8(c.slice(1))); w.close();
+        json=await new Response(ds.readable).text();
+      } else if(c.charAt(0)==='j'){ json=new TextDecoder().decode(b64u8(c.slice(1))); }
+      else { json=new TextDecoder().decode(b64u8(c)); }
+      var d=JSON.parse(json);
+      if(!d||!d.fam) return null;
+      d.items=d.items||[]; d.heroes=d.heroes||[];
+      if(!d.items.length&&!d.heroes.length) return null;
       return d;
     }catch(e){ return null; }
   }
-  var D=fromLink()||DEFAULT;
+  var D=DEFAULT;
 
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function money(n){ return Math.round(n).toLocaleString('he-IL')+' ₪'; }
@@ -239,31 +252,33 @@ footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
     $('#dedn').textContent=fam;
     $('#qt').textContent='הצעת מחיר · '+fam;
     $('#meta').innerHTML='מספר <b class="num">'+esc(D.no||'')+'</b> · <b>'+esc(D.date||'')+'</b>'+(D.until?' · בתוקף עד <b>'+esc(D.until)+'</b>':'');
-    var qty=0; D.items.forEach(function(it){ qty+=(+it.q||0); });
-    var sizes=[]; D.items.forEach(function(it){ if(it.s&&sizes.indexOf(it.s)<0) sizes.push(it.s); });
+    var items=D.items||[], heroes=D.heroes||[];
+    var qty=0; items.forEach(function(it){ qty+=(+it.q||0); });
     $('#who').innerHTML=
       '<div><h3>לכבוד</h3><p><b>'+esc(D.name||fam)+'</b>'+(D.addr?'<br>'+esc(D.addr):'')+(D.phone?'<br><a class="num" href="tel:'+esc(telLink(D.phone))+'">'+esc(telShow(D.phone))+'</a>':'')+'</p></div>'+
-      '<div><h3>העבודה</h3><p>'+esc(D.work||'ריצוף וחיפוי')+'<br>'+qty+' מ״ר, '+D.items.length+(D.items.length===1?' אריח':' אריחים')+(sizes.length?' '+esc(sizes.join(', ')):'')+'<br>אספקה מהאולם ביפיע</p></div>';
+      '<div><h3>העבודה</h3><p>'+esc(D.work||'ריצוף וחיפוי')+(items.length?'<br>'+items.length+' פריטים'+(qty?', '+Math.round(qty)+' יח׳ / מ״ר':''):'')+'<br>אספקה מהאולם ביפיע</p></div>';
     var html='', total=0, lines='';
-    D.items.forEach(function(it,i){
-      var sum=(+it.q||0)*(+it.p||0); total+=sum;
+    /* v1 links: pictures on the items themselves */
+    var picItems=items.filter(function(it){return it.room||it.tile;});
+    var bigs=heroes.length?heroes:picItems;
+    bigs.forEach(function(it,i){
       var pic;
-      if(it.room||it.tile){
-        pic='<div class="pic">'+(it.room?'<img class="room" src="'+esc(it.room)+'" alt="" loading="lazy">':'')+'<span class="k">'+(i+1)+'</span>'+(it.tile?'<img class="tile" src="'+esc(it.tile)+'" alt="">':'')+'</div>';
-      } else {
-        pic='<div class="pic none"><span class="k">'+(i+1)+'</span><span class="mono num">'+esc(it.s||'')+'</span></div>';
-      }
-      html+='<article class="item">'+pic+'<div class="body"><h3>'+esc(it.t)+'</h3><p class="sub">'+esc([it.k,it.s?it.s+' ס״מ':''].filter(Boolean).join(' · '))+'</p>'+
-        '<div class="calc"><span class="t">כמות</span><span class="num">'+esc(it.q)+' מ״ר</span><span class="t">מחיר למ״ר</span><span class="num">'+esc(it.p)+' ₪</span>'+
-        '<span class="sum"><span>סה״כ לפריט</span><span class="num">'+money(sum)+'</span></span></div></div></article>';
-      lines+='<div class="line"><span>'+esc(it.t)+' · '+esc(it.q)+' מ״ר</span><span class="num">'+money(sum)+'</span></div>';
+      if(it.room||it.tile) pic='<div class="pic">'+(it.room?'<img class="room" src="'+esc(it.room)+'" alt="" loading="lazy">':'')+'<span class="k">'+(i+1)+'</span>'+(it.tile?'<img class="tile" src="'+esc(it.tile)+'" alt="">':'')+'</div>';
+      else if(it.img) pic='<div class="pic"><img class="room" src="'+esc(it.img)+'" alt="" loading="lazy"><span class="k">'+(i+1)+'</span></div>';
+      else pic='<div class="pic none"><span class="k">'+(i+1)+'</span><span class="mono num">'+esc(it.s||'')+'</span></div>';
+      var calc='';
+      if(it.q&&it.p){ var sum=(+it.q)*(+it.p); calc='<div class="calc"><span class="t">כמות</span><span class="num">'+esc(it.q)+' מ״ר</span><span class="t">מחיר למ״ר</span><span class="num">'+esc(it.p)+' ₪</span><span class="sum"><span>סה״כ לפריט</span><span class="num">'+money(sum)+'</span></span></div>'; }
+      html+='<article class="item">'+pic+'<div class="body"><h3>'+esc(it.t)+'</h3><p class="sub">'+esc([it.k,it.s?it.s+' ס״מ':''].filter(Boolean).join(' · '))+'</p>'+calc+'</div></article>';
     });
     $('#items').innerHTML=html;
-    $('#total').innerHTML=lines+'<div class="grand"><b>סה״כ לתשלום</b><span class="num">'+money(total)+'</span></div><p class="fine">'+esc(D.note||'המחירים כוללים מע״מ. הובלה, פחת חיתוך ואביזרים נקבעים מול נציג האולם.')+'</p>';
+    items.forEach(function(it){ var sum=(+it.q||0)*(+it.p||0); total+=sum; lines+='<div class="line"><span>'+esc(it.t)+(it.q?' · <span class="num">'+esc(it.q)+'</span>':'')+'</span><span class="num">'+money(sum)+'</span></div>'; });
+    if(D.total) total=+D.total;
+    $('#total').innerHTML=(items.length>bigs.length||heroes.length?'<h3 class="th">כל הפריטים בהצעה</h3>':'')+lines+'<div class="grand"><b>סה״כ לתשלום</b><span class="num">'+money(total)+'</span></div><p class="fine">'+esc(D.note||'המחירים כוללים מע״מ. הובלה, פחת חיתוך ואביזרים נקבעים מול נציג האולם.')+'</p>';
     var msg='שלום, '+(D.name||fam)+'. ראיתי את הסרט ואת הצעת המחיר'+(D.no?' מספר '+D.no:'')+' ('+money(total)+') ואני רוצה לאשר את ההזמנה.';
     $('#approve').href='https://wa.me/'+WA_BIZ+'?text='+encodeURIComponent(msg);
   }
   render();
+  fromLink().then(function(d){ if(d){ D=d; render(); } });
 
   /* ---- the screens ---- */
   var entry=$('#entry'), film=$('#film'), quote=$('#quote'), v=$('#v'), tap=$('#tap');
