@@ -22,6 +22,7 @@ for i,s in enumerate(room['surfaces']):
     chroma=np.sqrt((A-a0)**2+(B-b0)**2)
     m=(ratio>lo)&(ratio<hi)&(chroma<ctol)&sel
     m=m.astype(np.uint8)*255
+    for ex in s.get('exclude',[]): cv2.fillPoly(m,[np.array(ex,np.int32)],0)
     # clean: close small holes (thin fixtures stay excluded only if wider than k), remove specks
     k=s.get('close',5)
     m=cv2.morphologyEx(m,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
