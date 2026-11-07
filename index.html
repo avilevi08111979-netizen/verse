@@ -183,6 +183,7 @@ footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
 
   <div class="acts">
     <a class="btn go" id="approve" href="#" target="_blank" rel="noopener">לאשר את ההזמנה <small>בוואטסאפ</small></a>
+    <a class="btn" id="viz" href="#" target="_blank" rel="noopener" style="display:none">ההדמיה שלכם <small>Design Pro Max</small></a>
     <div class="row2">
       <a class="btn" href="tel:046508600">להתקשר לאולם</a>
       <a class="btn" href="https://waze.com/ul?ll=32.6817269%2C35.2710996&navigate=yes" target="_blank" rel="noopener">לאולם ביפיע</a>
@@ -275,7 +276,7 @@ footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
     if(D.total) total=+D.total;
     $('#total').innerHTML=(items.length>bigs.length||heroes.length?'<h3 class="th">כל הפריטים בהצעה</h3>':'')+lines+'<div class="grand"><b>סה״כ לתשלום</b><span class="num">'+money(total)+'</span></div><p class="fine">'+esc(D.note||'המחירים כוללים מע״מ. הובלה, פחת חיתוך ואביזרים נקבעים מול נציג האולם.')+'</p>';
     var msg='שלום, '+(D.name||fam)+'. ראיתי את הסרט ואת הצעת המחיר'+(D.no?' מספר '+D.no:'')+' ('+money(total)+') ואני רוצה לאשר את ההזמנה.';
-    $('#approve').href='https://wa.me/'+WA_BIZ+'?text='+encodeURIComponent(msg);
+    $('#approve').href='https://wa.me/'+WA_BIZ+'?text='+encodeURIComponent(msg); var vz=$('#viz'); if(vz){ if(D.viz){ vz.href='design/#'+D.viz; vz.style.display=''; } else vz.style.display='none'; }
   }
   render();
   fromLink().then(function(d){ if(d){ D=d; render(); } });
