@@ -141,8 +141,8 @@ input[type=number],input[type=text]{font:inherit;color:var(--text);background:#0
 <input type="file" id="camIn" accept="image/*" capture="environment" hidden>
 <div id="toast" role="status"></div>
 
-<script src="rooms.js"></script>
-<script src="tiles.js"></script>
+<script src="rooms.js?v=3"></script>
+<script src="tiles.js?v=3"></script>
 <script>
 (function(){
 'use strict';
@@ -209,7 +209,7 @@ function setView(p){ gl.uniform2f(gl.getUniformLocation(p,'uHalf'),view.vw/2,vie
 /* ---------- patterns ---------- */
 var patCache={};
 function tileById(id){ for(var i=0;i<TILES.length;i++) if(String(TILES[i].id)===String(id)) return TILES[i]; for(i=0;i<S.custom.length;i++) if(S.custom[i].id===id) return S.custom[i]; return null; }
-function faceSrc(t){ return t.custom?t.img:('t/'+t.id+'.jpg'); }
+function faceSrc(t){ return t.custom?t.img:('t2/'+t.id+'.jpg'); }
 function avgColor(img){ var c=D.createElement('canvas'); c.width=c.height=8; var x=c.getContext('2d'); x.drawImage(img,0,0,8,8); var d=x.getImageData(0,0,8,8).data, r=0,g=0,b=0; for(var i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];} var n=d.length/4; return [r/n,g/n,b/n]; }
 /* one period of the pattern drawn into a 1024² canvas: tile(s) + grout */
 function buildPattern(t,o,cb){ var key=t.id+'|'+o.lay+'|'+o.gr+'|'+o.gw; if(patCache[key]) return cb(patCache[key]);
