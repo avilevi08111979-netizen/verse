@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Design Pro Max 8.1</title>
+<meta name="description" content="הדמיה מיידית: בוחרים אריח מהחנות, והוא מונח על הרצפה ועל הקיר של החדר, בפרספקטיבה ובאור של הצילום.">
+<meta name="theme-color" content="#0b0d10">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0d10;--panel:rgba(14,16,20,.88);--line:rgba(255,255,255,.12);--text:#ece8df;--mute:#9a968d;--acc:#e2a84b;--acc2:#5fc4c9;
+--body:"Heebo","Arial Hebrew",Arial,sans-serif;--display:"Secular One","Heebo",sans-serif;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:var(--body);overflow:hidden;overscroll-behavior:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+#app{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:minmax(0,1fr)}
+#app>*{min-width:0}
+/* top bar */
+#top{display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top,0px)) 14px 8px;background:linear-gradient(var(--bg),rgba(11,13,16,.85));z-index:3}
+#brand{display:flex;flex-direction:column;line-height:1.05}
+#brand b{font-family:var(--display);font-weight:400;font-size:17px;letter-spacing:.02em;direction:ltr;text-align:right}
+#brand small{color:var(--mute);font-size:11.5px}
+#roomSel{margin-inline-start:auto;display:flex;gap:6px}
+#roomSel button{min-height:36px;padding:0 12px;border:1px solid var(--line);border-radius:999px;font-size:14px;color:var(--mute)}
+#roomSel button[aria-pressed="true"]{color:var(--text);border-color:var(--acc)}
+.ic{min-width:38px;min-height:38px;border:1px solid var(--line);border-radius:10px;display:grid;place-items:center;color:var(--text)}
+.ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* stage */
+#stage{position:relative;min-height:0;touch-action:none;background:#000}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block}
+#hint{position:absolute;inset-inline:0;top:12px;text-align:center;pointer-events:none;color:#fff;font-size:14px;text-shadow:0 1px 6px rgba(0,0,0,.8);opacity:0;transition:opacity .4s}
+#hint.on{opacity:.95}
+#surf{position:absolute;inset-inline:0;bottom:12px;display:flex;justify-content:center;gap:8px;padding:0 12px;flex-wrap:wrap}
+.sb{display:flex;align-items:center;gap:8px;min-height:40px;padding:0 12px 0 8px;border-radius:999px;background:var(--panel);backdrop-filter:blur(10px);border:1px solid var(--line);font-size:14px;color:var(--text)}
+.sb[aria-pressed="true"]{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}
+.sb .sw{width:22px;height:22px;border-radius:6px;background:#2a2d33 center/cover;border:1px solid var(--line)}
+.sb small{color:var(--mute);font-size:12px}
+.sb .x{margin-inline-start:4px;color:var(--mute);font-size:16px;line-height:1;padding:4px}
+#tools{position:absolute;left:12px;top:12px;display:flex;flex-direction:column;gap:8px}
+#tools .ic{background:var(--panel);backdrop-filter:blur(10px)}
+/* tray */
+#tray{background:var(--panel);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px));z-index:3}
+#filters{display:flex;gap:6px;overflow-x:auto;padding:2px 14px 8px;scrollbar-width:none}
+#filters::-webkit-scrollbar{display:none}
+#filters button{flex:0 0 auto;min-height:30px;padding:0 11px;border-radius:999px;border:1px solid var(--line);font-size:13px;color:var(--mute);white-space:nowrap}
+#filters button[aria-pressed="true"]{color:var(--text);border-color:var(--acc)}
+#tiles{display:flex;gap:10px;overflow-x:auto;padding:0 14px 4px;scroll-snap-type:x proximity;scrollbar-width:none}
+#tiles::-webkit-scrollbar{display:none}
+.t{flex:0 0 auto;width:88px;display:flex;flex-direction:column;gap:5px;scroll-snap-align:start;text-align:right}
+.t .im{width:88px;height:88px;border-radius:10px;background:#1a1d22 center/cover;border:2px solid transparent}
+.t[aria-pressed="true"] .im{border-color:var(--acc)}
+.t b{font-weight:500;font-size:12px;line-height:1.2;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;height:2.4em}
+.t small{color:var(--mute);font-size:11px;direction:ltr;text-align:right}
+.t.cam .im{display:grid;place-items:center;border:1px dashed var(--line);color:var(--mute)}
+.t.cam .im svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+/* sheets */
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center;z-index:9}
+.sheet.on{display:flex}
+.sheet>div{width:min(560px,100%);background:#14171c;border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));display:grid;gap:10px;max-height:92vh;overflow:auto}
+.sheet h2{margin:0;font-family:var(--display);font-weight:400;font-size:20px;color:var(--acc)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row span{color:var(--mute);font-size:13px;min-width:64px}
+.row button{min-height:38px;padding:0 14px;border:1px solid var(--line);border-radius:999px;font-size:14px}
+.row button[aria-pressed="true"]{border-color:var(--acc);color:var(--text)}
+.btn{min-height:46px;padding:0 18px;border-radius:12px;border:1px solid var(--acc);color:var(--text);font-size:16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.btn.p{background:var(--acc);color:#14110a;font-weight:600}
+.mute{color:var(--mute);font-size:13px}
+input[type=number],input[type=text]{font:inherit;color:var(--text);background:#0f1115;border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-height:40px;width:90px;text-align:center}
+/* straighten */
+#str{position:fixed;inset:0;background:#000;display:none;z-index:10;flex-direction:column}
+#str.on{display:flex}
+#strWrap{position:relative;flex:1;min-height:0;touch-action:none}
+#strImg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+#strSvg{position:absolute;inset:0;width:100%;height:100%}
+#strSvg polygon{fill:rgba(226,168,75,.12);stroke:var(--acc);stroke-width:2}
+#strSvg circle{fill:#fff;stroke:var(--acc);stroke-width:3}
+#strBar{display:flex;gap:10px;align-items:center;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:#14171c;flex-wrap:wrap}
+#toast{position:fixed;left:50%;bottom:calc(190px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#14171c;border:1px solid var(--line);padding:8px 14px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:12}
+#toast.on{opacity:1}
+@media (min-width:900px){#brand b{font-size:19px} .t{width:96px} .t .im{width:96px;height:96px}}
+:focus-visible{outline:2px solid var(--acc2);outline-offset:2px}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="top">
+    <div id="brand"><b>DESIGN PRO MAX 8.1</b><small>הדמיה מיידית · קרמיקה בשאראת · cinemacome</small></div>
+    <nav id="roomSel" aria-label="חדרים"></nav>
+    <button class="ic" id="shareBtn" aria-label="לשמור ולשלוח"><svg viewBox="0 0 24 24"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M12 15V3M7 8l5-5 5 5"/></svg></button>
+  </header>
+
+  <section id="stage" aria-label="החדר">
+    <canvas id="gl"></canvas>
+    <div id="hint"></div>
+    <div id="tools">
+      <button class="ic" id="beforeBtn" aria-label="להחזיק כדי לראות לפני"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      <button class="ic" id="resetBtn" aria-label="לנקות את הבחירות"><svg viewBox="0 0 24 24"><path d="M4 4v6h6M20 20v-6h-6M20 9A8 8 0 0 0 5.6 6.6L4 10M4 15a8 8 0 0 0 14.4 2.4L20 14"/></svg></button>
+    </div>
+    <div id="surf" role="tablist" aria-label="משטחים"></div>
+  </section>
+
+  <footer id="tray">
+    <div id="filters" role="tablist" aria-label="סינון"></div>
+    <div id="tiles" role="listbox" aria-label="אריחים"></div>
+  </footer>
+</div>
+
+<div class="sheet" id="optSheet" role="dialog" aria-modal="true" aria-labelledby="optT">
+  <div>
+    <h2 id="optT">הנחה</h2>
+    <div class="row"><span>סידור</span><button data-lay="grid">ישר</button><button data-lay="brick">בריקים</button><button data-lay="third">שליש</button></div>
+    <div class="row"><span>כיוון</span><button data-rot="0">לאורך</button><button data-rot="1">לרוחב</button></div>
+    <div class="row"><span>פוגה</span><button data-gr="auto">בצבע האריח</button><button data-gr="light">בהירה</button><button data-gr="dark">כהה</button></div>
+    <div class="row"><span>רוחב פוגה</span><button data-gw="2">2 מ״מ</button><button data-gw="4">4 מ״מ</button><button data-gw="8">8 מ״מ</button></div>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="optClose">סגירה</button></div>
+  </div>
+</div>
+
+<div class="sheet" id="shareSheet" role="dialog" aria-modal="true" aria-labelledby="shT">
+  <div>
+    <h2 id="shT">העיצוב שלכם</h2>
+    <p class="mute" id="shSummary"></p>
+    <div class="row"><input type="text" id="shName" placeholder="שם משפחה" style="width:100%;text-align:right"></div>
+    <a class="btn p" id="shWa" href="#" target="_blank" rel="noopener">לשלוח לקרמיקה בשאראת בוואטסאפ</a>
+    <div class="row"><button class="btn" id="shCopy">להעתיק קישור</button><button class="btn" id="shImg">להוריד תמונה</button></div>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="shClose">סגירה</button></div>
+  </div>
+</div>
+
+<div id="str" role="dialog" aria-modal="true" aria-label="יישור אריח מצילום">
+  <div id="strWrap"><img id="strImg" alt=""><svg id="strSvg"><polygon id="strPoly"></polygon><circle r="14" data-i="0"/><circle r="14" data-i="1"/><circle r="14" data-i="2"/><circle r="14" data-i="3"/></svg></div>
+  <div id="strBar">
+    <span class="mute">גררו את ארבע הפינות לפינות האריח</span>
+    <label class="mute">רוחב <input type="number" id="strW" value="60" inputmode="numeric"></label>
+    <label class="mute">אורך <input type="number" id="strH" value="60" inputmode="numeric"></label>
+    <button class="btn" id="strCancel">ביטול</button>
+    <button class="btn p" id="strOk">ליישר ולהניח</button>
+  </div>
+</div>
+<input type="file" id="camIn" accept="image/*" capture="environment" hidden>
+<div id="toast" role="status"></div>
+
+<script src="rooms.js"></script>
+<script src="tiles.js"></script>
+<script>
+(function(){
+'use strict';
+var D=document, $=function(s){return D.querySelector(s)};
+var ROOMS=window.ROOMS||[], TILES=window.TILES||[];
+var WA='972522699099';
+
+/* ---------- state ---------- */
+var S={room:ROOMS[0], active:null, sel:{}, opt:{}, cx:0, cy:0, before:false, custom:[]};
+function surfOpt(id){ return S.opt[id]||(S.opt[id]={lay:'grid',rot:null,gr:'auto',gw:3}); }
+
+/* ---------- WebGL ---------- */
+var cv=$('#gl'), gl=cv.getContext('webgl',{antialias:false,alpha:false,preserveDrawingBuffer:true})||cv.getContext('experimental-webgl');
+if(!gl){ $('#hint').textContent='הדפדפן הזה לא תומך בהדמיה. נסו בכרום או בספארי עדכניים.'; $('#hint').classList.add('on'); }
+var aniso=gl&&(gl.getExtension('EXT_texture_filter_anisotropic')||gl.getExtension('WEBKIT_EXT_texture_filter_anisotropic'));
+function sh(type,src){ var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; }
+function prog(vs,fs){ var p=gl.createProgram(); gl.attachShader(p,sh(gl.VERTEX_SHADER,vs)); gl.attachShader(p,sh(gl.FRAGMENT_SHADER,fs)); gl.linkProgram(p); if(!gl.getProgramParameter(p,gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p)); return p; }
+var VS_ROOM='attribute vec2 aP;varying vec2 vT;uniform vec2 uHalf,uCenter,uImg;uniform float uScale;void main(){vec2 img=aP*uImg;vec2 scr=(img-uCenter)*uScale+uHalf;gl_Position=vec4(scr.x/uHalf.x-1.0,1.0-scr.y/uHalf.y,0.0,1.0);vT=aP;}';
+var FS_ROOM='precision mediump float;varying vec2 vT;uniform sampler2D uRoom;void main(){gl_FragColor=vec4(texture2D(uRoom,vT).rgb,1.0);}';
+/* the surface: a unit square mapped by the homography H to image pixels; w carries the perspective so uv interpolates correctly */
+var VS_SURF='attribute vec2 aP;varying vec2 vUV;uniform mat3 uH;uniform vec2 uHalf,uCenter;uniform float uScale;void main(){vec3 q=uH*vec3(aP,1.0);float w=q.z;vec2 img=q.xy/w;vec2 scr=(img-uCenter)*uScale+uHalf;vec2 ndc=vec2(scr.x/uHalf.x-1.0,1.0-scr.y/uHalf.y);gl_Position=vec4(ndc*w,0.0,w);vUV=aP;}';
+var FS_SURF='precision highp float;varying vec2 vUV;uniform sampler2D uRoom,uMask,uPat;uniform vec2 uHalf,uCenter,uImg,uCm,uPeriod,uOff;uniform float uScale,uBase,uOpacity,uVH,uRot;'+
+'void main(){vec2 scr=vec2(gl_FragCoord.x,uVH-gl_FragCoord.y);vec2 img=(scr-uHalf)/uScale+uCenter;vec2 ruv=img/uImg;'+
+'vec3 room=texture2D(uRoom,ruv).rgb;float m=texture2D(uMask,ruv).r;'+
+'vec2 p=vUV*uCm; if(uRot>0.5) p=vec2(p.y,p.x); vec2 puv=p/uPeriod+uOff;'+
+'vec3 tile=texture2D(uPat,puv).rgb;'+
+'float L=dot(room,vec3(0.299,0.587,0.114));float shade=clamp(mix(1.0,L/uBase,0.82),0.0,1.9);'+
+'vec3 lit=tile*shade; float spec=max(L-uBase*1.2,0.0)*0.35; lit+=vec3(spec); lit=lit-max(lit-0.9,0.0)*0.55;'+
+'gl_FragColor=vec4(mix(room,lit,m*uOpacity),1.0);}';
+var pRoom=gl&&prog(VS_ROOM,FS_ROOM), pSurf=gl&&prog(VS_SURF,FS_SURF);
+var quadBuf=gl&&gl.createBuffer(); if(gl){ gl.bindBuffer(gl.ARRAY_BUFFER,quadBuf); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([0,0,1,0,0,1,1,1]),gl.STATIC_DRAW); }
+function tex(img,repeat,mip){ var t=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,t); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,repeat?gl.REPEAT:gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,repeat?gl.REPEAT:gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+  if(mip){ gl.generateMipmap(gl.TEXTURE_2D); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR); if(aniso) gl.texParameterf(gl.TEXTURE_2D,aniso.TEXTURE_MAX_ANISOTROPY_EXT,Math.min(8,gl.getParameter(aniso.MAX_TEXTURE_MAX_ANISOTROPY_EXT))); }
+  else gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+  return t; }
+function homography(p){ /* unit square (0,0),(1,0),(1,1),(0,1) -> quad p0..p3 ; returns column-major mat3 */
+  var x0=p[0][0],y0=p[0][1],x1=p[1][0],y1=p[1][1],x2=p[2][0],y2=p[2][1],x3=p[3][0],y3=p[3][1];
+  var dx1=x1-x2,dx2=x3-x2,dx3=x0-x1+x2-x3,dy1=y1-y2,dy2=y3-y2,dy3=y0-y1+y2-y3;
+  var det=dx1*dy2-dx2*dy1, g=(dx3*dy2-dx2*dy3)/det, h=(dx1*dy3-dx3*dy1)/det;
+  var a=x1-x0+g*x1,b=x3-x0+h*x3,c=x0,d=y1-y0+g*y1,e=y3-y0+h*y3,f=y0;
+  return new Float32Array([a,d,g, b,e,h, c,f,1]); }
+
+/* ---------- room loading ---------- */
+var roomTex=null, roomImg=null, masks={}, loaded={};
+function loadImg(src){ return new Promise(function(res,rej){ var i=new Image(); i.onload=function(){res(i)}; i.onerror=rej; i.src=src; }); }
+function loadRoom(r){
+  S.room=r; S.active=null; S.sel={}; masks={}; roomTex=null; roomImg=null;
+  $('#hint').textContent='החדר נטען…';
+  var jobs=[loadImg(r.img).then(function(i){ roomImg=i; roomTex=tex(i,false,false); })];
+  r.surfaces.forEach(function(s){ s.H=homography(s.quad); jobs.push(loadImg('rooms/'+r.id+'_'+s.id+'.png').then(function(i){ masks[s.id]=tex(i,false,false); })); });
+  Promise.all(jobs).then(function(){ S.cx=r.w/2; S.cy=r.h; fit(); S.active=r.surfaces[0].id; renderSurfChips(); restoreFromHash(); draw(); showHint('נוגעים ברצפה או בקיר, ואז באריח'); }).catch(function(){ showHint('החדר לא נטען. רעננו.'); });
+  renderRoomSel();
+}
+/* view: cover fit with horizontal pan */
+var view={scale:1,vw:1,vh:1,dpr:1};
+function fit(){ var r=S.room; if(!r) return; var rect=$('#stage').getBoundingClientRect(); view.dpr=Math.min(2,window.devicePixelRatio||1);
+  view.vw=Math.round(rect.width*view.dpr); view.vh=Math.round(rect.height*view.dpr); cv.width=view.vw; cv.height=view.vh;
+  view.scale=Math.max(view.vw/r.w, view.vh/r.h); clampCenter(); }
+function clampCenter(){ var r=S.room; var halfW=view.vw/view.scale/2, halfH=view.vh/view.scale/2; S.cx=Math.min(r.w-halfW,Math.max(halfW,S.cx)); S.cy=Math.min(r.h-halfH,Math.max(halfH,S.cy)); }
+function setView(p){ gl.uniform2f(gl.getUniformLocation(p,'uHalf'),view.vw/2,view.vh/2); gl.uniform2f(gl.getUniformLocation(p,'uCenter'),S.cx,S.cy); gl.uniform1f(gl.getUniformLocation(p,'uScale'),view.scale); }
+
+/* ---------- patterns ---------- */
+var patCache={};
+function tileById(id){ for(var i=0;i<TILES.length;i++) if(String(TILES[i].id)===String(id)) return TILES[i]; for(i=0;i<S.custom.length;i++) if(S.custom[i].id===id) return S.custom[i]; return null; }
+function faceSrc(t){ return t.custom?t.img:('t/'+t.id+'.jpg'); }
+function avgColor(img){ var c=D.createElement('canvas'); c.width=c.height=8; var x=c.getContext('2d'); x.drawImage(img,0,0,8,8); var d=x.getImageData(0,0,8,8).data, r=0,g=0,b=0; for(var i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];} var n=d.length/4; return [r/n,g/n,b/n]; }
+/* one period of the pattern drawn into a 1024² canvas: tile(s) + grout */
+function buildPattern(t,o,cb){ var key=t.id+'|'+o.lay+'|'+o.gr+'|'+o.gw; if(patCache[key]) return cb(patCache[key]);
+  loadImg(faceSrc(t)).then(function(img){
+    var g=o.gw/10; /* mm -> cm */ var tw=t.w, th=t.h; var rows=o.lay==='grid'?1:(o.lay==='brick'?2:3);
+    var Pw=tw+g, Ph=(th+g)*rows; var c=D.createElement('canvas'); c.width=1024; c.height=1024; var x=c.getContext('2d');
+    var av=avgColor(img); var gc; if(o.gr==='light') gc=[225,222,214]; else if(o.gr==='dark') gc=[58,58,60]; else gc=[av[0]*0.82,av[1]*0.82,av[2]*0.82];
+    x.fillStyle='rgb('+gc.map(Math.round).join(',')+')'; x.fillRect(0,0,1024,1024);
+    var sx=1024/Pw, sy=1024/Ph; var twp=tw*sx, thp=th*sy, gxp=g*sx/2, gyp=g*sy/2;
+    for(var r=0;r<rows;r++){ var off=(o.lay==='brick'?(r%2)*0.5:(o.lay==='third'?(r%3)/3:0))*Pw*sx; var y=r*(th+g)*sy+gyp;
+      for(var k=-1;k<=1;k++){ var xx=off+k*Pw*sx+gxp; if(xx>1024||xx+twp<0) continue; x.drawImage(img,xx,y,twp,thp); } }
+    var T=tex(c,true,true); var pat={tex:T,period:[Pw,Ph]}; patCache[key]=pat; cb(pat);
+  }).catch(function(){ cb(null); }); }
+
+/* ---------- draw ---------- */
+var pending=0;
+function draw(){ if(!gl||!roomTex) return; var r=S.room;
+  gl.viewport(0,0,view.vw,view.vh); gl.disable(gl.DEPTH_TEST); gl.disable(gl.BLEND);
+  gl.useProgram(pRoom); gl.bindBuffer(gl.ARRAY_BUFFER,quadBuf); var aP=gl.getAttribLocation(pRoom,'aP'); gl.enableVertexAttribArray(aP); gl.vertexAttribPointer(aP,2,gl.FLOAT,false,0,0);
+  setView(pRoom); gl.uniform2f(gl.getUniformLocation(pRoom,'uImg'),r.w,r.h); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,roomTex); gl.uniform1i(gl.getUniformLocation(pRoom,'uRoom'),0);
+  gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+  if(S.before) return;
+  r.surfaces.forEach(function(s){ var tid=S.sel[s.id]; if(!tid) return; var t=tileById(tid); if(!t) return; var o=surfOpt(s.id);
+    buildPattern(t,o,function(pat){ if(!pat) return; if(pat._drawnFor!==undefined && pat._drawnFor!==draw._n){ /* pattern arrived late: redraw everything once */ }
+      gl.useProgram(pSurf); gl.bindBuffer(gl.ARRAY_BUFFER,quadBuf); var a=gl.getAttribLocation(pSurf,'aP'); gl.enableVertexAttribArray(a); gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
+      setView(pSurf); gl.uniformMatrix3fv(gl.getUniformLocation(pSurf,'uH'),false,s.H);
+      gl.uniform2f(gl.getUniformLocation(pSurf,'uImg'),r.w,r.h); gl.uniform2f(gl.getUniformLocation(pSurf,'uCm'),s.cm[0],s.cm[1]);
+      var rot=o.rot===null?defaultRot(s,t):o.rot; gl.uniform1f(gl.getUniformLocation(pSurf,'uRot'),rot);
+      gl.uniform2f(gl.getUniformLocation(pSurf,'uPeriod'),pat.period[0],pat.period[1]); gl.uniform2f(gl.getUniformLocation(pSurf,'uOff'),0.0,0.0);
+      gl.uniform1f(gl.getUniformLocation(pSurf,'uBase'),(s.base||150)/255); gl.uniform1f(gl.getUniformLocation(pSurf,'uOpacity'),1.0); gl.uniform1f(gl.getUniformLocation(pSurf,'uVH'),view.vh);
+      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,roomTex); gl.uniform1i(gl.getUniformLocation(pSurf,'uRoom'),0);
+      gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D,masks[s.id]); gl.uniform1i(gl.getUniformLocation(pSurf,'uMask'),1);
+      gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D,pat.tex); gl.uniform1i(gl.getUniformLocation(pSurf,'uPat'),2);
+      gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+      if(pat._fresh===undefined){ pat._fresh=true; requestAnimationFrame(draw); } /* first time a pattern arrives async, redraw so layering order is right */
+    }); });
+}
+/* floors: long side into the room; walls: long side across */
+function defaultRot(s,t){ var longAlongU = t.w>=t.h; if(s.kind==='floor') return longAlongU?1:0; return longAlongU?0:1; }
+
+/* ---------- UI: rooms / surfaces / tiles ---------- */
+function renderRoomSel(){ var n=$('#roomSel'); n.innerHTML=''; ROOMS.forEach(function(r){ var b=D.createElement('button'); b.textContent=r.n; b.setAttribute('aria-pressed',String(r===S.room)); b.onclick=function(){ if(r!==S.room){ loadRoom(r); } }; n.appendChild(b); }); }
+function renderSurfChips(){ var n=$('#surf'); n.innerHTML=''; S.room.surfaces.forEach(function(s){ var b=D.createElement('button'); b.className='sb'; b.setAttribute('role','tab'); b.setAttribute('aria-pressed',String(S.active===s.id));
+    var t=S.sel[s.id]?tileById(S.sel[s.id]):null; b.innerHTML='<span class="sw"'+(t?' style="background-image:url('+faceSrc(t)+')"':'')+'></span><span>'+s.n+(t?' <small>· '+(t.s||'')+'</small>':'')+'</span>'+(t?'<span class="x" role="button" aria-label="להסיר">×</span>':'');
+    b.onclick=function(ev){ if(ev.target.classList.contains('x')){ delete S.sel[s.id]; renderSurfChips(); renderTiles(); draw(); pushHash(); return; } if(S.active===s.id&&t){ openOpt(s); return; } S.active=s.id; renderSurfChips(); renderTiles(); showHint(t?'נגיעה נוספת: סידור ופוגה':'עכשיו בוחרים אריח ל'+s.n); };
+    n.appendChild(b); }); }
+var filter='all';
+function look(t){ var n=(t.n||'')+' '+(t.l||''); if(t.custom) return 'mine'; if(/שיש|אוניקס|מרמר/.test(n)) return 'marble'; if(/עץ|פרקט|אלון/.test(n)) return 'wood'; if(/טרצו|טראצו/.test(n)) return 'terrazzo'; if(/מעוטר|דוגמ|פטצ|מרוקאי|קרמ/.test(n)) return 'pattern'; return 'stone'; }
+var LOOKS=[['all','הכל'],['marble','שיש'],['stone','בטון ואבן'],['wood','עץ'],['terrazzo','טרצו'],['pattern','מעוטר'],['mine','שלי']];
+function renderFilters(){ var n=$('#filters'); n.innerHTML=''; LOOKS.forEach(function(l){ if(l[0]==='mine'&&!S.custom.length) return; var b=D.createElement('button'); b.textContent=l[1]; b.setAttribute('aria-pressed',String(filter===l[0])); b.onclick=function(){ filter=l[0]; renderFilters(); renderTiles(); }; n.appendChild(b); }); }
+function renderTiles(){ var n=$('#tiles'); n.innerHTML=''; var cam=D.createElement('button'); cam.className='t cam'; cam.innerHTML='<span class="im"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span><b>לצלם אריח</b><small>מהנייד</small>'; cam.onclick=function(){ $('#camIn').click(); }; n.appendChild(cam);
+  var list=S.custom.concat(TILES).filter(function(t){ return filter==='all'||look(t)===filter; });
+  var cur=S.active?S.sel[S.active]:null;
+  list.forEach(function(t){ var b=D.createElement('button'); b.className='t'; b.setAttribute('role','option'); b.setAttribute('aria-pressed',String(String(cur)===String(t.id)));
+    b.innerHTML='<span class="im" style="background-image:url('+faceSrc(t)+')"></span><b>'+(t.n||'האריח שלי')+'</b><small>'+(t.s||(t.w+'×'+t.h))+(t.p?' · ₪'+t.p+'/מ״ר':'')+'</small>';
+    b.onclick=function(){ pick(t); }; n.appendChild(b); }); }
+function pick(t){ if(!S.active) S.active=S.room.surfaces[0].id; S.sel[S.active]=t.id; renderSurfChips(); renderTiles(); draw(); pushHash(); }
+var hintT; function showHint(msg){ var h=$('#hint'); h.textContent=msg; h.classList.add('on'); clearTimeout(hintT); hintT=setTimeout(function(){h.classList.remove('on')},2600); }
+function toast(msg){ var t=$('#toast'); t.textContent=msg; t.classList.add('on'); setTimeout(function(){t.classList.remove('on')},1800); }
+
+/* ---------- options sheet ---------- */
+var optFor=null;
+function openOpt(s){ optFor=s; var o=surfOpt(s.id); $('#optT').textContent='הנחה · '+s.n; var sh=$('#optSheet');
+  sh.querySelectorAll('[data-lay]').forEach(function(b){ b.setAttribute('aria-pressed',String(b.dataset.lay===o.lay)); });
+  var t=tileById(S.sel[s.id]); var rot=o.rot===null?(t?defaultRot(s,t):0):o.rot; sh.querySelectorAll('[data-rot]').forEach(function(b){ b.setAttribute('aria-pressed',String(+b.dataset.rot===rot)); });
+  sh.querySelectorAll('[data-gr]').forEach(function(b){ b.setAttribute('aria-pressed',String(b.dataset.gr===o.gr)); });
+  sh.querySelectorAll('[data-gw]').forEach(function(b){ b.setAttribute('aria-pressed',String(+b.dataset.gw===o.gw)); });
+  sh.classList.add('on'); }
+$('#optSheet').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; var o=surfOpt(optFor.id);
+  if(b.dataset.lay){ o.lay=b.dataset.lay; } else if(b.dataset.rot){ o.rot=+b.dataset.rot; } else if(b.dataset.gr){ o.gr=b.dataset.gr; } else if(b.dataset.gw){ o.gw=+b.dataset.gw; } else if(b.id==='optClose'){ $('#optSheet').classList.remove('on'); return; } else return;
+  openOpt(optFor); draw(); pushHash(); });
+
+/* ---------- pointer: pan + tap to select ---------- */
+var pt=null;
+$('#stage').addEventListener('pointerdown',function(e){ if(e.target.closest('button')) return; pt={x:e.clientX,y:e.clientY,cx:S.cx,cy:S.cy,moved:false}; });
+window.addEventListener('pointermove',function(e){ if(!pt) return; var dx=e.clientX-pt.x, dy=e.clientY-pt.y; if(Math.abs(dx)+Math.abs(dy)>6) pt.moved=true; if(pt.moved){ S.cx=pt.cx-dx*view.dpr/view.scale; S.cy=pt.cy-dy*view.dpr/view.scale; clampCenter(); draw(); } });
+window.addEventListener('pointerup',function(e){ if(!pt) return; var was=pt; pt=null; if(was.moved||!S.room) return; var rect=cv.getBoundingClientRect(); var sx=(e.clientX-rect.left)*view.dpr, sy=(e.clientY-rect.top)*view.dpr; var ix=(sx-view.vw/2)/view.scale+S.cx, iy=(sy-view.vh/2)/view.scale+S.cy;
+  for(var i=0;i<S.room.surfaces.length;i++){ var s=S.room.surfaces[i]; if(inQuad([ix,iy],s.quad)){ S.active=s.id; renderSurfChips(); renderTiles(); showHint('בוחרים אריח ל'+s.n); return; } } });
+function inQuad(p,q){ var c=false; for(var i=0,j=3;i<4;j=i++){ var xi=q[i][0],yi=q[i][1],xj=q[j][0],yj=q[j][1]; if(((yi>p[1])!==(yj>p[1]))&&(p[0]<(xj-xi)*(p[1]-yi)/(yj-yi)+xi)) c=!c; } return c; }
+/* before/after: hold */
+var bb=$('#beforeBtn'); function bOn(e){ e.preventDefault(); S.before=true; draw(); } function bOff(){ if(S.before){ S.before=false; draw(); } }
+bb.addEventListener('pointerdown',bOn); window.addEventListener('pointerup',bOff); window.addEventListener('pointercancel',bOff);
+$('#resetBtn').onclick=function(){ S.sel={}; renderSurfChips(); renderTiles(); draw(); pushHash(); toast('נוקה'); };
+window.addEventListener('resize',function(){ fit(); draw(); });
+
+/* ---------- hash state ---------- */
+function pushHash(){ if(!S.room) return; var parts=['r='+S.room.id]; S.room.surfaces.forEach(function(s){ var t=S.sel[s.id]; if(t&&!tileById(t).custom){ var o=surfOpt(s.id); parts.push(s.id+'='+t+(o.lay!=='grid'||o.rot!==null||o.gr!=='auto'||o.gw!==3?('.'+o.lay+'.'+(o.rot===null?'d':o.rot)+'.'+o.gr+'.'+o.gw):'')); } }); history.replaceState(null,'','#'+parts.join('&')); }
+function restoreFromHash(){ var h=location.hash.replace(/^#/,''); if(!h) return; h.split('&').forEach(function(kv){ var k=kv.split('=')[0], v=kv.split('=')[1]; if(!v||k==='r') return; var s=S.room.surfaces.filter(function(x){return x.id===k})[0]; if(!s) return; var f=v.split('.'); if(!tileById(f[0])) return; S.sel[k]=f[0]; if(f.length>=5){ var o=surfOpt(k); o.lay=f[1]; o.rot=f[2]==='d'?null:+f[2]; o.gr=f[3]; o.gw=+f[4]; } }); renderSurfChips(); renderTiles(); }
+function roomFromHash(){ var m=location.hash.match(/[#&]r=([a-z0-9_-]+)/i); if(m){ var r=ROOMS.filter(function(x){return x.id===m[1]})[0]; if(r) return r; } return ROOMS[0]; }
+
+/* ---------- share ---------- */
+$('#shareBtn').onclick=function(){ var lines=[]; S.room.surfaces.forEach(function(s){ var t=S.sel[s.id]?tileById(S.sel[s.id]):null; if(t) lines.push(s.n+': '+(t.n||'אריח מצילום')+' '+(t.s||(t.w+'×'+t.h))+(t.id&&!t.custom?' (מק״ט '+t.id+')':'')); });
+  $('#shSummary').textContent=lines.length?('ב'+S.room.n+': '+lines.join(' · ')):'עוד לא נבחר אריח. בחרו אריח לרצפה או לקיר.';
+  var name=$('#shName').value.trim(); var text='שלום'+(name?', משפחת '+name:'')+'. ראינו ב־Design Pro Max את '+S.room.n+' שלנו: '+(lines.join(' | ')||'')+'\n'+location.href+'\nנשמח להצעת מחיר.';
+  $('#shWa').href='https://wa.me/'+WA+'?text='+encodeURIComponent(text); $('#shareSheet').classList.add('on'); };
+$('#shName').addEventListener('input',function(){ $('#shareBtn').onclick(); });
+$('#shClose').onclick=function(){ $('#shareSheet').classList.remove('on'); };
+$('#shCopy').onclick=function(){ navigator.clipboard&&navigator.clipboard.writeText(location.href).then(function(){toast('הקישור הועתק')},function(){toast('לא הצלחתי להעתיק')}); };
+$('#shImg').onclick=function(){ draw(); var a=D.createElement('a'); a.download='design-pro-max-'+S.room.id+'.jpg'; a.href=cv.toDataURL('image/jpeg',0.92); D.body.appendChild(a); a.click(); a.remove(); };
+
+/* ---------- straighten a photographed tile ---------- */
+var strPts=[], strImgEl=$('#strImg'), strBox=null, strPhoto=null;
+$('#camIn').addEventListener('change',function(){ var f=this.files&&this.files[0]; this.value=''; if(!f) return; var url=URL.createObjectURL(f); loadImg(url).then(function(img){ strPhoto=img; strImgEl.src=url; $('#str').classList.add('on'); requestAnimationFrame(function(){ var b=imgBox(); strPts=[[b.x+b.w*.15,b.y+b.h*.15],[b.x+b.w*.85,b.y+b.h*.15],[b.x+b.w*.85,b.y+b.h*.85],[b.x+b.w*.15,b.y+b.h*.85]]; drawStr(); }); }); });
+function imgBox(){ var w=$('#strWrap').clientWidth,h=$('#strWrap').clientHeight; var s=Math.min(w/strPhoto.naturalWidth,h/strPhoto.naturalHeight); var iw=strPhoto.naturalWidth*s, ih=strPhoto.naturalHeight*s; return strBox={x:(w-iw)/2,y:(h-ih)/2,w:iw,h:ih,s:s}; }
+function drawStr(){ var svg=$('#strSvg'); svg.setAttribute('viewBox','0 0 '+$('#strWrap').clientWidth+' '+$('#strWrap').clientHeight); $('#strPoly').setAttribute('points',strPts.map(function(p){return p.join(',')}).join(' ')); svg.querySelectorAll('circle').forEach(function(c,i){ c.setAttribute('cx',strPts[i][0]); c.setAttribute('cy',strPts[i][1]); }); }
+var dragI=-1; $('#strSvg').addEventListener('pointerdown',function(e){ var c=e.target.closest('circle'); if(!c){ /* nearest */ var r=$('#strWrap').getBoundingClientRect(); var x=e.clientX-r.left,y=e.clientY-r.top,best=1e9; strPts.forEach(function(p,i){ var d=(p[0]-x)*(p[0]-x)+(p[1]-y)*(p[1]-y); if(d<best){best=d;dragI=i;} }); } else dragI=+c.dataset.i; e.target.setPointerCapture&&e.target.setPointerCapture(e.pointerId); });
+$('#strSvg').addEventListener('pointermove',function(e){ if(dragI<0) return; var r=$('#strWrap').getBoundingClientRect(); strPts[dragI]=[Math.max(0,Math.min(r.width,e.clientX-r.left)),Math.max(0,Math.min(r.height,e.clientY-r.top))]; drawStr(); });
+window.addEventListener('pointerup',function(){ dragI=-1; });
+$('#strCancel').onclick=function(){ $('#str').classList.remove('on'); };
+$('#strOk').onclick=function(){ var b=strBox||imgBox(); var pts=strPts.map(function(p){ return [(p[0]-b.x)/b.s,(p[1]-b.y)/b.s]; }); /* photo pixel coords */
+  var out=warpToSquare(strPhoto,pts,1024); var w=Math.max(5,+$('#strW').value||60), h=Math.max(5,+$('#strH').value||60);
+  var t={id:'c'+Date.now(),custom:true,img:out,w:w,h:h,n:'האריח שלי',s:w+'×'+h}; S.custom.unshift(t); filter='mine'; renderFilters(); $('#str').classList.remove('on'); pick(t); toast('האריח שלכם בחדר'); };
+/* perspective warp of the photographed tile into a square face, using the same homogeneous trick on a small offscreen context */
+function warpToSquare(img,pts,size){ var c=D.createElement('canvas'); c.width=c.height=size; var g2=c.getContext('webgl',{preserveDrawingBuffer:true}); if(!g2) return img.src;
+  function sh2(t,s){ var x=g2.createShader(t); g2.shaderSource(x,s); g2.compileShader(x); return x; }
+  var p=g2.createProgram(); g2.attachShader(p,sh2(g2.VERTEX_SHADER,'attribute vec2 aP;attribute vec3 aT;varying vec3 vT;void main(){gl_Position=vec4(aP*2.0-1.0,0.0,1.0);vT=aT;}')); g2.attachShader(p,sh2(g2.FRAGMENT_SHADER,'precision highp float;varying vec3 vT;uniform sampler2D uI;void main(){gl_FragColor=texture2D(uI,vT.xy/vT.z);}')); g2.linkProgram(p); g2.useProgram(p);
+  /* homography from unit square to photo quad gives (X*W, Y*W, W) at the corners; pass those as a vec3 and divide per fragment: exact perspective */
+  var H=homography(pts); var iw=img.naturalWidth, ih=img.naturalHeight; function at(u,v){ var X=H[0]*u+H[3]*v+H[6], Y=H[1]*u+H[4]*v+H[7], W=H[2]*u+H[5]*v+H[8]; return [X/iw,Y/ih,W]; }
+  var corners=[[0,1],[1,1],[0,0],[1,0]]; /* output square (flip y so the top of the tile stays up) */ var uv=[[0,0],[1,0],[0,1],[1,1]];
+  var data=[]; for(var i=0;i<4;i++){ var t=at(uv[i][0],uv[i][1]); data.push(corners[i][0],corners[i][1],t[0]*t[2],t[1]*t[2],t[2]); }
+  var buf=g2.createBuffer(); g2.bindBuffer(g2.ARRAY_BUFFER,buf); g2.bufferData(g2.ARRAY_BUFFER,new Float32Array(data),g2.STATIC_DRAW);
+  var aP=g2.getAttribLocation(p,'aP'), aT=g2.getAttribLocation(p,'aT'); g2.enableVertexAttribArray(aP); g2.vertexAttribPointer(aP,2,g2.FLOAT,false,20,0); g2.enableVertexAttribArray(aT); g2.vertexAttribPointer(aT,3,g2.FLOAT,false,20,8);
+  var T=g2.createTexture(); g2.bindTexture(g2.TEXTURE_2D,T); g2.pixelStorei(g2.UNPACK_FLIP_Y_WEBGL,false); g2.texImage2D(g2.TEXTURE_2D,0,g2.RGBA,g2.RGBA,g2.UNSIGNED_BYTE,img); g2.texParameteri(g2.TEXTURE_2D,g2.TEXTURE_WRAP_S,g2.CLAMP_TO_EDGE); g2.texParameteri(g2.TEXTURE_2D,g2.TEXTURE_WRAP_T,g2.CLAMP_TO_EDGE); g2.texParameteri(g2.TEXTURE_2D,g2.TEXTURE_MIN_FILTER,g2.LINEAR); g2.texParameteri(g2.TEXTURE_2D,g2.TEXTURE_MAG_FILTER,g2.LINEAR);
+  g2.viewport(0,0,size,size); g2.drawArrays(g2.TRIANGLE_STRIP,0,4); return c.toDataURL('image/jpeg',0.9); }
+
+/* ---------- go ---------- */
+renderFilters(); renderTiles();
+if(ROOMS.length) loadRoom(roomFromHash());
+})();
+</script>
+</body>
+</html>
