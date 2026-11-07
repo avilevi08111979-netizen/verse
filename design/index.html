@@ -17,12 +17,15 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 #app{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:minmax(0,1fr)}
 #app>*{min-width:0}
 /* top bar */
-#top{display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top,0px)) 14px 8px;background:linear-gradient(var(--bg),rgba(11,13,16,.85));z-index:3}
-#brand{display:flex;flex-direction:column;line-height:1.05}
-#brand b{font-family:var(--display);font-weight:400;font-size:17px;letter-spacing:.02em;direction:ltr;text-align:right}
-#brand small{color:var(--mute);font-size:11.5px}
-#roomSel{margin-inline-start:auto;display:flex;gap:6px}
-#roomSel button{min-height:36px;padding:0 12px;border:1px solid var(--line);border-radius:999px;font-size:14px;color:var(--mute)}
+#top{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:calc(8px + env(safe-area-inset-top,0px)) 14px 8px;background:linear-gradient(var(--bg),rgba(11,13,16,.85));z-index:3}
+#brand{display:flex;flex-direction:column;line-height:1.05;flex:1 1 auto;min-width:0}
+#brand b{font-family:var(--display);font-weight:400;font-size:17px;letter-spacing:.02em;direction:ltr;text-align:right;white-space:nowrap}
+#brand small{color:var(--mute);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#shareBtn{order:2}
+#roomSel{order:3;flex:1 0 100%;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+#roomSel::-webkit-scrollbar{display:none}
+#roomSel button{flex:0 0 auto;white-space:nowrap;min-height:34px;padding:0 11px;border:1px solid var(--line);border-radius:999px;font-size:13.5px;color:var(--mute)}
+@media (min-width:900px){#roomSel{order:0;flex:0 1 auto;margin-inline-start:auto}#shareBtn{order:0}#roomSel button{min-height:36px;padding:0 12px;font-size:14px}}
 #roomSel button[aria-pressed="true"]{color:var(--text);border-color:var(--acc)}
 .ic{min-width:38px;min-height:38px;border:1px solid var(--line);border-radius:10px;display:grid;place-items:center;color:var(--text)}
 .ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -141,7 +144,7 @@ input[type=number],input[type=text]{font:inherit;color:var(--text);background:#0
 <input type="file" id="camIn" accept="image/*" capture="environment" hidden>
 <div id="toast" role="status"></div>
 
-<script src="rooms.js?v=8"></script>
+<script src="rooms.js?v=9"></script>
 <script src="tiles.js?v=4"></script>
 <script>
 (function(){
@@ -251,7 +254,7 @@ function draw(){ if(!gl||!roomTex) return; var r=S.room;
 function defaultRot(s,t){ var longAlongU = t.w>=t.h; if(s.kind==='floor') return longAlongU?1:0; return longAlongU?0:1; }
 
 /* ---------- UI: rooms / surfaces / tiles ---------- */
-function renderRoomSel(){ var n=$('#roomSel'); n.innerHTML=''; ROOMS.forEach(function(r){ var b=D.createElement('button'); b.textContent=r.n; b.setAttribute('aria-pressed',String(r===S.room)); b.onclick=function(){ if(r!==S.room){ loadRoom(r); } }; n.appendChild(b); }); }
+function renderRoomSel(){ var n=$('#roomSel'); n.innerHTML=''; ROOMS.forEach(function(r){ var b=D.createElement('button'); b.textContent=r.n; b.setAttribute('aria-pressed',String(r===S.room)); b.onclick=function(){ if(r!==S.room){ loadRoom(r); } }; n.appendChild(b); if(r===S.room) requestAnimationFrame(function(){ b.scrollIntoView({inline:'nearest',block:'nearest'}); }); }); }
 function renderSurfChips(){ var n=$('#surf'); n.innerHTML=''; S.room.surfaces.forEach(function(s){ var b=D.createElement('button'); b.className='sb'; b.setAttribute('role','tab'); b.setAttribute('aria-pressed',String(S.active===s.id));
     var t=S.sel[s.id]?tileById(S.sel[s.id]):null; b.innerHTML='<span class="sw"'+(t?' style="background-image:url('+faceSrc(t)+')"':'')+'></span><span>'+s.n+(t?' <small>· '+(t.s||'')+'</small>':'')+'</span>'+(t?'<span class="x" role="button" aria-label="להסיר">×</span>':'');
     b.onclick=function(ev){ if(ev.target.classList.contains('x')){ delete S.sel[s.id]; renderSurfChips(); renderTiles(); draw(); pushHash(); return; } if(S.active===s.id&&t){ openOpt(s); return; } S.active=s.id; renderSurfChips(); renderTiles(); showHint(t?'נגיעה נוספת: סידור ופוגה':'עכשיו בוחרים אריח ל'+s.n); };
