@@ -141,7 +141,7 @@ input[type=number],input[type=text]{font:inherit;color:var(--text);background:#0
 <input type="file" id="camIn" accept="image/*" capture="environment" hidden>
 <div id="toast" role="status"></div>
 
-<script src="rooms.js?v=7"></script>
+<script src="rooms.js?v=8"></script>
 <script src="tiles.js?v=4"></script>
 <script>
 (function(){
@@ -194,7 +194,7 @@ function loadRoom(r){
   S.room=r; S.active=null; S.sel={}; masks={}; roomTex=null; roomImg=null;
   $('#hint').textContent='החדר נטען…';
   var jobs=[loadImg(r.img).then(function(i){ roomImg=i; roomTex=tex(i,false,false); })];
-  r.surfaces.forEach(function(s){ s.H=homography(s.quad); jobs.push(loadImg('rooms/'+r.id+'_'+s.id+'.png').then(function(i){ masks[s.id]=tex(i,false,false); })); });
+  r.surfaces.forEach(function(s){ s.H=s.hm?new Float32Array(s.hm):homography(s.quad); jobs.push(loadImg('rooms/'+r.id+'_'+s.id+'.png').then(function(i){ masks[s.id]=tex(i,false,false); })); });
   Promise.all(jobs).then(function(){ S.cx=r.w/2; S.cy=r.h; fit(); S.active=r.surfaces[0].id; renderSurfChips(); restoreFromHash(); draw(); showHint('נוגעים ברצפה או בקיר, ואז באריח'); }).catch(function(){ showHint('החדר לא נטען. רעננו.'); });
   renderRoomSel();
 }
@@ -288,7 +288,7 @@ $('#stage').addEventListener('pointerdown',function(e){ if(e.target.closest('but
 window.addEventListener('pointermove',function(e){ if(!pt) return; var dx=e.clientX-pt.x, dy=e.clientY-pt.y; if(Math.abs(dx)+Math.abs(dy)>6) pt.moved=true; if(pt.moved){ S.cx=pt.cx-dx*view.dpr/view.scale; S.cy=pt.cy-dy*view.dpr/view.scale; clampCenter(); draw(); } });
 window.addEventListener('pointerup',function(e){ if(!pt) return; var was=pt; pt=null; if(was.moved||!S.room) return; var rect=cv.getBoundingClientRect(); var sx=(e.clientX-rect.left)*view.dpr, sy=(e.clientY-rect.top)*view.dpr; var ix=(sx-view.vw/2)/view.scale+S.cx, iy=(sy-view.vh/2)/view.scale+S.cy;
   for(var i=0;i<S.room.surfaces.length;i++){ var s=S.room.surfaces[i]; if(inQuad([ix,iy],s.quad)){ S.active=s.id; renderSurfChips(); renderTiles(); showHint('בוחרים אריח ל'+s.n); return; } } });
-function inQuad(p,q){ var c=false; for(var i=0,j=3;i<4;j=i++){ var xi=q[i][0],yi=q[i][1],xj=q[j][0],yj=q[j][1]; if(((yi>p[1])!==(yj>p[1]))&&(p[0]<(xj-xi)*(p[1]-yi)/(yj-yi)+xi)) c=!c; } return c; }
+function inQuad(p,q){ var c=false; for(var i=0,n=q.length,j=n-1;i<n;j=i++){ var xi=q[i][0],yi=q[i][1],xj=q[j][0],yj=q[j][1]; if(((yi>p[1])!==(yj>p[1]))&&(p[0]<(xj-xi)*(p[1]-yi)/(yj-yi)+xi)) c=!c; } return c; }
 /* before/after: hold */
 var bb=$('#beforeBtn'); function bOn(e){ e.preventDefault(); S.before=true; draw(); } function bOff(){ if(S.before){ S.before=false; draw(); } }
 bb.addEventListener('pointerdown',bOn); window.addEventListener('pointerup',bOff); window.addEventListener('pointercancel',bOff);
