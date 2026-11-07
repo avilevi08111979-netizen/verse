@@ -141,7 +141,7 @@ input[type=number],input[type=text]{font:inherit;color:var(--text);background:#0
 <input type="file" id="camIn" accept="image/*" capture="environment" hidden>
 <div id="toast" role="status"></div>
 
-<script src="rooms.js?v=6"></script>
+<script src="rooms.js?v=7"></script>
 <script src="tiles.js?v=4"></script>
 <script>
 (function(){
@@ -165,7 +165,7 @@ var FS_ROOM='precision mediump float;varying vec2 vT;uniform sampler2D uRoom;voi
 /* the surface: a unit square mapped by the homography H to image pixels; w carries the perspective so uv interpolates correctly */
 var VS_SURF='attribute vec2 aP;varying vec2 vUV;uniform mat3 uH;uniform vec2 uHalf,uCenter;uniform float uScale;void main(){vec3 q=uH*vec3(aP,1.0);float w=q.z;vec2 img=q.xy/w;vec2 scr=(img-uCenter)*uScale+uHalf;vec2 ndc=vec2(scr.x/uHalf.x-1.0,1.0-scr.y/uHalf.y);gl_Position=vec4(ndc*w,0.0,w);vUV=aP;}';
 var FS_SURF='precision highp float;varying vec2 vUV;uniform sampler2D uRoom,uMask,uPat;uniform vec2 uHalf,uCenter,uImg,uCm,uPeriod,uOff;uniform float uScale,uBase,uOpacity,uVH,uRot;'+
-'void main(){vec2 scr=vec2(gl_FragCoord.x,uVH-gl_FragCoord.y);vec2 img=(scr-uHalf)/uScale+uCenter;vec2 ruv=img/uImg;'+
+'void main(){vec2 scr=vec2(gl_FragCoord.x,uVH-gl_FragCoord.y);vec2 img=(scr-uHalf)/uScale+uCenter;vec2 ruv=img/uImg; if(ruv.x<0.0||ruv.y<0.0||ruv.x>1.0||ruv.y>1.0) discard;'+
 'vec3 room=texture2D(uRoom,ruv).rgb;float m=texture2D(uMask,ruv).r;'+
 'vec2 p=vUV*uCm; if(uRot>0.5) p=vec2(p.y,p.x); vec2 puv=p/uPeriod+uOff;'+
 'vec3 tile=texture2D(uPat,puv).rgb;'+
@@ -202,8 +202,8 @@ function loadRoom(r){
 var view={scale:1,vw:1,vh:1,dpr:1};
 function fit(){ var r=S.room; if(!r) return; var rect=$('#stage').getBoundingClientRect(); view.dpr=Math.min(2,window.devicePixelRatio||1);
   view.vw=Math.round(rect.width*view.dpr); view.vh=Math.round(rect.height*view.dpr); cv.width=view.vw; cv.height=view.vh;
-  view.scale=Math.max(view.vw/r.w, view.vh/r.h); clampCenter(); }
-function clampCenter(){ var r=S.room; var halfW=view.vw/view.scale/2, halfH=view.vh/view.scale/2; S.cx=Math.min(r.w-halfW,Math.max(halfW,S.cx)); S.cy=Math.min(r.h-halfH,Math.max(halfH,S.cy)); }
+  view.scale=Math.max(view.vw/r.w, view.vh/r.h); if(r.h*view.scale>view.vh*1.6) view.scale=view.vh/r.h; clampCenter(); }
+function clampCenter(){ var r=S.room; var halfW=view.vw/view.scale/2, halfH=view.vh/view.scale/2; S.cx=halfW*2>=r.w?r.w/2:Math.min(r.w-halfW,Math.max(halfW,S.cx)); S.cy=halfH*2>=r.h?r.h/2:Math.min(r.h-halfH,Math.max(halfH,S.cy)); }
 function setView(p){ gl.uniform2f(gl.getUniformLocation(p,'uHalf'),view.vw/2,view.vh/2); gl.uniform2f(gl.getUniformLocation(p,'uCenter'),S.cx,S.cy); gl.uniform1f(gl.getUniformLocation(p,'uScale'),view.scale); }
 
 /* ---------- patterns ---------- */
@@ -227,7 +227,7 @@ function buildPattern(t,o,cb){ var key=t.id+'|'+o.lay+'|'+o.gr+'|'+o.gw; if(patC
 /* ---------- draw ---------- */
 var pending=0;
 function draw(){ if(!gl||!roomTex) return; var r=S.room;
-  gl.viewport(0,0,view.vw,view.vh); gl.disable(gl.DEPTH_TEST); gl.disable(gl.BLEND);
+  gl.viewport(0,0,view.vw,view.vh); gl.clearColor(0.043,0.051,0.063,1); gl.clear(gl.COLOR_BUFFER_BIT); gl.disable(gl.DEPTH_TEST); gl.disable(gl.BLEND);
   gl.useProgram(pRoom); gl.bindBuffer(gl.ARRAY_BUFFER,quadBuf); var aP=gl.getAttribLocation(pRoom,'aP'); gl.enableVertexAttribArray(aP); gl.vertexAttribPointer(aP,2,gl.FLOAT,false,0,0);
   setView(pRoom); gl.uniform2f(gl.getUniformLocation(pRoom,'uImg'),r.w,r.h); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,roomTex); gl.uniform1i(gl.getUniformLocation(pRoom,'uRoom'),0);
   gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
