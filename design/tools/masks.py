@@ -21,10 +21,15 @@ for i,s in enumerate(room['surfaces']):
     ratio=L/max(l0,1)
     chroma=np.sqrt((A-a0)**2+(B-b0)**2)
     m=(ratio>lo)&(ratio<hi)&(chroma<ctol)&sel
+    # zones: inside a polygon use other limits (stricter around furniture, looser on sun spots)
+    for z in s.get('zones',[]):
+        zr=np.zeros((H,W),np.uint8); cv2.fillPoly(zr,[np.array(z['poly'],np.int32)],1); zr=zr.astype(bool)&sel
+        zl,zh=z.get('lum',[lo,hi]); zc=z.get('chroma',ctol)
+        m[zr]=((ratio>zl)&(ratio<zh)&(chroma<zc))[zr]
     m=m.astype(np.uint8)*255
     for ex in s.get('exclude',[]): cv2.fillPoly(m,[np.array(ex,np.int32)],0)
     # clean: close small holes (thin fixtures stay excluded only if wider than k), remove specks
-    k=s.get('close',5)
+    k=s.get('close',5 if not s.get('zones') else 3)
     m=cv2.morphologyEx(m,cv2.MORPH_OPEN,np.ones((3,3),np.uint8))
     m=cv2.morphologyEx(m,cv2.MORPH_CLOSE,np.ones((k,k),np.uint8))
     # keep only the largest connected component plus any component touching it after closing
