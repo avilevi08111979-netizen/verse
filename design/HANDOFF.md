@@ -65,3 +65,8 @@
 כפתור ״＋ החדר שלי״ בסוף רשימת החדרים → בחירת תמונה (מצלמה או גלריה) → כיווץ ל־2000 → מסך סימון בשני שלבים (רצפה 1–4, אחר כך קיר או ״בלי קיר״) עם רוחב הקיר במטרים → `buildCustom`: נקודת מגוז מצלעות הרצפה, גובה מצלמה מהרוחב, עומק בנוסחה (f=0.74·הצלע הארוכה, מתאים לטלפונים), מסכה בדפדפן (`makeMask`: חציון YCbCr בתוך המרובע, יחס בהירות וכרומה, סגירת חורים בשני מעברי 3×3). נשמר בטלפון (IndexedDB, `dpm/rooms/mine`) וחוזר אחרי רענון. שיתוף: בלחיצה הראשונה על שיתוף בחדר הזה התמונה עולה ל־Cloudinary (`verse/rooms`) והקישור הופך ל־`#r=u&u=<כתובת>&g=<נקודות>`; מי שפותח את הקישור בונה את אותו חדר.
 נבדק: על צילום אמיתי (חדר רחצה), כולל שמירה ורענון, בלי שגיאות. לא נבדק מכאן: ההעלאה ל־Cloudinary ופתיחת קישור משותף (אין גישה לרשת מסביבת הבדיקה) — לבדוק בטלפון של זיו.
 `window.DPM_test.mark(floor,wall,W)` קיים לבדיקות אוטומטיות בלבד.
+
+## Owner room, quote and gift (8.11, morning)
+- Owner room (o-b7q4x9): reads free-text lines with only quantity + price ("סמנט גריי 188 מר לפי 66 שח למר"): number next to לפי/ש"ח/₪ = price, next to מ"ר/יח = quantity, sizes like 120/60 ignored, unit words removed from the name. If the owner sends without pressing "לקרוא את ההצעה", the text is read automatically. Gift field `gift`; delete button for sent quotes (two taps).
+- Quote page (index.html): table item / quantity / unit price / line total, then before VAT, VAT 18%, total (prices include VAT; agorot shown only when present). Unit per item `u` (default מ״ר). Gift badge with a small gift box at top-left of the quote when `gift` is set, opens gift/#q=same code.
+- Gift page (gift/): Veo Fast video, name and gift text on screen, sound on first tap.
