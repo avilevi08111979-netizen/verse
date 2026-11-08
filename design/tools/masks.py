@@ -44,6 +44,7 @@ for i,s in enumerate(room['surfaces']):
     cv2.imwrite(os.path.join(root,'rooms',f"{rid}_{s['id']}.png"),m)
     gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY).astype(np.float32)
     s['base']=round(float(gray[m>127].mean()),1)
+    s['mv']=int(__import__('time').time())
     col=np.array(colors[i%3],np.uint8)
     a=(m.astype(np.float32)/255)[...,None]*0.45
     over=(over*(1-a)+col*a).astype(np.uint8)

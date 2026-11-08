@@ -105,6 +105,7 @@ input[type=number],input[type=text]{font:inherit;color:var(--text);background:#0
 #toast{position:fixed;left:50%;bottom:calc(190px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#14171c;border:1px solid var(--line);padding:8px 14px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:12}
 #toast.on{opacity:1}
 @media (min-width:900px){#brand b{font-size:19px} .t{width:96px} .t .im{width:96px;height:96px}}
+@media (max-height:520px){#top{flex-wrap:nowrap;padding-top:6px;padding-bottom:6px}#brand small{display:none}#brand b{font-size:15px}#roomSel{order:0;flex:1 1 auto}#shareBtn{order:0}#filters{display:none}.t{width:60px}.t .im{width:60px;height:60px}.t b,.t small{display:none}#tray{padding:6px 0 calc(6px + env(safe-area-inset-bottom,0px))}#tools{top:8px;left:8px;gap:6px}#tools .ic{min-width:32px;min-height:32px}.sb{min-height:32px;font-size:12.5px}#surf{bottom:6px}}
 :focus-visible{outline:2px solid var(--acc2);outline-offset:2px}
 </style>
 </head>
@@ -186,7 +187,7 @@ input[type=number],input[type=text]{font:inherit;color:var(--text);background:#0
 <input type="file" id="camIn" accept="image/*" capture="environment" hidden>
 <div id="toast" role="status"></div>
 
-<script src="rooms.js?v=11"></script>
+<script src="rooms.js?v=12"></script>
 <script src="tiles.js?v=10"></script>
 <script>
 (function(){
@@ -255,7 +256,7 @@ function loadRoom(r){
   $('#hint').textContent='החדר נטען…';
   var jobs=[(r.canvas?Promise.resolve(r.canvas):loadImg(r.img)).then(function(i){ roomImg=i; roomTex=tex(i,false,false);
     var c=D.createElement('canvas'); c.width=256; c.height=Math.max(1,Math.round(256*i.height/i.width)); var x=c.getContext('2d'); x.drawImage(i,0,0,c.width,c.height); blurTex=tex(c,false,false); })];
-  r.surfaces.forEach(function(s){ s.H=s.hm?new Float32Array(s.hm):homography(s.quad); s.far=farLine(s.H); if(s.maskCanvas){ masks[s.id]=tex(s.maskCanvas,false,false); } else jobs.push(loadImg('rooms/'+r.id+'_'+s.id+'.png').then(function(i){ masks[s.id]=tex(i,false,false); })); });
+  r.surfaces.forEach(function(s){ s.H=s.hm?new Float32Array(s.hm):homography(s.quad); s.far=farLine(s.H); if(s.maskCanvas){ masks[s.id]=tex(s.maskCanvas,false,false); } else jobs.push(loadImg('rooms/'+r.id+'_'+s.id+'.png?v='+(s.mv||1)).then(function(i){ masks[s.id]=tex(i,false,false); })); });
   Promise.all(jobs).then(function(){ S.cx=r.w/2; S.cy=r.h; view.scale=0; fit(); S.active=r.surfaces[0].id; renderSurfChips(); restoreFromHash(); draw(); showHint('נוגעים ברצפה או בקיר, ואז באריח'); }).catch(function(){ showHint('החדר לא נטען. רעננו.'); });
   renderRoomSel();
 }
