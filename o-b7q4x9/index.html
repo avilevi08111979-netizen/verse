@@ -128,6 +128,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-o
     </div>
     <p class="hint" id="camhint">הצילום עולה למגירת התמונות של cinemacome ונכנס לכרטיס של האריח.</p>
 
+    <label>המתנה ללקוח (לא חובה)<input name="gift" maxlength="80" placeholder="אתם מחליטים: למשל ״אריחי דקור לנישה במקלחת, במתנה״"></label>
     <label>ההדמיה מ־Design Pro Max (לא חובה)<input name="viz" inputmode="url" placeholder="מדביקים כאן את הקישור של ההדמיה"></label>
     <p style="margin:-4px 0 6px;font-size:14px"><a href="../design/" target="_blank" rel="noopener" style="color:inherit">לפתוח את Design Pro Max ולעצב עם הלקוח ←</a></p>
     <label>הערה בהצעה (לא חובה)<textarea name="note" rows="2" style="min-height:60px" placeholder="המחירים כוללים מע״מ. הובלה, פחת חיתוך ואביזרים נקבעים מול נציג האולם."></textarea></label>
@@ -321,14 +322,14 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-o
     var D={v:2,fam:(fd.get('fam')||'').trim(),name:(fd.get('name')||'').trim(),phone:(fd.get('phone')||'').trim(),addr:(fd.get('addr')||'').trim(),
       work:(fd.get('work')||'').trim(),no:quoteNo(),date:today(),until:plus14(),items:items,heroes:heroes.map(function(h){return {t:h.t,s:h.s,img:h.img};})};
     var over=num($('#totover').value); if(over>0) D.total=over;
-    var note=(fd.get('note')||'').trim(); if(note) D.note=note; var viz=(fd.get('viz')||'').trim(); var vm=viz.match(/\/design\/?#(.+)$/); if(vm) D.viz=vm[1];
+    var note=(fd.get('note')||'').trim(); if(note) D.note=note; var gift=(fd.get('gift')||'').trim(); if(gift) D.gift=gift; var viz=(fd.get('viz')||'').trim(); var vm=viz.match(/\/design\/?#(.+)$/); if(vm) D.viz=vm[1];
     if(!D.name) D.name='משפחת '+D.fam;
     $('#go').disabled=true;
     var code=await encode(D);
     $('#go').disabled=false;
     var link=BASE+'#q='+code;
     var total=D.total||calc();
-    var msg='שלום משפחת '+D.fam+', תודה שביקרתם היום באולם של קרמיקה בשאראת. הכנו לכם את הבית שלכם: הסרט והצעת המחיר שלכם, כאן:\n'+link+'\nפותחים בטלפון, עם סאונד.';
+    var msg='שלום משפחת '+D.fam+', תודה שביקרתם היום באולם של קרמיקה בשאראת. הכנו לכם את הבית שלכם: הסרט והצעת המחיר שלכם, כאן:\n'+link+'\nפותחים בטלפון, עם סאונד.'+(D.gift?'\n\nויש לכם גם מתנה מאיתנו 🎁\n'+BASE+'gift/#q='+code:'');
     $('#msg').textContent=msg; $('#link').textContent=link; $('#open').href=link;
     $('#wa').href='https://wa.me/'+intl(D.phone)+'?text='+encodeURIComponent(msg);
     out.classList.add('on'); out.scrollIntoView({behavior:'smooth',block:'start'});

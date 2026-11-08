@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>מתנה בשבילכם · קרמיקה בשאראת</title>
+<meta name="description" content="מתנה אישית מקרמיקה בשאראת.">
+<meta name="theme-color" content="#0b0906">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0906;--gold:#f0c46a;--cream:#fbf1dc;--mute:#bfae8f;--display:"Secular One","Heebo",sans-serif;--body:"Heebo","Arial Hebrew",Arial,sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--cream);font-family:var(--body);overflow:hidden}
+#stage{position:fixed;inset:0}
+#poster,#vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#vid{opacity:0;transition:opacity .4s}
+#vid.on{opacity:1}
+.shade{position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,0) 35%,rgba(0,0,0,0) 60%,rgba(0,0,0,.55));pointer-events:none}
+#ded{position:absolute;inset-inline:0;top:calc(14% + env(safe-area-inset-top,0px));text-align:center;font-family:var(--display);font-size:clamp(22px,6vw,40px);color:var(--cream);text-shadow:0 2px 14px rgba(0,0,0,.7);opacity:0;transition:opacity .8s,transform .8s;transform:translateY(8px);padding:0 16px}
+#ded.on{opacity:1;transform:none}
+#gift{position:absolute;inset-inline:0;top:24%;display:grid;gap:10px;justify-items:center;text-align:center;padding:0 22px;opacity:0;transform:translateY(60px) scale(.96);transition:opacity 1.4s ease,transform 1.8s cubic-bezier(.2,.7,.2,1);pointer-events:none}
+#gift.on{opacity:1;transform:none}
+#gift small{font-size:clamp(14px,3.8vw,18px);color:var(--gold);letter-spacing:.08em}
+#gift b{font-family:var(--display);font-weight:400;font-size:clamp(30px,9vw,64px);line-height:1.12;color:#fff;text-shadow:0 0 22px rgba(255,196,90,.9),0 0 50px rgba(255,170,60,.6),0 2px 10px rgba(0,0,0,.6);max-width:900px;text-wrap:balance}
+#acts{position:absolute;inset-inline:0;bottom:calc(22px + env(safe-area-inset-bottom,0px));display:grid;gap:10px;justify-items:center;padding:0 16px;opacity:0;transition:opacity .8s;pointer-events:none}
+#acts.on{opacity:1;pointer-events:auto}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:54px;width:min(420px,100%);border-radius:999px;font-family:var(--display);font-size:19px;text-decoration:none;border:1px solid var(--gold);color:var(--cream);background:rgba(11,9,6,.55);backdrop-filter:blur(8px)}
+.btn.p{background:var(--gold);color:#1a1206}
+#start{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:14px;background:rgba(0,0,0,.35);border:0;color:var(--cream);font-family:var(--display);font-size:24px;cursor:pointer;width:100%}
+#start span{display:grid;place-items:center;width:84px;height:84px;border-radius:50%;border:2px solid var(--gold);box-shadow:0 0 30px rgba(240,196,106,.5);font-size:30px;color:var(--gold)}
+#start small{font-family:var(--body);font-size:15px;color:var(--mute)}
+#top{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));inset-inline:12px;display:flex;justify-content:space-between;z-index:3}
+#top a,#top button{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.35);color:var(--cream);font:inherit;font-size:14px;display:flex;align-items:center;text-decoration:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+</style>
+</head>
+<body>
+<div id="stage">
+  <img id="poster" alt="קופסת מתנה שחורה עם סרט משי אדום">
+  <video id="vid" playsinline muted preload="auto"></video>
+  <div class="shade"></div>
+  <p id="ded"></p>
+  <div id="gift" aria-live="polite"><small>המתנה שלכם</small><b id="giftT"></b></div>
+  <div id="acts">
+    <a class="btn p" id="claim" href="#" target="_blank" rel="noopener">לממש את המתנה</a>
+    <a class="btn" id="film" href="../">לסרט ולהצעה שלכם</a>
+  </div>
+  <div id="top"><a id="back" href="../">אחורה</a><button id="again" type="button">שוב</button></div>
+  <button id="start" type="button"><span>▶</span>לפתוח את המתנה<small id="startFor"></small></button>
+</div>
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s)};
+var WA_BIZ='972522699099';
+var D={fam:'בן משה',name:'זיו בן משה',gift:'אריחי דקור לנישה במקלחת, במתנה'};
+function b64u8(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; var b=atob(s); var u=new Uint8Array(b.length); for(var i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return u; }
+function code(){ var m=(location.hash||'').match(/[#&]q=([A-Za-z0-9_\-]+)/); return m?m[1]:null; }
+async function fromLink(){ try{ var c=code(); if(!c) return null; var json;
+  if(c.charAt(0)==='z'){ if(!window.DecompressionStream) return null; var ds=new DecompressionStream('deflate-raw'); var w=ds.writable.getWriter(); w.write(b64u8(c.slice(1))); w.close(); json=await new Response(ds.readable).text(); }
+  else if(c.charAt(0)==='j'){ json=new TextDecoder().decode(b64u8(c.slice(1))); } else { json=new TextDecoder().decode(b64u8(c)); }
+  var d=JSON.parse(json); return (d&&d.fam)?d:null; }catch(e){ return null; } }
+var v=$('#vid'), portrait=function(){ return window.innerHeight>window.innerWidth; };
+function setSources(){ var p=portrait(); $('#poster').src='m/poster_'+(p?'v':'h')+'.jpg'; var want='m/gift_'+(p?'v':'h')+'.mp4'; if(v.getAttribute('src')!==want){ var t=v.currentTime||0, playing=!v.paused; v.setAttribute('src',want); v.load(); if(t){ v.addEventListener('loadedmetadata',function f(){ v.removeEventListener('loadedmetadata',f); try{ v.currentTime=t; }catch(e){} if(playing) v.play(); }); } } }
+function render(){ $('#ded').textContent='לכבוד משפחת '+D.fam; $('#startFor').textContent='לכבוד משפחת '+D.fam; $('#giftT').textContent=D.gift||'מתנה מאיתנו';
+  var msg='שלום, '+(D.name||('משפחת '+D.fam))+'. פתחנו את המתנה מקרמיקה בשאראת: '+(D.gift||'')+(D.no?' (הצעה מספר '+D.no+')':'')+'. נשמח לממש אותה.';
+  $('#claim').href='https://wa.me/'+WA_BIZ+'?text='+encodeURIComponent(msg);
+  var back='../'+(code()?'#q='+code():''); $('#film').href=back; $('#back').href=back; }
+var shown=false;
+v.addEventListener('timeupdate',function(){ var t=v.currentTime; $('#ded').classList.toggle('on',t>0.3&&t<3.6); if(t>4.3&&!shown){ shown=true; $('#gift').classList.add('on'); setTimeout(function(){ $('#acts').classList.add('on'); },1400); } });
+v.addEventListener('ended',function(){ $('#gift').classList.add('on'); $('#acts').classList.add('on'); });
+function play(){ $('#start').style.display='none'; shown=false; $('#gift').classList.remove('on'); $('#acts').classList.remove('on');
+  try{ var el=document.documentElement; if(!document.fullscreenElement&&el.requestFullscreen) el.requestFullscreen().catch(function(){}); }catch(e){}
+  v.currentTime=0; v.classList.add('on'); var p=v.play(); if(p&&p.catch) p.catch(function(){ $('#start').style.display=''; }); }
+$('#start').onclick=play; $('#again').onclick=play;
+window.addEventListener('resize',setSources);
+setSources(); render(); fromLink().then(function(d){ if(d){ D=d; render(); } });
+})();
+</script>
+</body>
+</html>
