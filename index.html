@@ -75,8 +75,15 @@ button{font:inherit;color:inherit;cursor:pointer}
 .qbar .pill.gold{color:var(--light)}
 .qbar .t{color:var(--mist);font-size:13px}
 
-header.q{padding:14px 0 14px;border-bottom:1px solid var(--line);display:grid;gap:10px}
+header.q{position:relative;padding:14px 0 14px;border-bottom:1px solid var(--line);display:grid;gap:10px}
 header.q .lg{height:72px;width:auto}
+.qgift{position:absolute;top:14px;left:0;display:flex;align-items:center;gap:10px;max-width:52%;padding:8px 12px 8px 10px;border:1px solid rgba(240,196,106,.55);border-radius:14px;background:linear-gradient(135deg,rgba(240,196,106,.14),rgba(240,196,106,.03));color:var(--light);text-decoration:none;box-shadow:0 0 22px rgba(240,196,106,.18)}
+.qgift[hidden]{display:none}
+.qgift svg{flex:none;width:38px;height:38px;filter:drop-shadow(0 0 6px rgba(240,196,106,.45))}
+.qgift span{display:grid;gap:2px;font-size:13px;line-height:1.3}
+.qgift small{font-size:12px;color:#f0c46a;letter-spacing:.04em}
+.qgift b{font-weight:500;font-size:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
 header.q .row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
 header.q h2{font-family:var(--la);font-size:32px;line-height:1.1;color:var(--light)}
 .meta{color:var(--mist);font-size:14px;line-height:1.5}
@@ -166,6 +173,7 @@ footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
   </div>
 
   <header class="q">
+    <a class="qgift" id="qgift" href="gift/" hidden><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="6" y="17" width="28" height="19" rx="2" fill="#16120c" stroke="#f0c46a" stroke-width="1.4"/><rect x="4" y="12" width="32" height="7" rx="1.5" fill="#1f1910" stroke="#f0c46a" stroke-width="1.4"/><rect x="18" y="12" width="4" height="24" fill="#c8202a"/><path d="M20 12c-3-6-10-7-10-3s6 3 10 3zM20 12c3-6 10-7 10-3s-6 3-10 3z" fill="#c8202a" stroke="#8e141b" stroke-width=".8"/></svg><span><small>מתנה בשבילכם</small><b id="qgiftT"></b></span></a>
     <img class="lg" src="m/logo.png" alt="קרמיקה בשאראת" width="414" height="372">
     <div class="row">
       <div>
@@ -276,7 +284,7 @@ footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
     if(D.total) total=+D.total;
     $('#total').innerHTML=(items.length>bigs.length||heroes.length?'<h3 class="th">כל הפריטים בהצעה</h3>':'')+lines+'<div class="grand"><b>סה״כ לתשלום</b><span class="num">'+money(total)+'</span></div><p class="fine">'+esc(D.note||'המחירים כוללים מע״מ. הובלה, פחת חיתוך ואביזרים נקבעים מול נציג האולם.')+'</p>';
     var msg='שלום, '+(D.name||fam)+'. ראיתי את הסרט ואת הצעת המחיר'+(D.no?' מספר '+D.no:'')+' ('+money(total)+') ואני רוצה לאשר את ההזמנה.';
-    $('#approve').href='https://wa.me/'+WA_BIZ+'?text='+encodeURIComponent(msg); var vz=$('#viz'); if(vz){ if(D.viz){ vz.href='design/#'+D.viz; vz.style.display=''; } else vz.style.display='none'; }
+    $('#approve').href='https://wa.me/'+WA_BIZ+'?text='+encodeURIComponent(msg); var qg=$('#qgift'); if(qg){ if(D.gift){ $('#qgiftT').textContent=D.gift; var cc=codeFromLink(); qg.href='gift/'+(cc?'#q='+cc:''); qg.hidden=false; } else qg.hidden=true; } var vz=$('#viz'); if(vz){ if(D.viz){ vz.href='design/#'+D.viz; vz.style.display=''; } else vz.style.display='none'; }
   }
   render();
   fromLink().then(function(d){ if(d){ D=d; render(); } });
