@@ -62,7 +62,7 @@ async function fromLink(){ try{ var c=code(); if(!c) return null; var json;
   else if(c.charAt(0)==='j'){ json=new TextDecoder().decode(b64u8(c.slice(1))); } else { json=new TextDecoder().decode(b64u8(c)); }
   var d=JSON.parse(json); return (d&&d.fam)?d:null; }catch(e){ return null; } }
 var v=$('#vid'), portrait=function(){ return window.innerHeight>window.innerWidth; };
-function setSources(){ var p=portrait(); $('#poster').src=p?'m/poster_v2.jpg':'m/poster_h.jpg'; var want=p?'m/gift_s_v2.mp4':'m/gift_s_h.mp4'; if(v.getAttribute('src')!==want){ var t=v.currentTime||0, playing=!v.paused; v.setAttribute('src',want); v.load(); if(t){ v.addEventListener('loadedmetadata',function f(){ v.removeEventListener('loadedmetadata',f); try{ v.currentTime=t; }catch(e){} if(playing) v.play(); }); } } }
+function setSources(){ var p=portrait(); $('#poster').src=p?'m/poster_v2.jpg':'m/poster_h.jpg'; var want=p?'m/gift_s_v2.mp4':'m/gift_s_h.mp4'; if(v.getAttribute('src')!==want){ var t=v.currentTime||0, playing=!v.paused; v.setAttribute('src',want); v.load(); if(t){ v.addEventListener('loadedmetadata',function f(){ v.removeEventListener('loadedmetadata',f); try{ v.currentTime=t; }catch(e){} }); } if(playing){ var pp=v.play(); if(pp&&pp.catch) pp.catch(function(){ $('#start').style.display=''; }); } } }
 function render(){ $('#ded').textContent='לכבוד משפחת '+D.fam; $('#startFor').textContent='לכבוד משפחת '+D.fam; $('#giftT').textContent=D.gift||'מתנה מאיתנו';
   var msg='שלום, '+(D.name||('משפחת '+D.fam))+'. פתחנו את המתנה מקרמיקה בשאראת: '+(D.gift||'')+(D.no?' (הצעה מספר '+D.no+')':'')+'. נשמח לממש אותה.';
   $('#claim').href='https://wa.me/'+WA_BIZ+'?text='+encodeURIComponent(msg);

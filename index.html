@@ -317,13 +317,15 @@ footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
   function want(){ return mq.matches ? 'v' : 'h'; }
   function setSrc(keepTime){
     var k=want(); if(k===cur) return;
-    var t=keepTime ? v.currentTime : 0, playing=keepTime && !v.paused && !v.ended;
-    cur=k; v.poster=POSTER[k]; v.src=SRC[k];
-    v.addEventListener('loadedmetadata',function f(){ v.removeEventListener('loadedmetadata',f);
-      try{ if(t>0.05) v.currentTime=t; }catch(e){}
-      if(playing) tryPlay();
-    });
-    v.load();
+    var t=keepTime ? (v.currentTime||0) : 0, resume=keepTime && !film.hidden && !v.ended;
+    cur=k; v.poster=POSTER[k]; v.src=SRC[k]; v.load();
+    if(t>0.05){
+      var seek=function(){ v.removeEventListener('loadedmetadata',seek); try{ v.currentTime=Math.min(t,(v.duration||t+1)-0.3); }catch(e){} };
+      if(v.readyState>=1) seek(); else v.addEventListener('loadedmetadata',seek);
+      v.addEventListener('playing',function fix(){ v.removeEventListener('playing',fix); if(Math.abs(v.currentTime-t)>1.2){ try{ v.currentTime=t; }catch(e){} } });
+    }
+    /* play right away: some phones load nothing until play() is called */
+    if(resume){ tryPlay(); setTimeout(function(){ if(!film.hidden && v.paused && !v.ended) tap.hidden=false; },1800); }
   }
   function tryPlay(){ var p=v.play(); if(p&&p.catch) p.catch(function(){ tap.hidden=false; }); }
   function goFull(){
