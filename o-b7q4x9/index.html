@@ -79,6 +79,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-o
 .hist a{color:var(--brass);text-decoration:none}
 .count{font-family:var(--la);font-size:34px;color:var(--light);line-height:1}
 :focus-visible{outline:2px solid var(--light);outline-offset:3px}
+#hist .del{font:inherit;font-size:13px;color:#d98a7a;background:none;border:0;padding:4px 2px;cursor:pointer;min-height:32px}
 </style>
 </head>
 <body>
@@ -337,7 +338,10 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-o
     hist();
   });
   $('#copy').addEventListener('click',function(){ var t=$('#link').textContent, b=$('#copy'); try{ navigator.clipboard.writeText(t).then(function(){ b.textContent='הועתק'; setTimeout(function(){ b.textContent='להעתיק קישור'; },1500); }); }catch(e){} });
-  function hist(){ var h=[]; try{ h=JSON.parse(localStorage.getItem('bq_hist')||'[]'); }catch(e){} $('#count').textContent=h.length; $('#hist').innerHTML=h.slice(0,8).map(function(x){ return '<div><span>משפחת '+esc(x.fam)+' · '+esc(x.at)+'</span><span><b class="num">'+money(x.total)+'</b> · <a href="'+esc(x.link)+'" target="_blank" rel="noopener">לפתוח</a></span></div>'; }).join(''); }
+  function hist(){ var h=[]; try{ h=JSON.parse(localStorage.getItem('bq_hist')||'[]'); }catch(e){} $('#count').textContent=h.length; $('#hist').innerHTML=h.slice(0,8).map(function(x,i){ return '<div><span>משפחת '+esc(x.fam)+' · '+esc(x.at)+'</span><span><b class="num">'+money(x.total)+'</b> · <a href="'+esc(x.link)+'" target="_blank" rel="noopener">לפתוח</a> · <button type="button" class="del" data-i="'+i+'" aria-label="למחוק את ההצעה של משפחת '+esc(x.fam)+'">מחיקה</button></span></div>'; }).join(''); }
+  document.addEventListener('click',function(e){ var b=e.target.closest&&e.target.closest('#hist .del'); if(!b) return; var i=+b.dataset.i; var h=[]; try{ h=JSON.parse(localStorage.getItem('bq_hist')||'[]'); }catch(x){} var x=h[i]; if(!x) return;
+    if(b.dataset.sure!=='1'){ b.dataset.sure='1'; b.textContent='בטוח? לחצו שוב'; setTimeout(function(){ if(b.isConnected){ b.dataset.sure=''; b.textContent='מחיקה'; } },3000); return; }
+    h.splice(i,1); try{ localStorage.setItem('bq_hist',JSON.stringify(h)); }catch(x2){} hist(); });
   hist();
 })();
 </script>
