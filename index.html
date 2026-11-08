@@ -117,8 +117,18 @@ header.q h2{font-family:var(--la);font-size:32px;line-height:1.1;color:var(--lig
 .total .line span:first-child{min-width:0;overflow-wrap:anywhere}
 .total .th{font-family:var(--la);font-weight:400;font-size:17px;color:var(--brass);margin:0 0 8px}
 .total .grand{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:8px;padding-top:12px;border-top:1px solid var(--line)}
-.total .grand b{font-family:var(--la);font-weight:400;font-size:20px;color:var(--stone)}
-.total .grand .num{font-family:var(--la);font-size:34px;color:var(--light)}
+.total .grand b{white-space:nowrap;font-family:var(--la);font-weight:400;font-size:20px;color:var(--stone)}
+.total .grand .num{white-space:nowrap;font-family:var(--la);font-size:clamp(24px,7.6vw,34px);color:var(--light)}
+.qt{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;column-gap:12px;align-items:baseline;font-size:15px}
+.qt .h{font-size:12.5px;color:var(--brass);padding-bottom:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.qt .c{padding:12px 0;border-bottom:1px dashed rgba(226,168,102,.22);white-space:nowrap;text-align:left;color:var(--stone)}
+.qt .c.n{white-space:normal;text-align:right;color:var(--light);font-weight:500;line-height:1.3;overflow-wrap:anywhere}
+.qt .c.n small{display:block;font-weight:400;font-size:12.5px;color:var(--mist);margin-top:2px}
+.qt .c.s{color:var(--light);font-weight:500}
+.qt .h.r{text-align:left}
+.qsum{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin-top:12px;font-size:14.5px;color:var(--mist)}
+.qsum .num{text-align:left;color:var(--stone)}
+@media (max-width:360px){.qt{column-gap:8px;font-size:14px}}
 .total .fine{color:var(--mist);font-size:13px;margin-top:10px;line-height:1.5}
 
 .acts{display:grid;gap:10px;margin-top:18px}
@@ -250,7 +260,7 @@ footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
   var D=DEFAULT;
 
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
-  function money(n){ return Math.round(n).toLocaleString('he-IL')+' ₪'; }
+  function money(n){ n=Math.round((+n||0)*100)/100; return n.toLocaleString('he-IL',n%1?{minimumFractionDigits:2,maximumFractionDigits:2}:{maximumFractionDigits:0})+' ₪'; }
   function telLink(p){ return String(p||'').replace(/[^\d+]/g,''); }
   function telShow(p){ var d=String(p||'').replace(/\D/g,''); return d.length===10 ? d.slice(0,3)+'-'+d.slice(3) : p; }
 
@@ -261,11 +271,14 @@ footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
     $('#dedn').textContent=fam;
     $('#qt').textContent='הצעת מחיר · '+fam;
     $('#meta').innerHTML='מספר <b class="num">'+esc(D.no||'')+'</b> · <b>'+esc(D.date||'')+'</b>'+(D.until?' · בתוקף עד <b>'+esc(D.until)+'</b>':'');
+    function fmt(n){ n=+n||0; return n.toLocaleString('he-IL',{maximumFractionDigits:2}); }
+    function unitOf(it){ return it&&it.u?esc(it.u):'מ״ר'; }
+    function money2(n){ return (+n||0).toLocaleString('he-IL',{minimumFractionDigits:2,maximumFractionDigits:2})+' ₪'; }
     var items=D.items||[], heroes=D.heroes||[];
-    var qty=0; items.forEach(function(it){ qty+=(+it.q||0); });
+    var qty=0; items.forEach(function(it){ if(!it.u||/מ.?ר/.test(it.u)) qty+=(+it.q||0); });
     $('#who').innerHTML=
       '<div><h3>לכבוד</h3><p><b>'+esc(D.name||fam)+'</b>'+(D.addr?'<br>'+esc(D.addr):'')+(D.phone?'<br><a class="num" href="tel:'+esc(telLink(D.phone))+'">'+esc(telShow(D.phone))+'</a>':'')+'</p></div>'+
-      '<div><h3>העבודה</h3><p>'+esc(D.work||'ריצוף וחיפוי')+(items.length?'<br>'+items.length+' פריטים'+(qty?', '+Math.round(qty)+' יח׳ / מ״ר':''):'')+'<br>אספקה מהאולם ביפיע</p></div>';
+      '<div><h3>העבודה</h3><p>'+esc(D.work||'ריצוף וחיפוי')+(items.length?'<br>'+(items.length===1?'פריט אחד':items.length+' פריטים')+(qty?' · <span class="num">'+fmt(qty)+'</span> '+unitOf(items[0]):''):'')+'<br>אספקה מהאולם ביפיע</p></div>';
     var html='', total=0, lines='';
     /* v1 links: pictures on the items themselves */
     var picItems=items.filter(function(it){return it.room||it.tile;});
@@ -280,9 +293,14 @@ footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
       html+='<article class="item">'+pic+'<div class="body"><h3>'+esc(it.t)+'</h3><p class="sub">'+esc([it.k,it.s?it.s+' ס״מ':''].filter(Boolean).join(' · '))+'</p>'+calc+'</div></article>';
     });
     $('#items').innerHTML=html;
-    items.forEach(function(it){ var sum=(+it.q||0)*(+it.p||0); total+=sum; lines+='<div class="line"><span>'+esc(it.t)+(it.q?' · <span class="num">'+esc(it.q)+'</span>':'')+'</span><span class="num">'+money(sum)+'</span></div>'; });
+    lines='<div class="qt" role="table" aria-label="פירוט ההצעה"><span class="h" role="columnheader">פריט</span><span class="h r" role="columnheader">כמות</span><span class="h r" role="columnheader">מחיר ליח׳</span><span class="h r" role="columnheader">סה״כ</span>';
+    items.forEach(function(it){ var sum=(+it.q||0)*(+it.p||0); total+=sum; var u=unitOf(it);
+      lines+='<span class="c n" role="cell">'+esc(it.t)+(it.s&&String(it.t).indexOf(it.s)<0?'<small>'+esc(it.s)+' ס״מ</small>':'')+'</span><span class="c num" role="cell">'+fmt(it.q)+' '+u+'</span><span class="c num" role="cell">'+fmt(it.p)+' ₪</span><span class="c s num" role="cell">'+money(sum)+'</span>'; });
+    lines+='</div>';
     if(D.total) total=+D.total;
-    $('#total').innerHTML=(items.length>bigs.length||heroes.length?'<h3 class="th">כל הפריטים בהצעה</h3>':'')+lines+'<div class="grand"><b>סה״כ לתשלום</b><span class="num">'+money(total)+'</span></div><p class="fine">'+esc(D.note||'המחירים כוללים מע״מ. הובלה, פחת חיתוך ואביזרים נקבעים מול נציג האולם.')+'</p>';
+    var before=Math.round(total/1.18*100)/100, vat=Math.round((total-before)*100)/100;
+    var sumBox='<div class="qsum"><span>סכום לפני מע״מ</span><span class="num">'+money2(before)+'</span><span>מע״מ 18%</span><span class="num">'+money2(vat)+'</span></div>';
+    $('#total').innerHTML='<h3 class="th">פירוט ההצעה</h3>'+lines+sumBox+'<div class="grand"><b>סה״כ לתשלום</b><span class="num">'+money(total)+'</span></div><p class="fine">'+esc(D.note||'המחירים כוללים מע״מ. הובלה, פחת חיתוך ואביזרים נקבעים מול נציג האולם.')+'</p>';
     var msg='שלום, '+(D.name||fam)+'. ראיתי את הסרט ואת הצעת המחיר'+(D.no?' מספר '+D.no:'')+' ('+money(total)+') ואני רוצה לאשר את ההזמנה.';
     $('#approve').href='https://wa.me/'+WA_BIZ+'?text='+encodeURIComponent(msg); var qg=$('#qgift'); if(qg){ if(D.gift){ $('#qgiftT').textContent=D.gift; var cc=codeFromLink(); qg.href='gift/'+(cc?'#q='+cc:''); qg.hidden=false; } else qg.hidden=true; } var vz=$('#viz'); if(vz){ if(D.viz){ vz.href='design/#'+D.viz; vz.style.display=''; } else vz.style.display='none'; }
   }
