@@ -74,7 +74,9 @@ function play(){ $('#start').style.display='none'; shown=false; $('#gift').class
   try{ var el=document.documentElement; if(!document.fullscreenElement&&el.requestFullscreen) el.requestFullscreen().catch(function(){}); }catch(e){}
   v.muted=false; v.volume=1; v.currentTime=0; v.classList.add('on'); var p=v.play(); if(p&&p.catch) p.catch(function(){ $('#start').style.display=''; }); }
 $('#start').onclick=play; $('#again').onclick=play;
-window.addEventListener('resize',setSources);
+function fit(){ if(!v.videoWidth) return; v.style.objectFit=((v.videoWidth<v.videoHeight)===portrait())?'cover':'contain'; v.style.background='#000'; }
+v.addEventListener('loadedmetadata',fit);
+window.addEventListener('resize',function(){ if(v.paused||v.ended) setSources(); fit(); });
 setSources(); render(); fromLink().then(function(d){ if(d){ D=d; render(); } });
 })();
 </script>

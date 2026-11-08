@@ -358,7 +358,8 @@ footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
     if(on!==ded.classList.contains('on')) ded.classList.toggle('on',on);
   });
 
-  var onOrient=function(){ if(!film.hidden) setSrc(true); };
+  /* never swap the film file while it is on screen: iPhone stalls on a mid-play swap. The film keeps playing, fitted to the new shape; the right version is picked on the next start. */
+  var onOrient=function(){ if(film.hidden) setSrc(false); };
   if(mq.addEventListener) mq.addEventListener('change',onOrient); else if(mq.addListener) mq.addListener(onOrient);
 
   var wasPlaying=false;
