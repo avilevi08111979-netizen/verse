@@ -80,6 +80,13 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-o
 .count{font-family:var(--la);font-size:34px;color:var(--light);line-height:1}
 :focus-visible{outline:2px solid var(--light);outline-offset:3px}
 #hist .del{font:inherit;font-size:13px;color:#d98a7a;background:none;border:0;padding:4px 2px;cursor:pointer;min-height:32px}
+/* the handshake settings: set once, kept on this phone */
+.hsbox{border:1px solid var(--brass);border-radius:12px;padding:12px;display:grid;gap:10px;background:linear-gradient(180deg,rgba(226,168,102,.10),rgba(226,168,102,0))}
+.chk{display:flex;align-items:flex-start;gap:10px;color:var(--stone);font-size:14.5px;line-height:1.45;cursor:pointer}
+.chk input{flex:none;width:24px;height:24px;min-height:24px;padding:0;margin:0;accent-color:var(--brass)}
+.chk b{font-family:var(--la);font-weight:400;font-size:17px;color:var(--light)}
+input[type=range]{padding:0;min-height:36px;border:0;background:transparent;accent-color:var(--brass);direction:ltr}
+.hsout{font-family:var(--la);font-size:22px;color:var(--light);line-height:1.2}
 </style>
 </head>
 <body>
@@ -133,6 +140,22 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-o
     <label>ההדמיה מ־Design Pro Max (לא חובה)<input name="viz" inputmode="url" placeholder="מדביקים כאן את הקישור של ההדמיה"></label>
     <p style="margin:-4px 0 6px;font-size:14px"><a href="../design/" target="_blank" rel="noopener" style="color:inherit">לפתוח את Design Pro Max ולעצב עם הלקוח ←</a></p>
     <label>הערה בהצעה (לא חובה)<textarea name="note" rows="2" style="min-height:60px" placeholder="המחירים כוללים מע״מ. הובלה, פחת חיתוך ואביזרים נקבעים מול נציג האולם."></textarea></label>
+    <div class="hsbox" id="hsbox">
+      <label class="chk"><input type="checkbox" id="hsOn"><span><b>לחיצת יד</b><br>המלכה מתמקחת עם הלקוח בסוף הסרט, עד המילה האחרונה שלכם, והוא סוגר בלילה.</span></label>
+      <div class="grid" id="hsSet" hidden>
+        <label>המילה האחרונה שלי: עד כמה יורדים מהסכום
+          <span class="hsout num" id="hsOut">5%</span>
+          <input type="range" id="hsP" min="0" max="15" step="1" value="5"></label>
+        <div class="grid2">
+          <label>כמה הצעות ללקוח<select id="hsN"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option></select></label>
+          <label>לחיצת היד שמורה<select id="hsH"><option value="24">24 שעות</option><option value="48" selected>48 שעות</option><option value="72">72 שעות</option></select></label>
+        </div>
+        <label>מתנה ללוחצי יד (לא חובה)<input id="hsG" maxlength="60" placeholder="למשל: הובלה עד הבית"></label>
+        <label class="chk"><input type="checkbox" id="hsTwo"><span>שתי ידיים: המחיר ננעל רק כשגם מי שלא היה באולם לוחץ, מהטלפון שלו.</span></label>
+        <p class="hint" id="hsRule"></p>
+        <p class="hint">מה אומרים ללקוח באולם: ״זה המחיר הרשמי. הערב תקבלו את הסרט שלכם, ובתוכו מחכה לכם המלכה. איתה אפשר לדבר על המחיר.״</p>
+      </div>
+    </div>
     <button class="go" type="submit" id="go">צור את הסרט האישי</button>
   </form>
 
@@ -173,7 +196,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-o
   var CLOUD='gtqmsqvz', PRESET='verse_photos';
   var CAT=window.CAT||[];
   var f=$('#f'), rows=$('#rows'), tot=$('#tot'), out=$('#out'), heroesEl=$('#heroes');
-  var heroes=[];
+  var heroes=[], lastTotal=0;
 
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function money(n){ return Math.round(n).toLocaleString('he-IL')+' ₪'; }
@@ -236,7 +259,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-o
     d.addEventListener('input',calc); rows.appendChild(d); calc();
   }
   function readRows(){ return [].map.call(rows.querySelectorAll('.row'),function(d){ var g=function(k){return d.querySelector('[data-k="'+k+'"]').value.trim();}; return {t:g('t'),q:num(g('q')),p:num(g('p'))}; }).filter(function(x){return x.t;}); }
-  function calc(){ var t=0; [].forEach.call(rows.querySelectorAll('.row'),function(d){ var q=num(d.querySelector('[data-k="q"]').value), p=num(d.querySelector('[data-k="p"]').value); t+=q*p; d.querySelector('[data-k="s"]').value=Math.round(q*p).toLocaleString('he-IL'); }); tot.textContent=money(t); return t; }
+  function calc(){ var t=0; [].forEach.call(rows.querySelectorAll('.row'),function(d){ var q=num(d.querySelector('[data-k="q"]').value), p=num(d.querySelector('[data-k="p"]').value); t+=q*p; d.querySelector('[data-k="s"]').value=Math.round(q*p).toLocaleString('he-IL'); }); tot.textContent=money(t); lastTotal=t; hsShow(); return t; }
   $('#parse').addEventListener('click',function(){
     var r=parseQuote($('#paste').value);
     rows.querySelectorAll('.row').forEach(function(d){ d.remove(); });
@@ -264,6 +287,58 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-o
     lbl.classList.remove('busy'); lbl.firstChild.textContent='צלם את ההצעה';
   });
   $('#totover').addEventListener('input',calc);
+
+  /* ---- the handshake: the owner's settings. Set once, kept on this phone, and carried inside each new link as hs:{p,n,h,two,g}.
+     Off until someone turns it on. The page of the personal film does the bargaining; this room only says how far it may go. ---- */
+  /*ENGINE · keep identical to the one in ../index.html*/
+  /* The bargaining engine. The owner gives one number (the last word, in percent). The character walks down a fixed
+     path of asks toward it; an offer at or above the round's ask closes at the offer; the last round ends at the last word. */
+  var HS=(function(){
+    function stepOf(T){ return T<2000?5:T<10000?10:T<50000?50:100; }
+    function bumpOf(T){ return T<2000?10:T<10000?50:100; }
+    function plan(T,p,n){
+      var st=stepOf(T), L=Math.min(T,Math.ceil(T*(1-p/100)/st)*st), gap=T-L;
+      if(gap<st) return {step:st,L:T,asks:[T],fixed:true};
+      var FR={1:[1],2:[.55,1],3:[.4,.75,1],4:[.3,.55,.8,1]}[n]||[.4,.75,1];
+      var top=Math.floor((T-1)/st)*st, asks=[];
+      for(var i=0;i<FR.length;i++){
+        var a=i===FR.length-1?L:Math.round((T-gap*FR[i])/st)*st;
+        a=Math.max(L,Math.min(a,top));
+        if(!asks.length||a<asks[asks.length-1]) asks.push(a);
+      }
+      if(asks[asks.length-1]!==L) asks.push(L);
+      return {step:st,L:L,asks:asks,fixed:false};
+    }
+    function respond(g,O){
+      var n=g.asks.length, k=g.k+1, A=g.asks[Math.min(k,n)-1];
+      if(!g.fixed&&O>=A) return {k:k,type:'deal',price:Math.min(O,g.ask)};
+      if(k>=n) return {k:k,type:'final',price:g.L};
+      var gap=g.T-g.L, tone=O<g.L-Math.max(gap,0.06*g.T)?'insult':(O<g.L?'far':'near');
+      return {k:k,type:'counter',price:A,tone:tone};
+    }
+    return {stepOf:stepOf,bumpOf:bumpOf,plan:plan,respond:respond};
+  })();
+  /*END ENGINE*/
+  var hsOn=$('#hsOn'), hsSet=$('#hsSet'), hsP=$('#hsP'), hsN=$('#hsN'), hsH=$('#hsH'), hsG=$('#hsG'), hsTwo=$('#hsTwo');
+  function hsShow(){
+    if(!hsOn) return;
+    hsSet.hidden=!hsOn.checked;
+    var over=num($('#totover').value), T=over>0?over:lastTotal, p=+hsP.value, L=T>0?HS.plan(T,p,3).L:0;
+    $('#hsOut').textContent=p+'%'+(T>0?'  ·  '+money(L):'');
+    $('#hsRule').textContent=!(T>0)?'אחרי שקוראים את ההצעה, יופיע כאן הסכום של המילה האחרונה.'
+      :p===0?(hsG.value.trim()?'המחיר לא זז. המלכה נותנת רק את המתנה, ורק למי שלוחץ יד.':'בלי הנחה ובלי מתנה אין למלכה על מה לדבר, והשולחן לא יופיע בסרט.')
+      :'אף אחד לא סוגר מתחת ל־'+money(L)+'. מי שהציע יותר, סגר ביותר. לחיצת יד מחייבת את האולם עד השעה שכתובה בה.';
+  }
+  function hsStore(){
+    try{ localStorage.setItem('bq_hs',JSON.stringify({on:hsOn.checked,p:+hsP.value,n:+hsN.value,h:+hsH.value,g:hsG.value.trim(),two:hsTwo.checked})); }catch(e){}
+    hsShow();
+  }
+  (function(){
+    var s=null; try{ s=JSON.parse(localStorage.getItem('bq_hs')||'null'); }catch(e){}
+    if(s&&typeof s==='object'){ hsOn.checked=!!s.on; if(s.p>=0&&s.p<=15) hsP.value=s.p; if([2,3,4].indexOf(s.n)>=0) hsN.value=s.n; if([24,48,72].indexOf(s.h)>=0) hsH.value=s.h; hsG.value=String(s.g||'').slice(0,60); hsTwo.checked=!!s.two; }
+  })();
+  [hsOn,hsP,hsN,hsH,hsG,hsTwo].forEach(function(el){ el.addEventListener('input',hsStore); el.addEventListener('change',hsStore); });
+  hsShow();
 
   /* ---- 3 · heroes: from the catalog, from a photo, or matched automatically ---- */
   var GENERIC=/^(פורצלן|אריח|אריחי|ריצוף|חיפוי|מט|מבריק|גימור|תוצרת|דמוי|במידה|מידה|דרגת|r10|סמ|לריצוף|וחיפוי|איטלקי|איטליה|ספרד|תואם|יח|כמות|גוון|בגימור|קיים|נוגד|החלקה|אנטי|סליפ|פנים|חוץ|ס״מ|ס"מ|מ״ר|מ"ר)$/;
@@ -332,20 +407,23 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-o
     var over=num($('#totover').value); if(over>0) D.total=over;
     var note=(fd.get('note')||'').trim(); if(note) D.note=note; var gift=(fd.get('gift')||'').trim(); if(gift) D.gift=gift; var viz=(fd.get('viz')||'').trim(); var vm=viz.match(/\/design\/?#(.+)$/); if(vm) D.viz=vm[1];
     if(!D.name) D.name='משפחת '+D.fam;
+    /* the handshake rides in the link only when it is on and has something to give */
+    var hsT=over>0?over:items.reduce(function(a,it){ return a+(+it.q||0)*(+it.p||0); },0), hsLw=0;
+    if(hsOn.checked&&hsT>0){ var hp=+hsP.value, hg=hsG.value.trim(); if(hp>0||hg){ D.hs={p:hp,n:+hsN.value,h:+hsH.value}; if(hsTwo.checked) D.hs.two=1; if(hg) D.hs.g=hg; hsLw=HS.plan(hsT,hp,D.hs.n).L; } }
     $('#go').disabled=true;
     var code=await encode(D);
     $('#go').disabled=false;
     var link=BASE+'#q='+code;
     var total=D.total||calc();
-    var msg='שלום משפחת '+D.fam+', תודה שביקרתם היום באולם של קרמיקה בשאראת. הכנו לכם את הבית שלכם: הסרט והצעת המחיר שלכם, כאן:\n'+link+'\nפותחים בטלפון, עם סאונד.'+(D.gift?'\n\nויש לכם גם מתנה מאיתנו 🎁\n'+BASE+'gift/#q='+code:'');
+    var msg='שלום משפחת '+D.fam+', תודה שביקרתם היום באולם של קרמיקה בשאראת. הכנו לכם את הבית שלכם: הסרט והצעת המחיר שלכם, כאן:\n'+link+'\nפותחים בטלפון, עם סאונד.'+(D.hs?'\nובסוף הסרט מחכה לכם המלכה. איתה אפשר לדבר על המחיר.':'')+(D.gift?'\n\nויש לכם גם מתנה מאיתנו 🎁\n'+BASE+'gift/#q='+code:'');
     $('#msg').textContent=msg; $('#link').textContent=link; $('#open').href=link;
     $('#wa').href='https://wa.me/'+intl(D.phone)+'?text='+encodeURIComponent(msg);
     out.classList.add('on'); out.scrollIntoView({behavior:'smooth',block:'start'});
-    try{ var h=JSON.parse(localStorage.getItem('bq_hist')||'[]'); h.unshift({fam:D.fam,no:D.no,total:total,link:link,at:D.date}); localStorage.setItem('bq_hist',JSON.stringify(h.slice(0,50))); }catch(x){}
+    try{ var h=JSON.parse(localStorage.getItem('bq_hist')||'[]'); h.unshift({fam:D.fam,no:D.no,total:total,link:link,at:D.date,lw:hsLw}); localStorage.setItem('bq_hist',JSON.stringify(h.slice(0,50))); }catch(x){}
     hist();
   });
   $('#copy').addEventListener('click',function(){ var t=$('#link').textContent, b=$('#copy'); try{ navigator.clipboard.writeText(t).then(function(){ b.textContent='הועתק'; setTimeout(function(){ b.textContent='להעתיק קישור'; },1500); }); }catch(e){} });
-  function hist(){ var h=[]; try{ h=JSON.parse(localStorage.getItem('bq_hist')||'[]'); }catch(e){} $('#count').textContent=h.length; $('#hist').innerHTML=h.slice(0,8).map(function(x,i){ return '<div><span>משפחת '+esc(x.fam)+' · '+esc(x.at)+'</span><span><b class="num">'+money(x.total)+'</b> · <a href="'+esc(x.link)+'" target="_blank" rel="noopener">לפתוח</a> · <button type="button" class="del" data-i="'+i+'" aria-label="למחוק את ההצעה של משפחת '+esc(x.fam)+'">מחיקה</button></span></div>'; }).join(''); }
+  function hist(){ var h=[]; try{ h=JSON.parse(localStorage.getItem('bq_hist')||'[]'); }catch(e){} $('#count').textContent=h.length; $('#hist').innerHTML=h.slice(0,8).map(function(x,i){ return '<div><span>משפחת '+esc(x.fam)+' · '+esc(x.at)+(x.lw?' · מילה אחרונה <b class="num">'+money(x.lw)+'</b>':'')+'</span><span><b class="num">'+money(x.total)+'</b> · <a href="'+esc(x.link)+'" target="_blank" rel="noopener">לפתוח</a> · <button type="button" class="del" data-i="'+i+'" aria-label="למחוק את ההצעה של משפחת '+esc(x.fam)+'">מחיקה</button></span></div>'; }).join(''); }
   document.addEventListener('click',function(e){ var b=e.target.closest&&e.target.closest('#hist .del'); if(!b) return; var i=+b.dataset.i; var h=[]; try{ h=JSON.parse(localStorage.getItem('bq_hist')||'[]'); }catch(x){} var x=h[i]; if(!x) return;
     if(b.dataset.sure!=='1'){ b.dataset.sure='1'; b.textContent='בטוח? לחצו שוב'; setTimeout(function(){ if(b.isConnected){ b.dataset.sure=''; b.textContent='מחיקה'; } },3000); return; }
     h.splice(i,1); try{ localStorage.setItem('bq_hist',JSON.stringify(h)); }catch(x2){} hist(); });

@@ -144,6 +144,95 @@ header.q h2{font-family:var(--la);font-size:32px;line-height:1.1;color:var(--lig
 footer{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--mist);font-size:12.5px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
 :focus-visible{outline:2px solid var(--light);outline-offset:3px}
+/* ---------- the handshake: the Queen's table at the end of the quote ---------- */
+.hs-tease{display:block;width:100%;margin:14px 0 0;padding:10px 16px;border-radius:14px;border:1px solid var(--brass);background:linear-gradient(135deg,rgba(226,168,102,.18),rgba(226,168,102,.04));color:var(--light);font-family:var(--la);font-size:16.5px;line-height:1.35;text-align:center}
+.hs{margin-top:18px;border:1px solid var(--brass);border-radius:18px;background:linear-gradient(180deg,rgba(226,168,102,.13),var(--panel) 46%);padding:16px;display:grid;gap:14px;scroll-margin-top:12px}
+.hs > *{min-width:0}
+.hs-stage{display:grid;grid-template-columns:132px minmax(0,1fr);gap:14px;align-items:end}
+.hs-arch{width:132px;height:176px;border-radius:66px 66px 12px 12px;border:1px solid var(--brass);overflow:hidden;position:relative;background:#1b1f24;box-shadow:0 14px 30px rgba(0,0,0,.45);transition:box-shadow .5s}
+.hs-arch.lit{box-shadow:0 0 0 3px rgba(226,168,102,.35),0 0 44px rgba(226,168,102,.5)}
+.hs-fig{position:absolute;inset:0;background:url(m/queen.jpg) 0 0/100% 1600% no-repeat}
+.hs-arch.bow .hs-fig{animation:hsbow 1.6s steps(15) forwards}
+@keyframes hsbow{to{background-position:0 100%}}
+.hs-talk{display:grid;gap:6px;min-width:0}
+.hs-who{font-family:var(--la);font-size:17px;color:var(--brass);line-height:1.2}
+.hs-bubble{background:var(--stone);color:var(--night);border-radius:16px 16px 4px 16px;padding:10px 14px;font-size:16.5px;line-height:1.45;min-height:4.6em;display:flex;align-items:center}
+.hs-bubble.in{animation:hspop .35s ease-out}
+@keyframes hspop{from{opacity:.25;transform:translateY(5px)}}
+.hs-think{display:inline-flex;align-items:center;gap:10px;color:#4a4f60}
+.hs-dots{display:inline-flex;gap:4px}
+.hs-dots i{width:7px;height:7px;border-radius:50%;background:#4a4f60;animation:hsdot 1s ease-in-out infinite}
+.hs-dots i:nth-child(2){animation-delay:.15s}.hs-dots i:nth-child(3){animation-delay:.3s}
+@keyframes hsdot{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+.hs-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:28px}
+.hs-tok{display:flex;align-items:center;gap:7px;color:var(--mist);font-size:14px}
+.hs-tok i{width:14px;height:16px;flex:none;background:var(--brass);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.hs-tok i.used{background:rgba(243,238,230,.2)}
+.hs-tok span{margin-inline-start:4px}
+.hs-link{background:none;border:0;color:var(--mist);text-decoration:underline;text-underline-offset:3px;font-size:14.5px;min-height:44px;padding:0 6px}
+.hs-bid{display:grid;gap:12px}
+.hs-track{--a:1;--o:.9;position:relative;height:66px;direction:ltr}
+.hs-flag{position:absolute;top:0;left:calc(14px + (100% - 28px) * var(--a));transform:translateX(calc(-100% * var(--a)));transition:left .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1);pointer-events:none}
+.hs-flag b{display:block;font-family:var(--la);font-weight:400;font-size:14.5px;line-height:1.5;color:var(--night);background:var(--brass);border-radius:8px;padding:0 9px;white-space:nowrap}
+.hs-stem{position:absolute;top:21px;left:calc(14px + (100% - 28px) * var(--a));width:2px;height:27px;margin-left:-1px;background:var(--brass);transition:left .8s cubic-bezier(.2,.7,.2,1);pointer-events:none}
+.hs-rail{position:absolute;left:0;right:0;top:38px;height:8px;border-radius:99px;background:rgba(243,238,230,.12);overflow:hidden}
+.hs-fill{position:absolute;top:0;bottom:0;left:0;width:calc(14px + (100% - 28px) * var(--o));background:var(--line)}
+.hs-zone{position:absolute;top:0;bottom:0;right:0;left:calc(14px + (100% - 28px) * var(--a));background:repeating-linear-gradient(135deg,rgba(243,238,230,.26) 0 3px,transparent 3px 7px);transition:left .8s cubic-bezier(.2,.7,.2,1)}
+.hs-tick{position:absolute;top:35px;width:2px;height:14px;margin-left:-1px;background:rgba(243,238,230,.5);pointer-events:none}
+#hsSlide{position:absolute;left:0;top:24px;width:100%;height:36px;margin:0;padding:0;border:0;background:transparent;-webkit-appearance:none;appearance:none;direction:ltr;touch-action:pan-y;cursor:pointer}
+#hsSlide::-webkit-slider-runnable-track{height:36px;background:transparent}
+#hsSlide::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;margin-top:4px;border-radius:50%;background:var(--stone);border:3px solid var(--brass);box-shadow:0 2px 10px rgba(0,0,0,.55)}
+#hsSlide::-moz-range-track{height:36px;background:transparent}
+#hsSlide::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--stone);border:3px solid var(--brass)}
+#hsSlide:disabled{opacity:.5}
+.hs-offer{display:grid;gap:6px}
+.hs-offer label{font-size:14px;color:var(--mist)}
+.hs-amount{display:grid;grid-template-columns:52px minmax(0,1fr) 52px;gap:8px;direction:ltr}
+.hs-amount input{width:100%;min-height:56px;text-align:center;font:inherit;font-family:var(--la);font-size:30px;line-height:1;color:var(--stone);background:#0c0e11;border:1px solid var(--line);border-radius:12px;padding:0 6px;direction:ltr}
+.hs-step{min-height:56px;border-radius:12px;border:1px solid var(--line);background:transparent;font-size:28px;line-height:1}
+.hs-btn{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 8px;width:100%;min-height:54px;padding:6px 18px;border-radius:999px;border:1px solid var(--brass);background:transparent;color:var(--stone);font-family:var(--la);font-size:19px;line-height:1.2;text-decoration:none;text-align:center}
+.hs-btn.go{background:var(--brass);color:var(--night)}
+.hs-btn span{pointer-events:none}
+.hs-btn:disabled,.hs-step:disabled{opacity:.45}
+.hs-shake{display:grid;gap:8px;justify-items:center;text-align:center}
+.hs-price{font-family:var(--la);font-size:clamp(36px,11vw,48px);line-height:1;color:var(--light)}
+.hs-gift{color:var(--brass);font-size:15.5px}
+.hs-note{color:var(--mist);font-size:14.5px;line-height:1.5}
+.hs-hold{position:relative;width:150px;height:150px;border-radius:50%;border:0;padding:0;background:radial-gradient(circle at 50% 42%,rgba(226,168,102,.26),rgba(226,168,102,.05) 70%);touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;transition:transform .2s}
+.hs-hold.on{transform:scale(.97)}
+.hs-hold svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hs-hold .hs-trk{fill:none;stroke:var(--line);stroke-width:3}
+.hs-hold .hs-prg{fill:none;stroke:var(--brass);stroke-width:5;stroke-linecap:round;stroke-dasharray:326.73;transform:rotate(-90deg);transform-origin:60px 60px}
+.hs-hold .hs-hl{fill:var(--stone)}
+.hs-hold .hs-hr{fill:var(--brass)}
+.hs-hold.done .hs-hl{fill:var(--brass)}
+.hs-hold.done{animation:hssealed .5s ease-out}
+@keyframes hssealed{40%{transform:scale(1.08);box-shadow:0 0 0 10px rgba(226,168,102,.25)}}
+.hs-ht{position:absolute;left:0;right:0;bottom:26px;font-family:var(--la);font-size:15px;color:var(--stone);pointer-events:none}
+.hs-links{display:flex;flex-wrap:wrap;justify-content:center;gap:0 10px}
+.hs-cert{border:1px dashed var(--brass);border-radius:16px;background:var(--deep);overflow:hidden;display:grid;gap:8px;padding:0 16px 16px;text-align:center;justify-items:center}
+.hs-band{justify-self:stretch;margin:0 -16px;height:54px;background:#1b1f24 url(m/tiles_band.jpg) center/cover}
+.hs-seals{display:flex;gap:10px;margin-top:-30px}
+.hs-seal{width:46px;height:52px;position:relative;display:grid;place-items:center;background:var(--brass);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.hs-seal::before{content:"";position:absolute;inset:3px;background:var(--deep);clip-path:inherit}
+.hs-seal svg{position:relative;width:22px;height:22px;stroke:var(--night);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.hs-seal.on::before{background:var(--brass)}
+.hs-seal.on svg{opacity:1}
+.hs-seal.on{animation:hsstamp .5s cubic-bezier(.2,1.4,.4,1)}
+@keyframes hsstamp{from{transform:scale(1.9) rotate(-14deg);opacity:0}}
+.hs-cert h3{font-family:var(--la);font-size:26px;color:var(--brass);line-height:1.1}
+.hs-parties{color:var(--mist);font-size:14.5px}
+.hs-cprice{font-family:var(--la);font-size:clamp(40px,12vw,56px);line-height:1;color:var(--light)}
+.hs-was{font-size:15px;color:var(--mist)}
+.hs-was b{color:var(--brass);font-weight:500}
+.hs-cgift{font-size:15.5px}
+.hs-kept{justify-self:stretch;display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-top:1px solid rgba(243,238,230,.14);padding-top:10px;text-align:start;font-size:14.5px;color:var(--mist)}
+.hs-kept b{font-family:var(--la);font-weight:400;font-size:20px;color:var(--brass);flex:none}
+.hs-fine{font-size:12.5px;color:var(--mist);line-height:1.5}
+.hs-second,.hs-gone{border-radius:16px;background:#0c0e11;border:1px solid rgba(243,238,230,.14);padding:14px 16px;display:grid;gap:8px;justify-items:center;text-align:center}
+.hs-sect{font-size:16px}
+@media (max-width:359px){ .hs-stage{grid-template-columns:112px minmax(0,1fr)} .hs-arch{width:112px;height:150px;border-radius:56px 56px 12px 12px} .hs-amount{grid-template-columns:46px minmax(0,1fr) 46px} .hs-amount input{font-size:26px} }
+@media (prefers-reduced-motion:reduce){ .hs *,.hs *::before{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important} }
 </style>
 </head>
 <body>
@@ -194,10 +283,81 @@ footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
     </div>
     <span class="demo">הדגמה · cinemacome</span>
   </header>
+  <button type="button" class="hs-tease" id="hsTease" hidden></button>
 
   <section class="who" aria-label="פרטי הלקוח" id="who"></section>
   <section class="items" aria-label="הפריטים" id="items"></section>
   <section class="total" aria-label="סיכום" id="total"></section>
+  <section class="hs" id="hs" aria-label="השולחן של המלכה" hidden>
+    <div class="hs-stage">
+      <div class="hs-arch" id="hsArch"><div class="hs-fig" role="img" aria-label="מלכת המשושים, מתוך הסרט"></div></div>
+      <div class="hs-talk"><p class="hs-who">מלכת המשושים</p><div class="hs-bubble" id="hsBubble" aria-live="polite"></div></div>
+    </div>
+    <div class="hs-meta"><p class="hs-tok" id="hsTok"></p><button type="button" class="hs-link" id="hsReset" hidden>להתחיל מחדש</button></div>
+
+    <div class="hs-bid" id="hsBid">
+      <div class="hs-track" id="hsTrack">
+        <div class="hs-flag"><b dir="rtl">המלכה · <span class="num" id="hsFlagV"></span></b></div>
+        <i class="hs-stem"></i>
+        <div class="hs-rail"><div class="hs-fill"></div><div class="hs-zone"></div></div>
+        <input type="range" id="hsSlide" aria-label="ההצעה שלכם">
+      </div>
+      <div class="hs-offer">
+        <label for="hsIn">ההצעה שלכם, בשקלים</label>
+        <div class="hs-amount">
+          <button type="button" class="hs-step" id="hsMinus" aria-label="להוריד את ההצעה">−</button>
+          <input id="hsIn" type="text" inputmode="numeric" autocomplete="off" maxlength="9">
+          <button type="button" class="hs-step" id="hsPlus" aria-label="להעלות את ההצעה">+</button>
+        </div>
+      </div>
+      <button type="button" class="hs-btn go" id="hsBidBtn">להציע <span class="num" id="hsBidV"></span></button>
+      <button type="button" class="hs-btn" id="hsTake" hidden>לקחת את המחיר שלה · <span class="num" id="hsTakeV"></span></button>
+    </div>
+
+    <div class="hs-shake" id="hsShake" hidden>
+      <p class="hs-price num" id="hsPrice"></p>
+      <p class="hs-gift" id="hsGift"></p>
+      <button type="button" class="hs-hold" id="hsHold" aria-describedby="hsHint">
+        <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="hs-trk" cx="60" cy="60" r="52"/><circle class="hs-prg" cx="60" cy="60" r="52"/><polygon class="hs-hl" points="60,28 40.9,39 40.9,61 60,72"/><polygon class="hs-hr" points="60,28 79.1,39 79.1,61 60,72"/></svg>
+        <span class="hs-ht">להחזיק</span>
+      </button>
+      <p class="hs-note" id="hsHint">לוחצים ומחזיקים עד שהטבעת נסגרת. זו לחיצת היד.</p>
+      <div class="hs-links">
+        <button type="button" class="hs-link" id="hsTap">לאשר בנגיעה אחת</button>
+        <button type="button" class="hs-link" id="hsBack" hidden>עוד לא. חזרה לשולחן</button>
+      </div>
+    </div>
+
+    <div class="hs-cert" id="hsCert" hidden>
+      <div class="hs-band"></div>
+      <div class="hs-seals" id="hsSeals"></div>
+      <h3 id="hsCertT">לחיצת יד</h3>
+      <p class="hs-parties" id="hsCertP"></p>
+      <p class="hs-cprice num" id="hsCertPrice"></p>
+      <p class="hs-was" id="hsCertWas"></p>
+      <p class="hs-cgift" id="hsCertGift"></p>
+      <div class="hs-kept"><span id="hsKept"></span><b class="num" id="hsCd" aria-label="הזמן שנשאר"></b></div>
+      <a class="hs-btn go" id="hsSend" href="https://wa.me/" target="_blank" rel="noopener" hidden>לשלוח למי שלא היה באולם</a>
+      <button type="button" class="hs-link" id="hsTogether" hidden>אנחנו ביחד, ליד אותו טלפון</button>
+      <a class="hs-btn go" id="hsWa" href="https://wa.me/" target="_blank" rel="noopener" hidden>לסגור בוואטסאפ</a>
+      <p class="hs-fine" id="hsFine"></p>
+    </div>
+
+    <div class="hs-second" id="hsSecond" hidden>
+      <p class="hs-sect" id="hsSecT"></p>
+      <button type="button" class="hs-hold" id="hsHold2" aria-describedby="hsHint2">
+        <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="hs-trk" cx="60" cy="60" r="52"/><circle class="hs-prg" cx="60" cy="60" r="52"/><polygon class="hs-hl" points="60,28 40.9,39 40.9,61 60,72"/><polygon class="hs-hr" points="60,28 79.1,39 79.1,61 60,72"/></svg>
+        <span class="hs-ht">להחזיק</span>
+      </button>
+      <p class="hs-note" id="hsHint2">היד השנייה נועלת את המחיר.</p>
+      <button type="button" class="hs-link" id="hsTap2">לאשר בנגיעה אחת</button>
+    </div>
+
+    <div class="hs-gone" id="hsGone" hidden>
+      <p class="hs-sect" id="hsGoneT"></p>
+      <a class="hs-btn" id="hsGoneWa" href="https://wa.me/" target="_blank" rel="noopener">לבקש הצעה חדשה בוואטסאפ</a>
+    </div>
+  </section>
 
   <div class="acts">
     <a class="btn go" id="approve" href="#" target="_blank" rel="noopener">לאשר את ההזמנה <small>בוואטסאפ</small></a>
@@ -233,7 +393,8 @@ footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
     items:[
       {t:'ונוס גריי',s:'120/60',k:'ריצוף פורצלן · גימור מט',q:120,p:55,room:'m/r_venus.jpg',tile:'m/t_venus.jpg'},
       {t:'סמנט בז׳',s:'120/60',k:'ריצוף פורצלן · גימור מט',q:160,p:68,room:'m/r_cement.jpg',tile:'m/t_cement.jpg'}
-    ]};
+    ],
+    hs:{p:7,n:3,h:48,two:1,g:'הובלה עד הבית'}};
   function b64u8(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; var b=atob(s); var u=new Uint8Array(b.length); for(var i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return u; }
   function codeFromLink(){
     var h=location.hash||''; var m=h.match(/[#&]q=([A-Za-z0-9_\-]+)/);
@@ -303,7 +464,265 @@ footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
     $('#total').innerHTML='<h3 class="th">פירוט ההצעה</h3>'+lines+sumBox+'<div class="grand"><b>סה״כ לתשלום</b><span class="num">'+money(total)+'</span></div><p class="fine">'+esc(D.note||'המחירים כוללים מע״מ. הובלה, פחת חיתוך ואביזרים נקבעים מול נציג האולם.')+'</p>';
     var msg='שלום, '+(D.name||fam)+'. ראיתי את הסרט ואת הצעת המחיר'+(D.no?' מספר '+D.no:'')+' ('+money(total)+') ואני רוצה לאשר את ההזמנה.';
     $('#approve').href='https://wa.me/'+WA_BIZ+'?text='+encodeURIComponent(msg); var qg=$('#qgift'); if(qg){ if(D.gift){ $('#qgiftT').textContent=D.gift; var cc=codeFromLink(); qg.href='gift/'+(cc?'#q='+cc:''); qg.hidden=false; } else qg.hidden=true; } var vz=$('#viz'); if(vz){ if(D.viz){ vz.href='design/#'+D.viz; vz.style.display=''; } else vz.style.display='none'; }
+    hsInit(total);
   }
+
+  /* ---- the handshake: the Queen bargains for the showroom at night, and the customer shakes on a price.
+     The seller turns it on in the owners' room; the link then carries hs:{p,n,h,two,g}. A link without it looks exactly as before.
+     p = the owner's last word in percent, n = offers, h = hours the handshake is kept, two = both partners must shake, g = a gift for those who shake. ---- */
+  /*ENGINE · keep identical to the one in o-b7q4x9/index.html*/
+  /* The bargaining engine. The owner gives one number (the last word, in percent). The character walks down a fixed
+     path of asks toward it; an offer at or above the round's ask closes at the offer; the last round ends at the last word. */
+  var HS=(function(){
+    function stepOf(T){ return T<2000?5:T<10000?10:T<50000?50:100; }
+    function bumpOf(T){ return T<2000?10:T<10000?50:100; }
+    function plan(T,p,n){
+      var st=stepOf(T), L=Math.min(T,Math.ceil(T*(1-p/100)/st)*st), gap=T-L;
+      if(gap<st) return {step:st,L:T,asks:[T],fixed:true};
+      var FR={1:[1],2:[.55,1],3:[.4,.75,1],4:[.3,.55,.8,1]}[n]||[.4,.75,1];
+      var top=Math.floor((T-1)/st)*st, asks=[];
+      for(var i=0;i<FR.length;i++){
+        var a=i===FR.length-1?L:Math.round((T-gap*FR[i])/st)*st;
+        a=Math.max(L,Math.min(a,top));
+        if(!asks.length||a<asks[asks.length-1]) asks.push(a);
+      }
+      if(asks[asks.length-1]!==L) asks.push(L);
+      return {step:st,L:L,asks:asks,fixed:false};
+    }
+    function respond(g,O){
+      var n=g.asks.length, k=g.k+1, A=g.asks[Math.min(k,n)-1];
+      if(!g.fixed&&O>=A) return {k:k,type:'deal',price:Math.min(O,g.ask)};
+      if(k>=n) return {k:k,type:'final',price:g.L};
+      var gap=g.T-g.L, tone=O<g.L-Math.max(gap,0.06*g.T)?'insult':(O<g.L?'far':'near');
+      return {k:k,type:'counter',price:A,tone:tone};
+    }
+    return {stepOf:stepOf,bumpOf:bumpOf,plan:plan,respond:respond};
+  })();
+  /*END ENGINE*/
+  var hs=null, hsBusy=false, hsGID=0, hsApprove=$('#approve').innerHTML;
+  var hsBox=$('#hs'), hsTease=$('#hsTease'), hsBubble=$('#hsBubble'), hsTrack=$('#hsTrack'), hsSlide=$('#hsSlide'), hsIn=$('#hsIn'), hsArch=$('#hsArch');
+  var HS_DAYS=['יום ראשון','יום שני','יום שלישי','יום רביעי','יום חמישי','יום שישי','שבת'];
+  function hsM(n){ return '<span class="num">'+money(n)+'</span>'; }
+  function hs2(n){ return (n<10?'0':'')+n; }
+  function hsWhen(ms){ var d=new Date(ms); return HS_DAYS[d.getDay()]+', '+d.getDate()+'.'+(d.getMonth()+1)+', בשעה '+hs2(d.getHours())+':'+hs2(d.getMinutes()); }
+  function hsDigits(s){ var n=parseInt(String(s).replace(/[^\d]/g,''),10); return isFinite(n)?n:0; }
+  function hsFmt(n){ return Math.round(n).toLocaleString('he-IL'); }
+  function hsStill(){ try{ return matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ return false; } }
+  var HSL={
+    open:'המחיר שקיבלתם באולם הוא המחיר הרשמי. אצלי אפשר להציע.',
+    insult:function(A){ return 'בסכום הזה אני לא מכסה אפילו את הדבק. אבל באתי לסגור: '+hsM(A)+'.'; },
+    far:function(r,A){ return r===1?'רחוק מדי. אני יורדת ל־'+hsM(A)+'.':r===2?'פתחתי את הפנקס של בעל הבית. יש לי רשות לרדת עוד: '+hsM(A)+'.':'עוד צעד מהצד שלי: '+hsM(A)+'.'; },
+    near:function(r,A){ return r===1?'קרוב. '+hsM(A)+', וסוגרים.':r===2?'כמעט שם. בעל הבית מרשה לי '+hsM(A)+'.':'עוד קצת. '+hsM(A)+'.'; },
+    deal:function(O,i){ return i%2?hsM(O)+'? יש עסקה.':'על '+hsM(O)+' אני לוחצת יד.'; },
+    final:function(L){ return hsM(L)+'. זו המילה האחרונה שלי. מתחתיה גם בעל הבית לא יורד.'; },
+    take:function(A){ return hsM(A)+'. מחיר טוב לשני הצדדים. יד?'; },
+    fixed:function(g){ return 'המחיר הזה לא זז, ואני אומרת את זה ישר. מה שכן: '+esc(g)+', עליי, למי שלוחץ יד.'; },
+    stand:function(A,left){ return hsM(A)+'. זה המחיר שלי כרגע. '+(left===1?'נשארה לכם הצעה אחת.':'אפשר להציע שוב.'); },
+    again:'בבקשה. אני כאן.',
+    half:'יד אחת יש. חסרה היד של מי שלא היה באולם.',
+    halfYou:'היד הראשונה כבר לחצה. חסרה רק היד שלך.',
+    sealed:function(g){ return 'לחצנו יד.'+(g?' '+esc(g)+', עליי.':'')+' נתראה באולם.'; },
+    gone:'לחיצת היד שלנו פגה, והמחיר חזר למחיר הרשמי. אפשר לבקש מהאולם הצעה חדשה.'
+  };
+  function hsSay(html){ hsBubble.classList.remove('in'); hsBubble.innerHTML='<span>'+html+'</span>'; void hsBubble.offsetWidth; hsBubble.classList.add('in'); }
+  function hsThink(deep){ hsSay('<span class="hs-think"><span class="hs-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>'+(deep?'המלכה פותחת את הפנקס של בעל הבית':'המלכה חושבת')+'</span></span>'); }
+  function hsKey(){ return 'hs_'+String(D.no||'x')+'_'+Math.round(hs.T); }
+  function hsPos(v){ var p=(v-hs.lo)/(hs.T-hs.lo); return Math.max(0,Math.min(1,p)); }
+  function hsMax(){ return Math.floor((hs.ask-1)/hs.step)*hs.step; }
+  function hsSetOffer(v,typed){
+    v=Math.round(v/hs.step)*hs.step; v=Math.max(typed?hs.step:hs.lo,Math.min(hsMax(),v));
+    hs.offer=v; hsSlide.value=v; hsIn.value=hsFmt(v);
+    hsTrack.style.setProperty('--o',String(hsPos(v)));
+    $('#hsBidV').textContent=money(v);
+  }
+  function hsLock(on){ [hsSlide,hsIn,$('#hsBidBtn'),$('#hsTake'),$('#hsMinus'),$('#hsPlus')].forEach(function(el){ el.disabled=on; }); }
+  function hsSave(){
+    if(!hs||hs.mode==='gone') return;
+    var m=hs.mode==='take'?'talk':hs.mode;
+    try{ localStorage.setItem(hsKey(),JSON.stringify({k:hs.k,ask:hs.ask,mode:m,price:m==='talk'?null:hs.price,deadline:hs.deadline,hands:hs.hands,offers:hs.offers,via:hs.via})); }catch(e){}
+  }
+  function hsValid(s){
+    var n=hs.asks.length;
+    if(['talk','deal','final','half','sealed'].indexOf(s.mode)<0) return false;
+    if(!(s.k>=0&&s.k<=n)||(s.mode==='talk'&&s.k>=n)) return false;
+    if(!(s.ask>=hs.L-0.5&&s.ask<=hs.T+0.5)) return false;
+    if(s.mode!=='talk'&&!(s.price>=hs.L-0.5&&s.price<=hs.T+0.5)) return false;
+    if((s.mode==='half'||s.mode==='sealed')&&!(s.deadline>0)) return false;
+    return true;
+  }
+  /* the second hand travels in the link: the price, the minute the handshake ends, and a small check */
+  function hsSum(P,m){ var s=String(D.no||''), a=0; for(var i=0;i<s.length;i++) a=(a*31+s.charCodeAt(i))%46656; return ((P*7+m*13+a)%46656).toString(36); }
+  function hsCode(){ var P=Math.round(hs.price), m=Math.floor(hs.deadline/60000); return P.toString(36)+'.'+m.toString(36)+'.'+hsSum(P,m); }
+  function hsFromLink(){
+    var h=(location.hash||'').match(/[#&]k=([0-9a-z.]+)/); if(!h) return null;
+    var a=h[1].split('.'); if(a.length!==3) return null;
+    var P=parseInt(a[0],36), m=parseInt(a[1],36);
+    if(!isFinite(P)||!isFinite(m)||hsSum(P,m)!==a[2]) return null;
+    return {price:P,deadline:m*60000};
+  }
+  function hsTickMark(O){ var t=document.createElement('i'); t.className='hs-tick'; t.style.left='calc(14px + (100% - 28px) * '+hsPos(O)+')'; hsTrack.appendChild(t); }
+  function hsToks(){
+    var n=hs.asks.length, left=n-hs.k, h='';
+    for(var i=0;i<n;i++) h+='<i'+(i<hs.k?' class="used"':'')+'></i>';
+    $('#hsTok').innerHTML=h+'<span>'+(hs.mode!=='talk'?'':left>1?'נשארו לכם '+left+' הצעות':left===1?'נשארה לכם הצעה אחת':'')+'</span>';
+  }
+  function hsBidDo(){
+    if(!hs||hs.mode!=='talk'||hsBusy) return;
+    hsSetOffer(hsDigits(hsIn.value)||hs.offer,true);
+    var O=hs.offer, r=HS.respond(hs,O), id=hs.id, deep=r.type==='counter'&&r.k===2&&hs.asks.length>=3;
+    hs.offers.push(O); hs.k=r.k; hsBusy=true; hsLock(true); hsTickMark(O); hsToks(); hsThink(deep);
+    setTimeout(function(){
+      if(!hs||hs.id!==id) return;
+      hsBusy=false; hsLock(false);
+      if(r.type==='deal'){ hs.mode='deal'; hs.price=r.price; hsSay(HSL.deal(r.price,r.k)); }
+      else if(r.type==='final'){ hs.mode='final'; hs.ask=r.price; hs.price=r.price; hsSay(hs.fixed?HSL.fixed(hs.gift):HSL.final(r.price)); }
+      else { hs.ask=r.price; hsSay(r.tone==='insult'&&r.k===1?HSL.insult(r.price):(r.tone==='near'?HSL.near(r.k,r.price):HSL.far(r.k,r.price))); }
+      hsSave(); hsDraw();
+    }, hsStill()?200:(deep?1900:1000));
+  }
+  function hsTakeDo(){ if(!hs||hs.mode!=='talk'||hsBusy||hs.k<1) return; hs.mode='take'; hs.price=hs.ask; hsSay(HSL.take(hs.ask)); hsDraw(); }
+  function hsBackDo(){ if(!hs||hs.mode!=='take') return; hs.mode='talk'; hs.price=null; hsSay(HSL.again); hsDraw(); }
+  function hsFirst(){
+    if(!hs||!(hs.mode==='deal'||hs.mode==='final'||hs.mode==='take')) return;
+    hs.deadline=Math.floor((Date.now()+hs.h*3600e3)/60000)*60000; hs.hands=1;
+    if(hs.two){ hs.mode='half'; hs.via='self'; hsSay(HSL.half); } else { hs.mode='sealed'; hsSay(HSL.sealed(hs.gift)); }
+    hsSave(); hsDraw();
+  }
+  function hsSecondDo(){ if(!hs||hs.mode!=='half') return; hs.hands=2; hs.mode='sealed'; hsSay(HSL.sealed(hs.gift)); hsSave(); hsDraw(); }
+  function hsMsg(){
+    return 'שלום, '+(D.name||'משפחת '+D.fam)+'. ראיתי את הסרט, ו'+(hs.two?'שנינו לחצנו יד':'לחצנו יד')+' עם המלכה על '+money(hs.price)+' להצעת מחיר'+(D.no?' מספר '+D.no:'')+
+      (hs.price<hs.T?' (במקום '+money(hs.T)+')':'')+(hs.gift?', כולל '+hs.gift:'')+'. לחיצת היד שמורה עד '+hsWhen(hs.deadline)+'. אני רוצה לאשר את ההזמנה.';
+  }
+  /* the hold: a ring that closes while the finger stays, and two halves of a seal that meet */
+  function hsMakeHold(btn,cb){
+    var ring=btn.querySelector('.hs-prg'), hl=btn.querySelector('.hs-hl'), hr=btn.querySelector('.hs-hr'), LEN=326.73, DUR=1300, raf=0, t0=0, done=false, on=false;
+    function draw(p){ ring.style.strokeDashoffset=String(LEN*(1-p)); hl.setAttribute('transform','translate('+(-14*(1-p))+' 0)'); hr.setAttribute('transform','translate('+(14*(1-p))+' 0)'); }
+    function tick(now){ var p=Math.min(1,(now-t0)/DUR); draw(p); if(p>=1) fin(); else raf=requestAnimationFrame(tick); }
+    function begin(){ if(done||on||btn.disabled) return; on=true; t0=performance.now(); btn.classList.add('on'); raf=requestAnimationFrame(tick); }
+    function stop(){ if(done||!on) return; on=false; cancelAnimationFrame(raf); btn.classList.remove('on'); draw(0); }
+    function fin(){ if(done) return; done=true; on=false; cancelAnimationFrame(raf); btn.classList.remove('on'); btn.classList.add('done'); draw(1);
+      try{ if(navigator.vibrate) navigator.vibrate([30,40,90]); }catch(e){}
+      setTimeout(cb, hsStill()?0:420); }
+    btn.addEventListener('pointerdown',function(e){ if(e.button) return; e.preventDefault(); try{ btn.setPointerCapture(e.pointerId); }catch(x){} begin(); });
+    btn.addEventListener('pointerup',stop); btn.addEventListener('pointercancel',stop); btn.addEventListener('lostpointercapture',stop);
+    btn.addEventListener('keydown',function(e){ if((e.key===' '||e.key==='Enter')&&!e.repeat){ e.preventDefault(); begin(); } });
+    btn.addEventListener('keyup',function(e){ if(e.key===' '||e.key==='Enter') stop(); });
+    btn.addEventListener('blur',stop);
+    btn.addEventListener('contextmenu',function(e){ e.preventDefault(); });
+    draw(0);
+    return { reset:function(){ done=false; on=false; cancelAnimationFrame(raf); btn.classList.remove('on','done'); draw(0); }, instant:function(){ if(!done) fin(); } };
+  }
+  var hsHold1=hsMakeHold($('#hsHold'),hsFirst), hsHold2=hsMakeHold($('#hsHold2'),hsSecondDo);
+  function hsClock(){
+    if(!hs||!hs.deadline||!(hs.mode==='half'||hs.mode==='sealed')) return;
+    var s=Math.floor((hs.deadline-Date.now())/1000);
+    if(s<=0){ hs.mode='gone'; hsDraw(); hsSay(HSL.gone); return; }
+    $('#hsCd').textContent=hs2(Math.floor(s/3600))+':'+hs2(Math.floor(s%3600/60))+':'+hs2(s%60);
+  }
+  function hsDraw(){
+    var m=hs.mode, shaking=m==='deal'||m==='final'||m==='take', code=codeFromLink(), ap=$('#approve');
+    $('#hsBid').hidden=m!=='talk';
+    $('#hsShake').hidden=!shaking;
+    $('#hsCert').hidden=!(m==='half'||m==='sealed');
+    $('#hsSecond').hidden=!(m==='half'&&(hs.via==='partner'||hs.together));
+    $('#hsGone').hidden=m!=='gone';
+    $('#hsReset').hidden=!hs.demo;
+    hsArch.classList.toggle('bow',m!=='talk'&&m!=='gone');
+    hsArch.classList.toggle('lit',m==='sealed');
+    hsToks();
+    if(m==='talk'){
+      hsSlide.min=hs.lo; hsSlide.max=hs.T; hsSlide.step=hs.step;
+      hsTrack.style.setProperty('--a',String(hsPos(hs.ask)));
+      $('#hsFlagV').textContent=money(hs.ask);
+      hsSetOffer(hs.offer||hs.T*0.97);
+      $('#hsTake').hidden=hs.k<1; $('#hsTakeV').textContent=money(hs.ask);
+    }
+    if(shaking){
+      $('#hsPrice').textContent=money(hs.price);
+      $('#hsGift').textContent=hs.gift?'כולל '+hs.gift:''; $('#hsGift').hidden=!hs.gift;
+      $('#hsBack').hidden=m!=='take';
+      hsHold1.reset();
+    }
+    if(m==='half'||m==='sealed'){
+      var full=m==='sealed', self=!full&&hs.via==='self', n=hs.two?2:1, h='';
+      for(var i=0;i<n;i++) h+='<i class="hs-seal'+(i<hs.hands?' on':'')+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></i>';
+      $('#hsSeals').innerHTML=h;
+      $('#hsCertT').textContent=full?'לחיצת יד':'יד אחת מתוך שתיים';
+      $('#hsCertP').textContent='משפחת '+D.fam+' · קרמיקה בשאראת';
+      $('#hsCertPrice').textContent=money(hs.price);
+      $('#hsCertWas').innerHTML=hs.price<hs.T?'במקום <s class="num">'+money(hs.T)+'</s> · חיסכון <b class="num">'+money(hs.T-hs.price)+'</b>':'המחיר הרשמי';
+      $('#hsCertGift').textContent=hs.gift?'ועוד: '+hs.gift:''; $('#hsCertGift').hidden=!hs.gift;
+      $('#hsKept').textContent='שמור עד '+hsWhen(hs.deadline);
+      $('#hsSend').hidden=!self; $('#hsTogether').hidden=!self||hs.together;
+      if(self){
+        var link=location.href.split('#')[0]+'#'+(code?'q='+code+'&':'')+'k='+hsCode();
+        $('#hsSend').href='https://wa.me/?text='+encodeURIComponent('לחצתי יד עם המלכה של קרמיקה בשאראת על '+money(hs.price)+(hs.price<hs.T?' במקום '+money(hs.T):'')+(hs.gift?', כולל '+hs.gift:'')+
+          '. המחיר שמור לנו עד '+hsWhen(hs.deadline)+'. הסרט וההצעה כאן, וחסרה רק היד שלך:\n'+link);
+      }
+      $('#hsWa').hidden=!full; if(full) $('#hsWa').href='https://wa.me/'+(hs.demo?'':WA_BIZ)+'?text='+encodeURIComponent(hsMsg());
+      var fine=full?'המחיר כולל מע״מ. '+(hs.demo?'בדוגמה ההודעה לא נשלחת לאולם: בוואטסאפ בוחרים למי לשלוח אותה.':'ההודעה נפתחת בוואטסאפ של האולם, ונשאר רק לשלוח אותה.'):(self?'המחיר ננעל כשגם היד השנייה לוחצת, עד השעה שכתובה כאן.':'');
+      $('#hsFine').textContent=fine; $('#hsFine').hidden=!fine;
+      $('#hsSecT').innerHTML=hs.via==='partner'?'היד הראשונה כבר לחצה על '+hsM(hs.price)+'. המחיר שמור עד '+esc(hsWhen(hs.deadline))+'. חסרה רק היד שלך.':'ועכשיו היד השנייה.';
+      hsClock();
+    }
+    if(m==='gone'){
+      $('#hsGoneT').innerHTML='לחיצת היד על '+hsM(hs.price)+' הייתה שמורה עד '+esc(hsWhen(hs.deadline))+'.';
+      $('#hsGoneWa').href='https://wa.me/'+(hs.demo?'':WA_BIZ)+'?text='+encodeURIComponent('שלום, '+(D.name||'משפחת '+D.fam)+'. ראיתי את הסרט. לחיצת היד שלנו על '+money(hs.price)+' להצעת מחיר'+(D.no?' מספר '+D.no:'')+' פגה. אפשר לקבל הצעה חדשה?');
+    }
+    var tz=m==='talk'?'המלכה מחכה לכם למטה. איתה אפשר לדבר על המחיר.':shaking?'המלכה מושיטה לכם יד, למטה.':m==='half'?(hs.via==='partner'?'יד אחת כבר לחצה. חסרה רק היד שלך, למטה.':'יד אחת מתוך שתיים. חסרה היד השנייה.'):m==='sealed'?'לחצתם יד על '+money(hs.price)+'.':'';
+    hsTease.hidden=!tz; hsTease.textContent=tz;
+    if(m==='sealed') ap.hidden=true;
+    else if(m==='gone'){ ap.hidden=false; ap.innerHTML=hsApprove; ap.classList.add('go'); }
+    else { ap.hidden=false; ap.innerHTML='לאשר במחיר הרשמי <small>בלי להתמקח</small>'; ap.classList.remove('go'); }
+  }
+  function hsInit(T){
+    var c=D.hs, code=codeFromLink(), ap=$('#approve');
+    hsGID++; hsBusy=false; hs=null; hsLock(false);
+    ap.hidden=false; ap.innerHTML=hsApprove; ap.classList.add('go');
+    hsBox.hidden=true; hsTease.hidden=true;
+    [].forEach.call(hsTrack.querySelectorAll('.hs-tick'),function(t){ t.remove(); });
+    if(!c||!(T>0)||(code&&D===DEFAULT)) return;
+    var p=Math.max(0,Math.min(30,+c.p||0)), n=Math.max(2,Math.min(4,Math.round(+c.n)||3)), h=(+c.h===24||+c.h===72)?+c.h:48;
+    var pl=HS.plan(T,p,n), gift=String(c.g||'').slice(0,80);
+    if(pl.fixed&&!gift) return;
+    hs={id:hsGID,T:T,h:h,two:!!c.two,gift:gift,step:pl.step,L:pl.L,asks:pl.asks,fixed:pl.fixed,k:0,ask:T,mode:'talk',price:null,deadline:null,hands:0,offers:[],via:'self',together:false,offer:0,
+        lo:Math.floor(T*0.7/pl.step)*pl.step,demo:!code};
+    var s=null; try{ s=JSON.parse(localStorage.getItem(hsKey())||'null'); }catch(e){}
+    if(s&&typeof s==='object'&&hsValid(s)){ hs.k=s.k; hs.ask=s.ask; hs.mode=s.mode; hs.price=s.price; hs.deadline=s.deadline||null; hs.hands=s.hands||0; hs.offers=Array.isArray(s.offers)?s.offers.slice(0,8):[]; hs.via=s.via==='partner'?'partner':'self'; }
+    var k=hs.two?hsFromLink():null;
+    if(k&&hs.mode!=='sealed'&&k.price>=hs.L-0.5&&k.price<=hs.T+0.5&&k.deadline<Date.now()+73*3600e3){ hs.mode='half'; hs.price=hs.fixed?hs.T:k.price; hs.deadline=k.deadline; hs.hands=1; hs.via='partner'; hs.k=hs.asks.length; }
+    if(hs.deadline&&Date.now()>hs.deadline&&(hs.mode==='half'||hs.mode==='sealed')) hs.mode='gone';
+    hs.offers.forEach(hsTickMark);
+    hsHold2.reset();
+    hsBox.hidden=false;
+    hsDraw();
+    var m=hs.mode;
+    hsSay(m==='talk'?(hs.k?HSL.stand(hs.ask,hs.asks.length-hs.k):HSL.open):m==='deal'?HSL.deal(hs.price,0):m==='final'?(hs.fixed?HSL.fixed(hs.gift):HSL.final(hs.price)):m==='half'?(hs.via==='partner'?HSL.halfYou:HSL.half):m==='sealed'?HSL.sealed(hs.gift):HSL.gone);
+  }
+  hsSlide.addEventListener('input',function(){ if(hs) hsSetOffer(+hsSlide.value); });
+  hsIn.addEventListener('input',function(){ var n=hsDigits(hsIn.value); hsIn.value=n?hsFmt(n):''; });
+  hsIn.addEventListener('change',function(){ if(hs) hsSetOffer(hsDigits(hsIn.value)||hs.offer,true); });
+  hsIn.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); hsBidDo(); } });
+  $('#hsMinus').addEventListener('click',function(){ if(hs) hsSetOffer(hs.offer-HS.bumpOf(hs.T)); });
+  $('#hsPlus').addEventListener('click',function(){ if(hs) hsSetOffer(hs.offer+HS.bumpOf(hs.T)); });
+  $('#hsBidBtn').addEventListener('click',hsBidDo);
+  $('#hsTake').addEventListener('click',hsTakeDo);
+  $('#hsBack').addEventListener('click',hsBackDo);
+  $('#hsTap').addEventListener('click',function(){ hsHold1.instant(); });
+  $('#hsTap2').addEventListener('click',function(){ hsHold2.instant(); });
+  $('#hsTogether').addEventListener('click',function(){
+    if(!hs||hs.mode!=='half') return; hs.together=true; hsHold2.reset(); hsDraw();
+    try{ $('#hsSecond').scrollIntoView({behavior:hsStill()?'auto':'smooth',block:'center'}); }catch(e){}
+  });
+  hsTease.addEventListener('click',function(){ try{ hsBox.scrollIntoView({behavior:hsStill()?'auto':'smooth',block:'start'}); }catch(e){} });
+  $('#hsReset').addEventListener('click',function(){
+    if(!hs||!hs.demo) return; var T=hs.T;
+    try{ localStorage.removeItem(hsKey()); }catch(e){}
+    try{ if(/[#&]k=/.test(location.hash)) history.replaceState(null,'',location.href.split('#')[0]); }catch(e){}
+    hsInit(T);
+  });
+  setInterval(hsClock,1000);
+
   render();
   fromLink().then(function(d){ if(d){ D=d; render(); } });
 
