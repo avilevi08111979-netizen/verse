@@ -114,6 +114,21 @@ input[type=range]{padding:0;min-height:36px;border:0;background:transparent;acce
 .row .qu:focus-within{outline:2px solid var(--brass);outline-offset:1px;border-color:transparent}
 .row .qu input{flex:1;min-width:0;width:auto;border:0;border-radius:0;background:transparent;padding:6px 6px 6px 2px;outline:0}
 .row .qu .u{flex:none;border:0;border-inline-start:1px solid rgba(255,255,255,.12);background:transparent;color:var(--brass);font:inherit;font-size:11.5px;line-height:1.1;padding:0 4px;min-width:34px;max-width:40px;cursor:pointer;white-space:normal;overflow-wrap:anywhere}
+/* what the page corrected by itself, and the phone's dictionary */
+.vfix{color:var(--mist);font-size:14px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.vfix[hidden]{display:none}
+.vfix .fx{display:inline-flex;align-items:center;max-width:100%;color:var(--stone)}
+.vfix button,.vdl button{flex:none;border:1px solid rgba(255,255,255,.25);background:transparent;color:var(--stone);font:inherit;font-size:13px;border-radius:999px;padding:6px 14px;min-height:40px;cursor:pointer;margin-inline-start:6px}
+.vdict{border-top:1px solid var(--line);padding-top:10px}
+.vdict summary{cursor:pointer;color:var(--brass);font-family:var(--la);font-size:16px;min-height:40px;display:flex;align-items:center;gap:8px;list-style:none}
+.vdict summary::-webkit-details-marker{display:none}
+.vdict summary::before{content:"+";display:inline-grid;place-items:center;width:24px;height:24px;border:1px solid var(--line);border-radius:50%;font-family:var(--body)}
+.vdict[open] summary::before{content:"−"}
+.vdbody{display:grid;gap:12px;padding-top:6px}
+#vdn:empty,#vdsay:empty{display:none}
+.vdl{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.vdl li{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:15px;border-bottom:1px solid rgba(255,255,255,.08);padding:4px 0}
+.vdl li span{min-width:0;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -143,10 +158,24 @@ input[type=range]{padding:0;min-height:36px;border:0;background:transparent;acce
     <div id="vsum" hidden>
       <h2>הבנתי כך</h2>
       <ul class="vlist" id="vlist"></ul>
+      <p class="vfix" id="vfix" hidden></p>
       <p class="vmiss" id="vmiss" role="status" aria-live="polite" hidden></p>
       <button class="go" type="button" id="vgo">נכון. צור את הסרט האישי</button>
-      <p class="hint">משהו לא נכון? מתקנים בשדות למטה, או מדברים שוב.</p>
+      <p class="hint">משהו לא נכון? מתקנים בשדות למטה, או מדברים שוב. שם של פריט שתוקן למטה, הדף זוכר לפעם הבאה.</p>
     </div>
+    <details class="vdict" id="vdict">
+      <summary>המילון של הטלפון הזה <span class="num" id="vdn"></span></summary>
+      <div class="vdbody">
+      <p class="hint">מילה שהטלפון שומע לא נכון? מלמדים אותו פעם אחת, והדף מתקן אותה לבד מעכשיו. נשמר רק בטלפון הזה.</p>
+      <div class="grid2">
+        <label>הטלפון כותב<input id="vdh" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
+        <label>צריך להיות<input id="vds" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
+      </div>
+      <button class="btn sm" type="button" id="vdadd">ללמד</button>
+      <p class="hint" id="vdsay" role="status" aria-live="polite"></p>
+      <ul class="vdl" id="vdl"></ul>
+      </div>
+    </details>
   </section>
 
   <form id="f" class="card grid" autocomplete="off">
@@ -590,7 +619,69 @@ input[type=range]{padding:0;min-height:36px;border:0;background:transparent;acce
       R.items=out;
       return R;
     }
-    return {parse:parse,readNumber:readNumber,tokenize:tokenize,phoneShow:phoneShow};
+    /* ---- words the phone hears wrong. The ear of the phone cannot be changed, so the page corrects after it:
+       a dictionary of pairs, names that were already sent, and the shop's own words. ---- */
+    var FIN={'ך':'כ','ם':'מ','ן':'נ','ף':'פ','ץ':'צ'};
+    var CLS={'א':1,'ע':1,'ה':1,'ו':2,'י':2,'ס':3,'צ':3,'ש':3,'ז':3,'ט':4,'ת':4,'ד':4,'כ':5,'ק':5,'ח':5,'ג':5,'ב':6,'פ':6};
+    function softL(c){ return c==='א'||c==='ה'||c==='ע'||c==='ו'||c==='י'; }
+    /* roughly how a word sounds: letters only, final forms folded, doubled vav and yod folded */
+    function norm(s){ return String(s||'').toLowerCase().replace(/[ךםןףץ]/g,function(c){ return FIN[c]; }).replace(/[^א-תa-z0-9]/g,'').replace(/יי+/g,'י').replace(/וו+/g,'ו'); }
+    /* the distance between two words by ear: letters that sound alike, and the vowel letters, cost half.
+       With hard=10 the result is under 10 only when every difference is of that soft kind. */
+    function dist(a,b,hard){
+      a=norm(a); b=norm(b); hard=hard||1;
+      var n=a.length, m=b.length, i, j, prev=[0], cur;
+      for(j=1;j<=m;j++) prev[j]=prev[j-1]+(softL(b.charAt(j-1))?0.5:hard);
+      for(i=1;i<=n;i++){
+        var x=a.charAt(i-1); cur=[prev[0]+(softL(x)?0.5:hard)];
+        for(j=1;j<=m;j++){
+          var y=b.charAt(j-1), sub=x===y?0:((CLS[x]&&CLS[x]===CLS[y])||(x==='ב'&&y==='ו')||(x==='ו'&&y==='ב')?0.5:hard);
+          cur[j]=Math.min(prev[j-1]+sub,prev[j]+(softL(x)?0.5:hard),cur[j-1]+(softL(y)?0.5:hard));
+        }
+        prev=cur;
+      }
+      return prev[m];
+    }
+    function near(a,b){ var L=Math.max(norm(a).length,norm(b).length); return L?dist(a,b)/L:1; }
+    var SIZE_W=/^[\d.,\/x×X*-]+$/;
+    /* the words of a name, without sizes and numbers */
+    function wordsOnly(t){ return String(t||'').split(/\s+/).filter(function(w){ return w&&!SIZE_W.test(w); }).join(' '); }
+    function swapWords(it,said){ var sizes=String(it.t).split(/\s+/).filter(function(w){ return SIZE_W.test(w); }); it.t=(said+(sizes.length?' '+sizes.join(' '):'')).trim(); }
+    /* replaces what the phone wrote with what was meant: whole words only, longest first */
+    function applyDict(text,dict){
+      var used=[], s=String(text||'');
+      (dict||[]).slice().sort(function(a,b){ return String(b.h).length-String(a.h).length; }).forEach(function(p){
+        if(!p||!p.h||!p.s) return;
+        var pat=String(p.h).trim().replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/\s+/g,'\\s+'); if(!pat) return;
+        var hit=false, re=new RegExp('(^|[\\s,.;:!?()\\[\\]"\\u05F4\\u05BE-])'+pat+'(?=$|[\\s,.;:!?()\\[\\]"\\u05F4\\u05BE-])','gi');
+        s=s.replace(re,function(m,pre){ hit=true; return pre+p.s; });
+        if(hit) used.push({h:p.h,s:p.s});
+      });
+      return {text:s,used:used};
+    }
+    /* corrects the names of the lines by ear. A whole name is matched to a name this phone already sent, when all that
+       differs is how it was heard (up to two such letters). Then single words are matched to the shop's own words, when
+       exactly one letter was swapped for one that sounds like it. Anything in keep is left as it was heard. */
+    function fixNames(items,known,vocab,keep){
+      var fixes=[], kn=[], seen={}, keepN={}, vset={};
+      (keep||[]).forEach(function(w){ keepN[norm(w)]=1; });
+      (known||[]).forEach(function(nm){ nm=wordsOnly(nm); var k=norm(nm); if(k&&!seen[k]){ seen[k]=1; kn.push(nm); nm.split(/\s+/).forEach(function(w){ var wk=norm(w); if(wk&&!keepN[wk]) keepN[wk]=2; }); } });
+      (vocab||[]).forEach(function(w){ var k=norm(w); if(k.length>=4&&!vset[k]) vset[k]=w; });
+      (items||[]).forEach(function(it){
+        var heard=wordsOnly(it.t), hn=norm(heard); if(!heard||keepN[hn]===1) return;
+        var best=null, bd=99;
+        if(hn.length>=4) kn.forEach(function(nm){ var d=dist(heard,nm,10); if(d<bd){ bd=d; best=nm; } });
+        if(best&&bd<=1){ if(best!==heard){ swapWords(it,best); if(bd>0) fixes.push({h:heard,s:best}); } return; }
+        var out=heard.split(/\s+/).map(function(w){
+          var k=norm(w); if(k.length<4||keepN[k]||vset[k]) return w;
+          for(var v in vset){ if(v.length===k.length&&dist(k,v,10)===0.5){ fixes.push({h:w,s:vset[v]}); return vset[v]; } }
+          return w;
+        }).join(' ');
+        if(out!==heard) swapWords(it,out);
+      });
+      return fixes;
+    }
+    return {parse:parse,readNumber:readNumber,tokenize:tokenize,phoneShow:phoneShow,norm:norm,dist:dist,near:near,wordsOnly:wordsOnly,applyDict:applyDict,fixNames:fixNames};
   })();
   /*END SPEECH*/
 
@@ -823,9 +914,70 @@ input[type=range]{padding:0;min-height:36px;border:0;background:transparent;acce
   $('#vfill').addEventListener('click',function(){ if(listening) vStop(false); if(vText.value.trim()) vFill(); else { vText.focus(); vSay('קודם אומרים או מקלידים משפט.',true); } });
   $('#vclear').addEventListener('click',function(){ if(listening) vStop(false); vText.value=''; vSum.hidden=true; vSay(''); vText.focus(); });
 
+  /* ---- words the phone hears wrong ----
+     Three things correct them after the phone: pairs this phone was taught (bq_dict), names it has already sent (bq_names),
+     and the shop's own words from the catalogue. bq_keep holds what the salesperson said to leave as it was heard. */
+  var SEED=[];   /* pairs every phone starts with: {h:'what the phone writes',s:'what was meant'} */
+  function lsGet(k){ try{ var v=JSON.parse(localStorage.getItem(k)||'[]'); return Array.isArray(v)?v:[]; }catch(e){ return []; } }
+  function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+  function sameH(a,b){ return SP.norm(a)===SP.norm(b)&&String(a).trim().split(/\s+/).length===String(b).trim().split(/\s+/).length; }
+  /* this phone's pairs first; a pair with nothing in it means "forget the one every phone starts with" */
+  function dictAll(){ var mine=lsGet('bq_dict'); return mine.concat(SEED.filter(function(p){ return !mine.some(function(m){ return sameH(m.h,p.h); }); })).filter(function(p){ return p&&p.h&&p.s; }); }
+  function dictAdd(h,s){
+    h=String(h||'').replace(/\s+/g,' ').trim(); s=String(s||'').replace(/\s+/g,' ').trim();
+    if(!h||!s||h===s||!SP.norm(h)) return false;
+    var d=lsGet('bq_dict').filter(function(p){ return p&&!sameH(p.h,h); }); d.unshift({h:h,s:s}); lsSet('bq_dict',d.slice(0,300)); return true;
+  }
+  function dictDel(h){
+    var d=lsGet('bq_dict').filter(function(p){ return p&&!sameH(p.h,h); });
+    if(SEED.some(function(p){ return sameH(p.h,h); })) d.unshift({h:h,s:''});
+    lsSet('bq_dict',d);
+  }
+  var VOC=(function(){
+    var m={}; (window.CAT||[]).forEach(function(c){ String((c.n||'')+' '+(c.l||'')+' '+(c.f||'')+' '+(c.full||'')).split(/[^\u05D0-\u05EA]+/).forEach(function(w){ if(w.length>=4) m[w]=1; }); });
+    ['ברזים','אסלה','אסלות','כיור','כיורים','אמבטיה','מקלחון','אינטרפוץ','שיפולים','פנלים','מראה','ארון','משטח','דבק','רובה'].forEach(function(w){ m[w]=1; });
+    return Object.keys(m);
+  })();
+  var vLast=null;
+  function vDictDraw(){
+    var d=dictAll();
+    $('#vdn').textContent=d.length?'('+d.length+')':'';
+    $('#vdl').innerHTML=d.map(function(p){ return '<li><span>״'+esc(p.h)+'״ ← ״'+esc(p.s)+'״</span><button type="button" data-forget="'+esc(p.h)+'">לשכוח</button></li>'; }).join('');
+  }
+  $('#vdadd').addEventListener('click',function(){
+    var h=$('#vdh').value, s=$('#vds').value;
+    if(!dictAdd(h,s)){ $('#vdsay').textContent='ממלאים את שתי התיבות: מה הטלפון כותב, ומה צריך להיות.'; return; }
+    $('#vdh').value=''; $('#vds').value=''; $('#vdsay').textContent='נלמד.'; vDictDraw();
+    if(vText.value.trim()) vFill();
+  });
+  function vForget(e){
+    var b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.forget){ dictDel(b.dataset.forget); }
+    else if(b.dataset.keep){ var k=lsGet('bq_keep'); k.unshift(b.dataset.keep); lsSet('bq_keep',k.slice(0,300)); }
+    else return;
+    vDictDraw(); if(vText.value.trim()) vFill();
+  }
+  $('#vdl').addEventListener('click',vForget); $('#vfix').addEventListener('click',vForget);
+  /* when a film is made: remember the names that were sent, and learn from what the salesperson corrected by hand.
+     Only a correction that sounds like what was heard is learned, so choosing another product teaches nothing. */
+  function vLearn(D){
+    var names=lsGet('bq_names'), seen={};
+    (D.items||[]).forEach(function(it){ var w=SP.wordsOnly(it.t); if(w&&w.length<=60) names.unshift(w); });
+    lsSet('bq_names',names.filter(function(n){ var k=SP.norm(n); if(!k||seen[k]) return false; seen[k]=1; return true; }).slice(0,400));
+    if(vLast){
+      if(vLast.items.length===(D.items||[]).length) D.items.forEach(function(it,i){ var h=vLast.items[i], s=SP.wordsOnly(it.t); if(h&&s&&h!==s&&SP.near(h,s)<=0.5) dictAdd(h,s); });
+      if(vLast.fam&&D.fam&&vLast.fam!==D.fam&&SP.near(vLast.fam,D.fam)<=0.34) dictAdd(vLast.fam,D.fam);
+      vLast=null;
+    }
+    vDictDraw();
+  }
+  vDictDraw();
+
   function nshow(n){ return (+n||0).toLocaleString('he-IL',{maximumFractionDigits:2}); }
   function vFill(){
-    var r=SP.parse(vText.value), E=f.elements;
+    var dd=SP.applyDict(vText.value,dictAll()), r=SP.parse(dd.text), E=f.elements;
+    vLast={fam:r.fam,items:r.items.map(function(it){ return SP.wordsOnly(it.t); }),dict:dd.used,auto:[]};
+    vLast.auto=SP.fixNames(r.items,lsGet('bq_names'),VOC,lsGet('bq_keep'));
     if(r.fam){ E.fam.value=r.fam; E.name.value=r.name||''; }
     if(r.phone) E.phone.value=r.phone;
     if(r.addr) E.addr.value=r.addr;
@@ -862,6 +1014,12 @@ input[type=range]{padding:0;min-height:36px;border:0;background:transparent;acce
     if(items.length) li('סה״כ','<b class="num">'+money(over>0?over:sum)+'</b>'+(over>0&&Math.round(over)!==Math.round(sum)?' <small>במקום <span class="num">'+money(sum)+'</span></small>':''));
     if(r.hs&&hsOn.checked) li('לחיצת יד','מילה אחרונה <span class="num">'+esc(hsP.value)+'%</span>');
     $('#vlist').innerHTML=L.join('');
+    var fxs=[];
+    if(vLast){
+      vLast.dict.forEach(function(p){ fxs.push('<span class="fx">״'+esc(p.h)+'״ ← ״'+esc(p.s)+'״<button type="button" data-forget="'+esc(p.h)+'">לשכוח</button></span>'); });
+      vLast.auto.forEach(function(p){ fxs.push('<span class="fx">״'+esc(p.h)+'״ ← ״'+esc(p.s)+'״<button type="button" data-keep="'+esc(p.h)+'">לבטל</button></span>'); });
+    }
+    $('#vfix').innerHTML=fxs.length?'תיקנתי לבד: '+fxs.join(' '):''; $('#vfix').hidden=!fxs.length;
     var w=$('#vmiss'), parts=[];
     if(miss.length) parts.push('חסר: '+miss.map(esc).join(', ')+'.');
     if(r.left.length) parts.push('לא הבנתי: ״'+r.left.map(esc).join('״, ״')+'״.');
@@ -907,6 +1065,7 @@ input[type=range]{padding:0;min-height:36px;border:0;background:transparent;acce
     var msg='שלום משפחת '+D.fam+', תודה שביקרתם היום באולם של קרמיקה בשאראת. הכנו לכם את הבית שלכם: הסרט והצעת המחיר שלכם, כאן:\n'+link+'\nפותחים בטלפון, עם סאונד.'+(D.hs?'\nובסוף הסרט מחכה לכם המלכה. איתה אפשר לדבר על המחיר.':'')+(D.gift?'\n\nויש לכם גם מתנה מאיתנו 🎁\n'+BASE+'gift/#q='+code:'');
     $('#msg').textContent=msg; $('#link').textContent=link; $('#open').href=link;
     $('#wa').href='https://wa.me/'+intl(D.phone)+'?text='+encodeURIComponent(msg);
+    vLearn(D);
     out.classList.add('on'); out.scrollIntoView({behavior:'smooth',block:'start'});
     try{ var h=JSON.parse(localStorage.getItem('bq_hist')||'[]'); h.unshift({fam:D.fam,no:D.no,total:total,link:link,at:D.date,lw:hsLw}); localStorage.setItem('bq_hist',JSON.stringify(h.slice(0,50))); }catch(x){}
     hist();
