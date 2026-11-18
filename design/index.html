@@ -188,6 +188,7 @@ input[type=number],input[type=text]{font:inherit;color:var(--text);background:#0
 <div id="toast" role="status"></div>
 
 <script src="rooms.js?v=12"></script>
+<script>(function(){var R=window.ROOMS||[],LV={"bath": {"rt": [1.168587, 1.174613, -0.107489, -0.094267], "vis": [240, 119, 2438, 1336], "cols": {"floor": [0.5333, 0.5373, 0.5529], "wall": [0.5961, 0.6078, 0.5961]}}, "bedroom": {"rt": [1.037323, 1.032828, -0.022125, -0.015745], "vis": [58, 25, 2535, 1411], "cols": {"floor": [0.4157, 0.4039, 0.4], "wall": [0.5686, 0.5569, 0.5412]}}, "living": {"rt": [1.05639108364844, 1.048701346866271, -0.02840757685100749, -0.024197651085157278], "vis": [72, 36, 2504, 1401], "cols": {"floor": [0.5686, 0.5608, 0.549], "wall": [0.6431, 0.6314, 0.6039]}}, "kitchen": {"rt": [1.137403, 1.133086, -0.067994, -0.063738], "vis": [157, 84, 2415, 1346], "cols": {"floor": [0.5647, 0.5608, 0.5725], "wall": [0.5412, 0.5176, 0.4941]}}, "balcony": {"rt": [1.280753, 1.070751, -0.141194, -0.034161], "vis": [110, 49, 855, 1385], "cols": {"floor": [0.5098, 0.4824, 0.4588], "wall": [0.5216, 0.4863, 0.4627]}}},E="mp4",i,L=null;R.forEach(function(r){var d=LV[r.id];if(!d)return;r.video='rooms/'+r.id+'_live.'+E;r.rt=d.rt;r.vis=d.vis;r.surfaces.forEach(function(s){if(d.cols[s.id])s.col=d.cols[s.id];s.lum=s.kind==='floor'?[0.3,1.42]:[0.55,1.4];if(r.id==='bedroom'&&s.kind==='floor')s.lum=[0.3,2.0];if(r.id==='kitchen'||r.id==='bath'||r.id==='balcony')s.lum=[0.3,2.3];});if(r.id==='living')L=r;});if(L){R.splice(R.indexOf(L),1);R.unshift(L);}try{if(!location.hash||location.hash.length<3)location.hash='r=living&floor=13328&wall=14080';}catch(e){}})();</script>
 <script src="tiles.js?v=10"></script>
 <script>
 (function(){
@@ -205,17 +206,19 @@ var deriv=gl&&gl.getExtension('OES_standard_derivatives'); var aniso=gl&&(gl.get
 function sh(type,src){ var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; }
 function prog(vs,fs){ var p=gl.createProgram(); gl.attachShader(p,sh(gl.VERTEX_SHADER,vs)); gl.attachShader(p,sh(gl.FRAGMENT_SHADER,fs)); gl.linkProgram(p); if(!gl.getProgramParameter(p,gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p)); return p; }
 var VS_ROOM='attribute vec2 aP;varying vec2 vT;uniform vec2 uHalf,uCenter,uImg;uniform float uScale;void main(){vec2 img=aP*uImg;vec2 scr=(img-uCenter)*uScale+uHalf;gl_Position=vec4(scr.x/uHalf.x-1.0,1.0-scr.y/uHalf.y,0.0,1.0);vT=aP;}';
-var FS_ROOM='precision mediump float;varying vec2 vT;uniform sampler2D uRoom;uniform vec3 uTint;void main(){gl_FragColor=vec4(texture2D(uRoom,vT).rgb*uTint,1.0);}';
+var FS_ROOM='precision mediump float;varying vec2 vT;uniform sampler2D uRoom;uniform vec3 uTint;uniform vec4 uRT;void main(){gl_FragColor=vec4(texture2D(uRoom,vT*uRT.xy+uRT.zw).rgb*uTint,1.0);}';
 var VS_SURF='attribute vec2 aP;varying vec2 vUV;uniform mat3 uH;uniform vec2 uHalf,uCenter;uniform float uScale;void main(){vec3 q=uH*vec3(aP,1.0);float w=q.z;vec2 img=q.xy/w;vec2 scr=(img-uCenter)*uScale+uHalf;vec2 ndc=vec2(scr.x/uHalf.x-1.0,1.0-scr.y/uHalf.y);gl_Position=vec4(ndc*w,0.0,w);vUV=aP;}';
 var FS_SURF=[
 '#extension GL_OES_standard_derivatives : enable\nprecision highp float;varying vec2 vUV;',
 'uniform sampler2D uRoom,uMask,uFace,uBlur;uniform vec2 uHalf,uCenter,uImg,uCm,uTile;uniform vec4 uFar;uniform vec3 uGroutCol,uTint;',
-'uniform float uScale,uBase,uOpacity,uVH,uRot,uGrout,uLay,uGloss,uKind,uMaxH,uSplit,uFaceLand,uVar;',
+'uniform vec4 uRT;uniform vec3 uCol;uniform vec2 uLum;uniform float uLive,uChroma;uniform float uScale,uBase,uOpacity,uVH,uRot,uGrout,uLay,uGloss,uKind,uMaxH,uSplit,uFaceLand,uVar;',
 'float hash(vec2 c){return fract(sin(dot(c,vec2(12.9898,78.233)))*43758.5453);}',
 'void main(){',
 ' vec2 scr=vec2(gl_FragCoord.x,uVH-gl_FragCoord.y); if(scr.x<uSplit) discard;',
 ' vec2 img=(scr-uHalf)/uScale+uCenter; vec2 ruv=img/uImg; if(ruv.x<0.0||ruv.y<0.0||ruv.x>1.0||ruv.y>1.0) discard;',
-' vec3 room=texture2D(uRoom,ruv).rgb*uTint; float m=texture2D(uMask,ruv).r;',
+' vec3 raw=texture2D(uRoom,ruv*uRT.xy+uRT.zw).rgb; vec3 room=raw*uTint; float m=texture2D(uMask,ruv).r;',
+' if(uLive>0.5){ float Y=dot(raw,vec3(0.299,0.587,0.114)); vec2 cc=vec2(raw.b-Y,raw.r-Y)*vec2(0.564,0.713); float Yb=dot(uCol,vec3(0.299,0.587,0.114)); vec2 cb=vec2(uCol.b-Yb,uCol.r-Yb)*vec2(0.564,0.713);',
+'   float dC=length(cc-cb)*255.0; float rt=Y/max(Yb,0.01); float gate=(1.0-smoothstep(uChroma*1.3,uChroma*2.4,dC))*smoothstep(uLum.x*0.75,uLum.x,rt)*(1.0-smoothstep(uLum.y,uLum.y*1.15,rt)); m*=gate; }',
 ' float hFloor=uCm.y*(1.0-vUV.y); if(uKind>0.5&&uMaxH>0.0&&hFloor>uMaxH) m=0.0;',
 ' vec2 p=vUV*uCm; if(uRot>0.5) p=vec2(p.y,p.x);',
 ' vec2 q=p; if(uLay>3.5){ q=vec2(p.x-p.y,p.x+p.y)*0.7071; }',
@@ -233,7 +236,7 @@ var FS_SURF=[
 ' float L=dot(room,vec3(0.299,0.587,0.114)); float shade=clamp(mix(1.0,L/uBase,0.82),0.0,1.9);',
 ' vec3 lit=col*shade; float spec=max(L-uBase*1.2,0.0)*0.35; lit+=vec3(spec);',
 ' if(uKind<0.5&&uGloss>0.01){ float yF=mix(uFar.y,uFar.w,clamp((img.x-uFar.x)/(uFar.z-uFar.x),0.0,1.0)); vec2 rr=vec2(img.x,2.0*yF-img.y)/uImg;',
-'   if(rr.y>0.0){ vec3 refl=texture2D(uBlur,rr).rgb*uTint; float depth=clamp((img.y-yF)/max(1.0,(uImg.y-yF)),0.0,1.0); float w=uGloss*mix(0.55,0.18,depth); lit=mix(lit,refl,w*mix(1.0,0.3,gm)); } }',
+'   if(rr.y>0.0){ vec3 refl=texture2D(uBlur,rr*uRT.xy+uRT.zw).rgb*uTint; float depth=clamp((img.y-yF)/max(1.0,(uImg.y-yF)),0.0,1.0); float w=uGloss*mix(0.55,0.18,depth); lit=mix(lit,refl,w*mix(1.0,0.3,gm)); } }',
 ' lit=lit-max(lit-0.9,0.0)*0.55;',
 ' gl_FragColor=vec4(mix(room,lit,m*uOpacity),1.0);}'].join('\n');
 var pRoom=gl&&prog(VS_ROOM,FS_ROOM), pSurf=gl&&prog(VS_SURF,FS_SURF);
@@ -251,11 +254,21 @@ function farLine(H){ function at(u){ var X=H[0]*u+H[6], Y=H[1]*u+H[7], W=H[2]*u+
 
 var roomTex=null, blurTex=null, roomImg=null, masks={};
 function loadImg(src,cors){ return new Promise(function(res,rej){ var i=new Image(); if(cors) i.crossOrigin='anonymous'; i.onload=function(){res(i)}; i.onerror=rej; i.src=src; }); }
-function loadRoom(r){
+var vid=null, blurCv=null, vidN=0;
+function loadVid(src){ return new Promise(function(res,rej){ var v=D.createElement('video'); v.muted=true; v.loop=true; v.playsInline=true; v.setAttribute('playsinline',''); v.setAttribute('muted',''); v.preload='auto'; v.crossOrigin='anonymous';
+  v.onloadeddata=function(){ v.width=v.videoWidth; v.height=v.videoHeight; var p=v.play(); if(p&&p.catch) p.catch(function(){}); res(v); }; v.onerror=rej; v.src=src; v.load(); }); }
+function vidTick(){ if(vid&&roomTex&&S.room&&S.room.video){ if(vid.paused&&!D.hidden){ var p=vid.play(); if(p&&p.catch) p.catch(function(){}); }
+    if(vid.readyState>=2){ gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,roomTex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,vid);
+      if(blurCv&&(vidN++%8===0)){ blurCv.getContext('2d').drawImage(vid,0,0,blurCv.width,blurCv.height); gl.bindTexture(gl.TEXTURE_2D,blurTex); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,blurCv); }
+      draw(); } }
+  requestAnimationFrame(vidTick); }
+requestAnimationFrame(vidTick);
+D.addEventListener('pointerdown',function(){ if(vid&&vid.paused){ var p=vid.play(); if(p&&p.catch) p.catch(function(){}); } },true);
+function loadRoom(r){ if(vid){ try{vid.pause();}catch(e){} vid=null; } blurCv=null;
   S.room=r; S.active=null; S.sel={}; S.fade={}; masks={}; roomTex=null; roomImg=null; setSplit(false);
   $('#hint').textContent='החדר נטען…';
-  var jobs=[(r.canvas?Promise.resolve(r.canvas):loadImg(r.img)).then(function(i){ roomImg=i; roomTex=tex(i,false,false);
-    var c=D.createElement('canvas'); c.width=256; c.height=Math.max(1,Math.round(256*i.height/i.width)); var x=c.getContext('2d'); x.drawImage(i,0,0,c.width,c.height); blurTex=tex(c,false,false); })];
+  var jobs=[(r.canvas?Promise.resolve(r.canvas):(r.video?loadVid(r.video):loadImg(r.img))).then(function(i){ roomImg=i; roomTex=tex(i,false,false); if(r.video) vid=i;
+    var c=D.createElement('canvas'); c.width=256; c.height=Math.max(1,Math.round(256*i.height/i.width)); var x=c.getContext('2d'); x.drawImage(i,0,0,c.width,c.height); blurTex=tex(c,false,false); if(r.video) blurCv=c; })];
   r.surfaces.forEach(function(s){ s.H=s.hm?new Float32Array(s.hm):homography(s.quad); s.far=farLine(s.H); if(s.maskCanvas){ masks[s.id]=tex(s.maskCanvas,false,false); } else jobs.push(loadImg('rooms/'+r.id+'_'+s.id+'.png?v='+(s.mv||1)).then(function(i){ masks[s.id]=tex(i,false,false); })); });
   Promise.all(jobs).then(function(){ S.cx=r.w/2; S.cy=r.h; view.scale=0; fit(); S.active=r.surfaces[0].id; renderSurfChips(); restoreFromHash(); draw(); showHint('נוגעים ברצפה או בקיר, ואז באריח'); }).catch(function(){ showHint('החדר לא נטען. רעננו.'); });
   renderRoomSel();
@@ -263,8 +276,8 @@ function loadRoom(r){
 var view={scale:0,min:1,vw:1,vh:1,dpr:1};
 function fit(){ var r=S.room; if(!r) return; var rect=$('#stage').getBoundingClientRect(); view.dpr=Math.min(2,window.devicePixelRatio||1);
   view.vw=Math.round(rect.width*view.dpr); view.vh=Math.round(rect.height*view.dpr); cv.width=view.vw; cv.height=view.vh;
-  var cover=Math.max(view.vw/r.w, view.vh/r.h); if(r.h*cover>view.vh*1.6) cover=view.vh/r.h; view.min=cover; if(!view.scale||view.scale<view.min) view.scale=view.min; view.scale=Math.min(view.scale,view.min*3); clampCenter(); }
-function clampCenter(){ var r=S.room; var halfW=view.vw/view.scale/2, halfH=view.vh/view.scale/2; S.cx=halfW*2>=r.w?r.w/2:Math.min(r.w-halfW,Math.max(halfW,S.cx)); S.cy=halfH*2>=r.h?r.h/2:Math.min(r.h-halfH,Math.max(halfH,S.cy)); }
+  var V=r.vis||[0,0,r.w,r.h]; var cover=Math.max(view.vw/(V[2]-V[0]), view.vh/(V[3]-V[1])); if((V[3]-V[1])*cover>view.vh*1.6) cover=view.vh/(V[3]-V[1]); view.min=cover; if(!view.scale||view.scale<view.min) view.scale=view.min; view.scale=Math.min(view.scale,view.min*3); clampCenter(); }
+function clampCenter(){ var r=S.room; var V=r.vis||[0,0,r.w,r.h]; var halfW=view.vw/view.scale/2, halfH=view.vh/view.scale/2; S.cx=halfW*2>=(V[2]-V[0])?(V[0]+V[2])/2:Math.min(V[2]-halfW,Math.max(V[0]+halfW,S.cx)); S.cy=halfH*2>=(V[3]-V[1])?(V[1]+V[3])/2:Math.min(V[3]-halfH,Math.max(V[1]+halfH,S.cy)); }
 function setView(p){ gl.uniform2f(gl.getUniformLocation(p,'uHalf'),view.vw/2,view.vh/2); gl.uniform2f(gl.getUniformLocation(p,'uCenter'),S.cx,S.cy); gl.uniform1f(gl.getUniformLocation(p,'uScale'),view.scale); }
 function toScreen(pt){ return [((pt[0]-S.cx)*view.scale+view.vw/2)/view.dpr, ((pt[1]-S.cy)*view.scale+view.vh/2)/view.dpr]; }
 
@@ -282,7 +295,7 @@ function draw(){ if(!gl||!roomTex) return; var r=S.room; var now=performance.now
   gl.viewport(0,0,view.vw,view.vh); gl.clearColor(0.043,0.051,0.063,1); gl.clear(gl.COLOR_BUFFER_BIT); gl.disable(gl.DEPTH_TEST); gl.disable(gl.BLEND);
   var tint=S.evening?[0.86,0.74,0.60]:[1,1,1];
   gl.useProgram(pRoom); gl.bindBuffer(gl.ARRAY_BUFFER,quadBuf); var aP=gl.getAttribLocation(pRoom,'aP'); gl.enableVertexAttribArray(aP); gl.vertexAttribPointer(aP,2,gl.FLOAT,false,0,0);
-  setView(pRoom); gl.uniform2f(gl.getUniformLocation(pRoom,'uImg'),r.w,r.h); gl.uniform3fv(gl.getUniformLocation(pRoom,'uTint'),tint); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,roomTex); gl.uniform1i(gl.getUniformLocation(pRoom,'uRoom'),0);
+  setView(pRoom); gl.uniform2f(gl.getUniformLocation(pRoom,'uImg'),r.w,r.h); gl.uniform3fv(gl.getUniformLocation(pRoom,'uTint'),tint); gl.uniform4fv(gl.getUniformLocation(pRoom,'uRT'),r.rt||[1,1,0,0]); gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,roomTex); gl.uniform1i(gl.getUniformLocation(pRoom,'uRoom'),0);
   gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
   r.surfaces.forEach(function(s){ var tid=S.sel[s.id]; if(!tid) return; var t=tileById(tid); if(!t) return; var o=surfOpt(s.id);
     faceTex(t,function(f){ if(!f) return;
@@ -295,7 +308,7 @@ function draw(){ if(!gl||!roomTex) return; var r=S.room; var now=performance.now
       var gc=o.gr==='light'?[0.88,0.87,0.84]:(o.gr==='dark'?[0.23,0.23,0.24]:[f.avg[0]*0.8,f.avg[1]*0.8,f.avg[2]*0.8]); gl.uniform3fv(U('uGroutCol'),gc);
       gl.uniform1f(U('uGloss'),glossOf(t,o)); gl.uniform1f(U('uKind'),s.kind==='wall'?1:0); gl.uniform1f(U('uMaxH'),s.kind==='wall'?o.h:0);
       gl.uniform4fv(U('uFar'),s.far); gl.uniform1f(U('uFaceLand'),f.land?1:0); gl.uniform1f(U('uVar'),t.custom?0:1);
-      gl.uniform1f(U('uBase'),(s.base||150)/255); gl.uniform1f(U('uOpacity'),op); gl.uniform1f(U('uVH'),view.vh); gl.uniform1f(U('uSplit'),S.split); gl.uniform3fv(U('uTint'),tint);
+      gl.uniform1f(U('uBase'),(s.base||150)/255); gl.uniform1f(U('uOpacity'),op); gl.uniform1f(U('uVH'),view.vh); gl.uniform1f(U('uSplit'),S.split); gl.uniform3fv(U('uTint'),tint); gl.uniform4fv(U('uRT'),r.rt||[1,1,0,0]); gl.uniform1f(U('uLive'),r.video&&s.col?1:0); gl.uniform3fv(U('uCol'),s.col||[0.5,0.5,0.5]); gl.uniform2f(U('uLum'),s.lum?s.lum[0]:0.25,s.lum?s.lum[1]:2.0); gl.uniform1f(U('uChroma'),s.chroma||9);
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,roomTex); gl.uniform1i(U('uRoom'),0);
       gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D,masks[s.id]); gl.uniform1i(U('uMask'),1);
       gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D,f.tex); gl.uniform1i(U('uFace'),2);
