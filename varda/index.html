@@ -119,16 +119,18 @@ header.q h2{font-family:var(--la);font-size:32px;line-height:1.1;color:var(--lig
 .total .grand{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:8px;padding-top:12px;border-top:1px solid var(--line)}
 .total .grand b{white-space:nowrap;font-family:var(--la);font-weight:400;font-size:20px;color:var(--stone)}
 .total .grand .num{white-space:nowrap;font-family:var(--la);font-size:clamp(24px,7.6vw,34px);color:var(--light)}
-.qt{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;column-gap:12px;align-items:baseline;font-size:15px}
-.qt .h{font-size:12.5px;color:var(--brass);padding-bottom:8px;border-bottom:1px solid var(--line);white-space:nowrap}
-.qt .c{padding:12px 0;border-bottom:1px dashed rgba(226,168,102,.22);white-space:nowrap;text-align:left;color:var(--stone)}
-.qt .c.n{white-space:normal;text-align:right;color:var(--light);font-weight:500;line-height:1.3;overflow-wrap:anywhere}
+/* each line: the item's name across the full width, its numbers under it in fixed columns */
+.qt{display:grid;grid-template-columns:repeat(var(--cols,3),minmax(0,1fr));column-gap:10px;align-items:baseline;font-size:15px}
+.qt .h{font-size:12.5px;color:var(--brass);padding-bottom:8px;border-bottom:1px solid var(--line);white-space:nowrap;text-align:left}
+.qt .c{padding:2px 0 12px;border-bottom:1px dashed rgba(226,168,102,.22);white-space:nowrap;text-align:left;color:var(--stone)}
+.qt .c.n{grid-column:1/-1;white-space:normal;text-align:right;color:var(--light);font-weight:500;line-height:1.35;overflow-wrap:break-word;word-break:normal;padding:12px 0 4px;border-bottom:0}
 .qt .c.n small{display:block;font-weight:400;font-size:12.5px;color:var(--mist);margin-top:2px}
 .qt .c.s{color:var(--light);font-weight:500}
-.qt .h.r{text-align:left}
+.qt .c.q{direction:rtl;text-align:left}
+.qt .c.n bdi{unicode-bidi:isolate}
 .qsum{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin-top:12px;font-size:14.5px;color:var(--mist)}
 .qsum .num{text-align:left;color:var(--stone)}
-@media (max-width:360px){.qt{column-gap:8px;font-size:14px}}
+@media (max-width:360px){.qt{column-gap:6px;font-size:13.5px}}
 .total .fine{color:var(--mist);font-size:13px;margin-top:10px;line-height:1.5}
 
 .acts{display:grid;gap:10px;margin-top:18px}
@@ -453,14 +455,25 @@ footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
       html+='<article class="item">'+pic+'<div class="body"><h3>'+esc(it.t)+'</h3><p class="sub">'+esc([it.k,it.s?it.s+' ס״מ':''].filter(Boolean).join(' · '))+'</p>'+calc+'</div></article>';
     });
     $('#items').innerHTML=html;
-    lines='<div class="qt" role="table" aria-label="פירוט ההצעה"><span class="h" role="columnheader">פריט</span><span class="h r" role="columnheader">כמות</span><span class="h r" role="columnheader">מחיר ליח׳</span><span class="h r" role="columnheader">סה״כ</span>';
-    items.forEach(function(it){ var sum=(+it.q||0)*(+it.p||0); total+=sum; var u=unitOf(it);
-      lines+='<span class="c n" role="cell">'+esc(it.t)+(it.s&&String(it.t).indexOf(it.s)<0?'<small>'+esc(it.s)+' ס״מ</small>':'')+'</span><span class="c num" role="cell">'+fmt(it.q)+' '+u+'</span><span class="c num" role="cell">'+fmt(it.p)+' ₪</span><span class="c s num" role="cell">'+money(sum)+'</span>'; });
+    var hasD=items.some(function(it){return +it.d>0;}), PV=D.pv;
+    /* Latin names and numbers inside a Hebrew name keep their own order: "HORIZON CREAM 119.2*59.5" */
+    function nameHtml(t){ return String(t==null?'':t).split(/([A-Za-z0-9][A-Za-z0-9 .*\-\/]*[A-Za-z0-9])/).map(function(seg,i){ return i%2?'<bdi>'+esc(seg)+'</bdi>':esc(seg); }).join(''); }
+    function lineSum(it){ return it.x!=null?+it.x:(+it.q||0)*(+it.p||0)*(1-(+it.d||0)/100); }
+    lines='<div class="qt" role="table" aria-label="פירוט ההצעה" style="--cols:'+(hasD?4:3)+'"><span class="h" role="columnheader">כמות</span><span class="h" role="columnheader">מחיר ליח׳</span>'+(hasD?'<span class="h" role="columnheader">הנחה</span>':'')+'<span class="h" role="columnheader">סה״כ</span>';
+    items.forEach(function(it){ var sum=lineSum(it); total+=sum; var u=unitOf(it);
+      lines+='<span class="c n" role="cell">'+nameHtml(it.t)+(it.s&&String(it.t).indexOf(it.s)<0?'<small>'+esc(it.s)+' ס״מ</small>':'')+'</span><span class="c q" role="cell"><span class="num">'+fmt(it.q)+'</span> '+u+'</span><span class="c num" role="cell">'+(PV?money2(it.p):fmt(it.p)+' ₪')+'</span>'+(hasD?'<span class="c num" role="cell">'+(+it.d?fmt(it.d)+'%':'')+'</span>':'')+'<span class="c s num" role="cell">'+(PV?money2(sum):money(sum))+'</span>'; });
     lines+='</div>';
-    if(D.total) total=+D.total;
-    var before=Math.round(total/1.18*100)/100, vat=Math.round((total-before)*100)/100;
-    var sumBox='<div class="qsum"><span>סכום לפני מע״מ</span><span class="num">'+money2(before)+'</span><span>מע״מ 18%</span><span class="num">'+money2(vat)+'</span></div>';
-    $('#total').innerHTML='<h3 class="th">פירוט ההצעה</h3>'+lines+sumBox+'<div class="grand"><b>סה״כ לתשלום</b><span class="num">'+money(total)+'</span></div><p class="fine">'+esc(D.note||'המחירים כוללים מע״מ. הובלה, פחת חיתוך ואביזרים נקבעים מול נציג האולם.')+'</p>';
+    var sumBox;
+    if(PV){ /* exactly the printed quote: lines before VAT, and the totals as printed */
+      total=+PV.total||total;
+      sumBox='<div class="qsum"><span>סה״כ</span><span class="num">'+money2(PV.sub)+'</span>'+(PV.disc?'<span>הנחה</span><span class="num">'+money2(PV.disc)+'</span>':'')+'<span>סה״כ לפני מע״מ</span><span class="num">'+money2(PV.before)+'</span><span>מע״מ '+esc(PV.vp||18)+'%</span><span class="num">'+money2(PV.vat)+'</span></div>';
+    } else {
+      if(D.total) total=+D.total;
+      var before=Math.round(total/1.18*100)/100, vat=Math.round((total-before)*100)/100;
+      sumBox='<div class="qsum"><span>סכום לפני מע״מ</span><span class="num">'+money2(before)+'</span><span>מע״מ 18%</span><span class="num">'+money2(vat)+'</span></div>';
+    }
+    if(PV&&D.total) total=+D.total;
+    $('#total').innerHTML='<h3 class="th">פירוט ההצעה</h3>'+lines+sumBox+'<div class="grand"><b>סה״כ לתשלום</b><span class="num">'+(PV?money2(total):money(total))+'</span></div><p class="fine">'+esc(D.note||(PV?'המחירים בשורות לפני מע״מ ואחרי ההנחה, כמו בהצעה המודפסת'+(D.no?' מספר '+D.no:'')+'. הסכום לתשלום כולל מע״מ.':'המחירים כוללים מע״מ. הובלה, פחת חיתוך ואביזרים נקבעים מול נציג האולם.'))+'</p>';
     var msg='שלום, '+(D.name||fam)+'. ראיתי את הסרט ואת הצעת המחיר'+(D.no?' מספר '+D.no:'')+' ('+money(total)+') ואני רוצה לאשר את ההזמנה.';
     $('#approve').href='https://wa.me/'+WA_BIZ+'?text='+encodeURIComponent(msg); var qg=$('#qgift'); if(qg){ if(D.gift){ $('#qgiftT').textContent=D.gift; var cc=codeFromLink(); qg.href='gift/'+(cc?'#q='+cc:''); qg.hidden=false; } else qg.hidden=true; } var vz=$('#viz'); if(vz){ if(D.viz){ vz.href='design/#'+D.viz; vz.style.display=''; } else vz.style.display='none'; }
     hsInit(total);
