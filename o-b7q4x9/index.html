@@ -124,7 +124,7 @@ input[type=range]{padding:0;min-height:36px;border:0;background:transparent;acce
       <label class="btn sm" style="margin:0" id="ocrlbl">צלם את ההצעה<input id="ocr" type="file" accept="image/*" capture="environment" hidden></label>
       <button class="btn sm" type="button" id="parse">לקרוא את ההצעה</button>
     </div>
-    <p class="hint" id="ocrhint">מצלמים את כל הדף, ישר מלמעלה ובאור טוב. הטלפון קורא אותו פעמיים (בערך חצי דקה), ממלא את הלקוח, השורות והסכומים, ובודק שהסה״כ יוצא כמו בדף.</p>
+    <p class="hint" id="ocrhint">מצלמים את כל הדף, ישר מלמעלה ובאור טוב. הטלפון קורא אותו שלוש פעמים (פחות מדקה), ממלא את הלקוח, השורות והסכומים, ובודק שהסה״כ יוצא כמו בדף.</p>
     <div id="parsed" hidden>
       <div class="rows" id="rows"><div class="h"><span>כמות</span><span>מחיר ליח׳</span><span>הנחה %</span><span>סה״כ</span><span></span></div></div>
       <button class="btn sm" type="button" id="addrow" style="margin-top:8px">+ שורה</button>
@@ -243,7 +243,7 @@ input[type=range]{padding:0;min-height:36px;border:0;background:transparent;acce
     Each item line has quantity, price, discount % and line total, in whatever order the reader returns them:
     line total = quantity × price × (1 − discount/100). Only the lines between the column titles and the first
     total are items; the fine print under the totals is never read as items. The totals are taken as printed.*/
-  function parsePaper(text){
+  function parsePaper(text,conf){
     var BIDI=/[‎‏‪-‮⁦-⁩]/g;
     var lines=String(text||'').replace(BIDI,'').replace(/[״”“]/g,'"').replace(/[׳’‘`]/g,"'").split(/\r?\n/).map(function(s){return s.replace(/\s+/g,' ').trim();});
     var TOK=/\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?/g;
@@ -263,7 +263,7 @@ input[type=range]{padding:0;min-height:36px;border:0;background:transparent;acce
     function good(t,y){ return t.dec||y===t.lost; }
     /* the name: what is left of the line after its numbers, codes and the supplier column */
     function nameOf(L,used,rev){
-      var ws=L.replace(/(\d+(?:\.\d+)?)\s*[*xX×]\s*(\d+(?:\.\d+)?)/g,'$1*$2').replace(/\d{7,}\]?/g,' ').split(' ');
+      var ws=L.replace(/(^|\s)ג\s*[.,]?\s*פורצלן/g,'$1ג.פורצלן').replace(/(\d+(?:\.\d+)?)\s*[*xX×]\s*(\d+(?:\.\d+)?)/g,'$1*$2').replace(/\d{7,}\]?/g,' ').split(' ');
       var out=ws.map(function(w){ return w.replace(/^[|\[\]{}<>\\_~^:;,!?]+|[|\[\]{}<>\\_~^:;,!?]+$/g,'').replace(/([֐-׿])\.$/,'$1'); }).filter(function(w){
         if(!w) return false;
         if(/^\d+(?:\.\d+)?\*\d+(?:\.\d+)?$/.test(w)) return true;
@@ -280,7 +280,12 @@ input[type=range]{padding:0;min-height:36px;border:0;background:transparent;acce
           if(last&&(k==='N'||k===last.k)) last.w.push(w); else runs.push({k:k,w:[w]}); });
         out=[]; runs.reverse().forEach(function(r){ out=out.concat(r.w); });
       }
-      return out.join(' ').replace(/^[.\-'"]+|[.\-]+$/g,'').replace(/\s{2,}/g,' ').trim();
+      /* the printed small yod is often read as an apostrophe: סינ' → סיני, מצב' → מצבי. And ג פורצלן → ג.פורצלן */
+      out=out.map(function(w){ return /^[\u05D0-\u05EA]{2,}['"]$/.test(w)?w.slice(0,-1)+'י':w; });
+      /* a short number before the first word is the supplier column (88, read as 38) */
+      while(out.length>1&&/^\d{1,2}$/.test(out[0])) out.shift();
+      var nm=paperCanon(out.join(' '));
+      return nm.replace(/^[.\-'"]+|[.\-]+$/g,'').replace(/\s{2,}/g,' ').trim();
     }
     var hdr=-1, end=-1, sum={}, i;
     for(i=0;i<lines.length;i++){ var L=lines[i];
@@ -300,17 +305,21 @@ input[type=range]{padding:0;min-height:36px;border:0;background:transparent;acce
     }
     if(first<0) first=end;
     var body=lines.slice(hdr+1,first);
+    /* how sure the reader was of each word on a line (when the reading came with it) */
+    function wkey(w){ return String(w||'').replace(BIDI,'').replace(/^[|\[\]{}<>\\_~^:;,!?'"().]+|[|\[\]{}<>\\_~^:;,!?'"().]+$/g,''); }
+    function cmap(li){ var m={}; if(conf&&conf.length===lines.length&&conf[li]) conf[li].forEach(function(p){ var k=wkey(p[0]); if(k) m[k]=Math.max(m[k]||0,+p[1]||0); }); return m; }
     /* the discount most lines share */
     var cnt={};
     body.forEach(function(L){ toks(L).forEach(function(t){ t.c.forEach(function(v){ if(v>0&&v<100&&v%1&&(t.dec||v===t.lost)){ var k=v.toFixed(2); cnt[k]=(cnt[k]||0)+1; } }); }); });
     var D=0, top=0; Object.keys(cnt).forEach(function(k){ if(cnt[k]>top&&cnt[k]>=2){ top=cnt[k]; D=+k; } });
     var items=[];
-    body.forEach(function(L){
+    body.forEach(function(L,bi){
+      var li=hdr+1+bi;
       if(!/[֐-׿A-Za-z]/.test(L)) return;
       var tk=toks(L);
       var hasMoney=tk.some(function(t){return t.dec;});
       if(!hasMoney&&!/\d{6,}/.test(L)){            /* words only: the rest of the item above ("מושב") */
-        var w=nameOf(L,[]); if(items.length&&w) items[items.length-1].more=(items[items.length-1].more||'')+' '+w; return; }
+        var w=nameOf(L,[]); if(items.length&&w&&w.split(' ').length<=2&&!/[A-Za-z]/.test(w)){ var pv=items[items.length-1], cm=cmap(li); pv.more=(pv.more||'')+' '+w; Object.keys(cm).forEach(function(k){ pv.cm[k]=Math.max(pv.cm[k]||0,cm[k]); }); } return; }
       var best=null;
       var ds=[D]; if(D) ds.push(0); tk.forEach(function(t){ t.c.forEach(function(v){ if(v>0&&v<100&&(t.dec||v===t.lost)&&ds.indexOf(v)<0) ds.push(v); }); });
       function consider(q,p,x,d,how,sc,rev){ if(!(q>0&&p>0&&x>0)) return; var f=1-d/100;
@@ -329,7 +338,7 @@ input[type=range]{padding:0;min-height:36px;border:0;background:transparent;acce
             var o=r2(x/(y*f)); if(!(o>0)) return;
             consider(Math.min(y,o),Math.max(y,o),x,d,'two',(o%1===0?8:0)+(y%1===0?2:0),c<a); }); }); })(tk[a],tk[c]); }
       });
-      var row={t:nameOf(L,best?[best.q,best.p,best.x,best.d]:[D],best&&best.rev),q:0,p:0,d:D,x:0,chk:true,vals:[],L:L,rev:best&&best.rev};
+      var row={t:nameOf(L,best?[best.q,best.p,best.x,best.d]:[D],best&&best.rev),q:0,p:0,d:D,x:0,chk:true,vals:[],L:L,rev:best&&best.rev,cm:cmap(li)};
       tk.forEach(function(t){ t.c.forEach(function(v){ if(v>0&&good(t,v)&&!same(v,D)) row.vals.push(v); }); });
       if(best){ row.q=best.q; row.p=best.p; row.x=best.x; row.d=best.d; row.chk=best.how!=='all'; }
       items.push(row);
@@ -349,7 +358,9 @@ input[type=range]{padding:0;min-height:36px;border:0;background:transparent;acce
         return false;
       });
     }
-    items.forEach(function(it){ delete it.vals; delete it.L; delete it.rev; delete it.more; });
+    items.forEach(function(it){
+      if(conf) it.wc=it.t.split(' ').map(function(w){ var k=wkey(w), c=it.cm[k]; if(c==null) c=it.cm[k.slice(0,-1)]; if(c==null){ var lg=k.split('.').sort(function(x,y){return y.length-x.length;})[0]; c=it.cm[lg]; } return c==null?60:c; });
+      delete it.vals; delete it.L; delete it.rev; delete it.more; delete it.cm; });
     items=items.filter(function(it){ return it.x>0||it.t; });
     if(!items.length) return null;
     sum.ok=sum.sub>0?same(total(),sum.sub):null;
@@ -367,34 +378,91 @@ input[type=range]{padding:0;min-height:36px;border:0;background:transparent;acce
       break; }
     return {items:items,sum:sum,d:D,info:info};
   }
+  /* one way to write a name, however the reader ordered it: inside each piece without Hebrew, the Latin words come
+     before the numbers, the way the paper prints them (HORIZON CREAM 119.2*59.5, OP 305368) */
+  function paperCanon(t){
+    var ws=String(t||'').split(' ').filter(Boolean), out=[], run=[];
+    function flush(){ out=out.concat(run.filter(function(w){return /[A-Za-z]/.test(w);}),run.filter(function(w){return !/[A-Za-z]/.test(w);})); run=[]; }
+    ws.forEach(function(w){ if(/[\u05D0-\u05EA]/.test(w)){ flush(); out.push(w); } else run.push(w); });
+    flush(); return out.join(' ');
+  }
   /* a name the reader garbled: Hebrew final letters in the middle of a word, or a word ending in a non-final one */
   function paperGarbled(t){ return /\d[\u05D0-\u05EA]|[\u05D0-\u05EA]\d/.test(String(t||''))||String(t||'').split(/\s+/).some(function(w){ w=w.replace(/[^\u0590-\u05FF]/g,''); return w.length>=2&&(/[ךםןףץ](?=[\u05D0-\u05EA])/.test(w)||/[מנצפכ]$/.test(w)&&w.length<=2); }); }
-  /* two readings of the same photo: keep the first, take a clean name from the second where the first is garbled */
-  function paperMerge(a,b){
-    function letters(t){ return String(t||'').replace(/[^\u05D0-\u05EAA-Z]/g,'').length; }
-    if(!a) return b; if(!b) return a;
-    if(!a.sum.ok&&b.sum.ok) { var t=a; a=b; b=t; }
-    var used=[];
-    a.items.forEach(function(it){
-      for(var k=0;k<b.items.length;k++){ var o=b.items[k]; if(used.indexOf(k)>=0) continue;
-        if(Math.abs(o.x-it.x)<0.006&&Math.abs(o.q-it.q)<0.006){ used.push(k);
-          /* the cleaner name wins: not garbled, then more letters */
-          var ga=paperGarbled(it.t)||!it.t, gb=paperGarbled(o.t)||!o.t;
-          if(ga&&!gb||(ga===gb&&letters(o.t)>letters(it.t))) it.t=o.t;
-          break; } }
+  /* several readings of the same photo. The numbers come from the reading that matches the paper's own total;
+     each name is voted word by word across the readings, so one misread letter is outvoted by the others. */
+  function paperMerge(){
+    var all=[].slice.call(arguments).filter(Boolean); if(!all.length) return null;
+    function letters(t){ return String(t||'').replace(/[^א-תA-Z]/g,'').length; }
+    function sure(r){ return r.items.filter(function(it){return !it.chk;}).length; }
+    all.sort(function(x,y){ return (y.sum.ok?1:0)-(x.sum.ok?1:0)||sure(y)-sure(x); });
+    var base=all[0], rest=all.slice(1), used=rest.map(function(){return [];});
+    base.items.forEach(function(it){
+      var names=[{t:it.t,wc:it.wc}];
+      rest.forEach(function(r,ri){ for(var k=0;k<r.items.length;k++){ var o=r.items[k]; if(used[ri].indexOf(k)>=0) continue;
+        if(Math.abs(o.x-it.x)<0.006){ used[ri].push(k); names.push({t:o.t,wc:o.wc}); break; } } });
+      var res=paperVote(names); it.t=res.t;
+      /* numbers worked out from two of three are confirmed when another reading printed all three the same */
+      if(it.chk&&rest.some(function(r){ return r.items.some(function(o){ return !o.chk&&Math.abs(o.x-it.x)<0.006&&Math.abs(o.q-it.q)<0.006&&Math.abs(o.p-it.p)<0.006; }); })) it.chk=false;
+      if(res.unsure) it.chk=true; delete it.wc;
     });
-    ['no','date','phone','name','fam'].forEach(function(k){ if(!a.info[k]&&b.info[k]) a.info[k]=b.info[k]; });
-    return a;
+    all.slice(1).forEach(function(r){ ['no','date','phone','name','fam'].forEach(function(k){ if(!base.info[k]&&r.info[k]) base.info[k]=r.info[k]; }); });
+    return base;
+    function noop(){ return letters; }
+  }
+  /* the name of one line, from several readings. Words are lined up across the readings; where they differ,
+     the word the readings are surest of (their certainty added up) wins. A word only one shaky reading saw is left out. */
+  function paperVote(cands){
+    cands=cands.filter(function(c){return c&&c.t;});
+    if(!cands.length) return {t:'',unsure:true};
+    var R=cands.map(function(c){ var ws=c.t.split(' '); return ws.map(function(w,i){ return {w:w,c:c.wc&&c.wc[i]!=null?c.wc[i]:(paperGarbled(w)?20:60)}; }); });
+    function score(r){ return r.reduce(function(a,x){ return a+(x.c-50); },0); }
+    var bi=0; R.forEach(function(r,i){ if(score(r)>score(R[bi])) bi=i; });
+    var base=R[bi], slots=base.map(function(x){ var o={}, n={}; o[x.w]=x.c; n[x.w]=1; return {alt:o,n:n,ins:[]}; });
+    slots.push({alt:{},n:{},ins:[],end:true});
+    /* line up every other reading against the base by their common words */
+    R.forEach(function(r,ri){ if(ri===bi) return;
+      var n=base.length, m=r.length, L=[], i, j;
+      for(i=0;i<=n;i++){ L.push([]); for(j=0;j<=m;j++) L[i].push(0); }
+      for(i=n-1;i>=0;i--) for(j=m-1;j>=0;j--) L[i][j]=base[i].w===r[j].w?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
+      i=0; j=0; var gapB=[], gapR=[];
+      function flush(){ /* words between two common words: same count = the same words read differently */
+        if(gapB.length&&gapB.length===gapR.length) gapB.forEach(function(bk,t){ var x=gapR[t]; slots[bk].alt[x.w]=(slots[bk].alt[x.w]||0)+x.c; slots[bk].n[x.w]=(slots[bk].n[x.w]||0)+1; });
+        else if(!gapB.length&&gapR.length) slots[i].ins.push(gapR.slice());
+        gapB=[]; gapR=[]; }
+      while(i<n||j<m){
+        if(i<n&&j<m&&base[i].w===r[j].w){ flush(); slots[i].alt[base[i].w]+=r[j].c; slots[i].n[base[i].w]++; i++; j++; }
+        else if(j<m&&(i>=n||L[i][j+1]>=L[i+1][j])){ gapR.push(r[j]); j++; }
+        else { gapB.push(i); i++; }
+      }
+      flush();
+    });
+    var out=[], unsure=false;
+    slots.forEach(function(sl){
+      /* words another reading saw here and the base missed: kept when sure enough */
+      sl.ins.forEach(function(g){ g.forEach(function(x){ var isNum=!/[A-Za-z\u05D0-\u05EA]/.test(x.w);
+        if(out.indexOf(x.w)>=0||paperGarbled(x.w)||!/[A-Za-z\u05D0-\u05EA\d]/.test(x.w)) return;
+        if(x.c>=(isNum?88:60)&&!(isNum&&!out.length)){ out.push(x.w); return; }
+        /* a Hebrew word at the end of the line that only one reading caught, faintly: kept, and the line is marked to check */
+        if(sl.end&&/^[\u05D0-\u05EA]{3,}$/.test(x.w)&&x.c>=20){ out.push(x.w); unsure=true; } }); });
+      if(sl.end) return;
+      var best=null, bc=-1, tot=0; Object.keys(sl.alt).forEach(function(w){ tot+=sl.alt[w]; if(sl.alt[w]>bc){ bc=sl.alt[w]; best=w; } });
+      if(bc<35&&R.length>1) return;                 /* a word nobody is sure of is dropped */
+      if(bc<60&&(sl.n[best]||0)<2) unsure=true;   /* two readings that agree are enough */
+      out.push(best);
+    });
+    return {t:paperCanon(out.join(' ')),unsure:unsure};
   }
   /*END PAPER*/
-  var SECOND='=== קריאה שנייה ===';
+  var SECOND='=== קריאה נוספת ===', ocrConf=null;
   var paperMode=null;   /* the printed totals, when the quote came from the Hashavshevet page */
   function r2(n){ return Math.round((+n||0)*100)/100; }
   function unitFor(t){ return /פורצלן|קרמיקה|אריח|ריצוף|חיפוי|פרקט|גרניט|שיש/.test(t)?'מ״ר':'יח׳'; }
   var NUM=/-?\d{1,3}(?:,\d{3})+(?:\.\d+)?|-?\d+(?:\.\d+)?/g;
   function parseQuote(text){
-    var parts=String(text||'').split(SECOND);
-    var pa=parsePaper(parts[0]), pb=parts[1]?parsePaper(parts[1]):null, pp=paperMerge(pa,pb);
+    /* the certainty of each word comes along only while the text is exactly what the photo gave */
+    var useConf=ocrConf&&ocrConf.text===text;
+    var parts=useConf?String(text).split('\n'+SECOND+'\n'):String(text||'').split(SECOND);
+    var pp=paperMerge.apply(null,parts.map(function(t,i){ return parsePaper(t,useConf?ocrConf.list[i]:null); }));
     if(pp) return {items:pp.items.map(function(it){ return {t:it.t,q:it.q,p:it.p,d:it.d,chk:it.chk}; }),over:0,paper:pp};
     text=parts[0];
     var items=[], over=0;
@@ -472,17 +540,22 @@ input[type=range]{padding:0;min-height:36px;border:0;background:transparent;acce
     var lbl=$('#ocrlbl'); lbl.classList.add('busy'); lbl.firstChild.textContent='קורא...';
     try{
       if(!window.Tesseract) await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js');
-      /* two readings of the same photo: a large grey one for the numbers, a smaller one for the names */
-      var pass=1;
-      var worker=await Tesseract.createWorker('heb+eng',1,{logger:function(m){ if(m.status==='recognizing text') lbl.firstChild.textContent='קורא '+pass+'/2 · '+Math.round((m.progress||0)*100)+'%'; }});
-      await worker.setParameters({tessedit_pageseg_mode:'6'});
-      var a=await worker.recognize(await shrink(file,2600,true));
-      pass=2; await worker.setParameters({tessedit_pageseg_mode:'3'});
-      var b=await worker.recognize(await shrink(file,2000));
+      /* three readings of the same photo, each at its own size and setting. Every word keeps how sure the reader
+         was of it, and the readings vote: a letter one of them misread is outvoted by the other two */
+      var PASSES=[[2600,true,'6'],[3000,true,'3'],[2000,false,'3']], pass=0, texts=[], confs=[];
+      var worker=await Tesseract.createWorker('heb+eng',1,{logger:function(m){ if(m.status==='recognizing text') lbl.firstChild.textContent='קורא '+(pass+1)+'/'+PASSES.length+' · '+Math.round((m.progress||0)*100)+'%'; }});
+      for(pass=0;pass<PASSES.length;pass++){
+        var P0=PASSES[pass]; await worker.setParameters({tessedit_pageseg_mode:P0[2]});
+        var rr=await worker.recognize(await shrink(file,P0[0],P0[1]),{},{text:true,blocks:true});
+        var ls=[]; ((rr&&rr.data&&rr.data.blocks)||[]).forEach(function(bk){ (bk.paragraphs||[]).forEach(function(pg){ (pg.lines||[]).forEach(function(ln){ ls.push(ln); }); }); });
+        texts.push(ls.map(function(ln){ return String(ln.text||'').replace(/\s+/g,' ').trim(); }).join('\n'));
+        confs.push(ls.map(function(ln){ return (ln.words||[]).map(function(w){ return [w.text,Math.round(w.confidence)]; }); }));
+      }
       await worker.terminate();
-      var ta=(a&&a.data&&a.data.text||'').trim(), tb=(b&&b.data&&b.data.text||'').trim();
-      if(!ta&&!tb) throw new Error('empty');
-      $('#paste').value=ta+(tb?'\n'+SECOND+'\n'+tb:''); $('#parse').click();
+      if(!texts.join('').trim()) throw new Error('empty');
+      var all=texts.join('\n'+SECOND+'\n');
+      ocrConf={text:all,list:confs}; window.__bqOcr=ocrConf;
+      $('#paste').value=all; $('#parse').click();
     }catch(e){ alert('לא הצלחתי לקרוא את הצילום. אפשר לצלם שוב ישר מול הדף, באור טוב, או להדביק את הטקסט.'); }
     lbl.classList.remove('busy'); lbl.firstChild.textContent='צלם את ההצעה';
   });
