@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>הבית של משפחת בן משה</title>
+<meta name="description" content="הסרט האישי מאקספו קרמיקה: הסרט של ורדה, ואחריו הצעת המחיר האישית עם אישור הזמנה בוואטסאפ.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: three screens on a phone. Entry with the family name, the film full screen with a dedication title, then the quote. The night look of ״ארץ האריחים״ (night, brass, stone). The quote is rendered from data carried in the link; without it, the Ben Moshe example. */
+:root{
+  --night:#0F1114; --deep:#171A1E; --panel:#14171B; --stone:#F3EEE6; --mist:#ADA89F; --brass:#E2A866; --light:#FFDDA8;
+  --line:rgba(226,168,102,.38); --ok:#5fc48f;
+  --he:"Heebo","Assistant","Arial Hebrew",Arial,sans-serif; --la:"Secular One","Heebo",Arial,sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ color-scheme:dark } }
+:root[data-theme="dark"]{ color-scheme:dark }
+*{box-sizing:border-box}
+html{background:var(--night)}
+body{margin:0;background:var(--night);color:var(--stone);font-family:var(--he);font-weight:400;line-height:1.55;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+p,ul{margin:0}
+h1,h2,h3{margin:0;font-weight:400;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer}
+.num{direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums;white-space:nowrap}
+[hidden]{display:none!important}
+
+/* ---------- entry ---------- */
+#entry{position:fixed;inset:0;z-index:30;background:var(--night);display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}
+#entry .bg{position:absolute;inset:0;background:#000 center/cover no-repeat;background-image:url(m/cast_v.jpg);opacity:.85}
+@media (orientation:landscape){ #entry .bg{background-image:url(m/cast_h.jpg)} }
+#entry .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(15,17,20,.96) 0%,rgba(15,17,20,.78) 28%,rgba(15,17,20,.15) 60%,rgba(15,17,20,.35) 100%)}
+#entry .top{position:relative;z-index:1;padding:calc(14px + env(safe-area-inset-top,0px)) 20px 0;display:flex;justify-content:center}
+#entry .top img{height:64px;width:auto;filter:drop-shadow(0 4px 14px rgba(0,0,0,.6))}
+#entry .mid{position:relative;z-index:1}
+#entry .bot{position:relative;z-index:1;padding:0 22px calc(26px + env(safe-area-inset-bottom,0px));display:grid;gap:12px;justify-items:center;text-align:center}
+.eyebrow{font-size:14px;letter-spacing:.06em;color:var(--brass)}
+#entry h1{font-family:var(--la);font-size:clamp(30px,8.5vw,44px);line-height:1.1;color:var(--light);text-shadow:0 2px 18px rgba(0,0,0,.7)}
+#entry .sub{color:var(--stone);font-size:15.5px;max-width:34ch}
+.big{display:inline-flex;align-items:center;justify-content:center;min-height:60px;padding:0 34px;border-radius:999px;border:0;background:var(--brass);color:var(--night);font-family:var(--la);font-size:21px;box-shadow:0 14px 40px rgba(0,0,0,.5);margin-top:6px}
+.big:active{transform:scale(.98)}
+#entry .hint{color:var(--mist);font-size:12.5px}
+@media (orientation:landscape){
+  #entry .top img{height:48px}
+  #entry .bot{padding-bottom:18px;gap:8px}
+  #entry h1{font-size:clamp(26px,5vw,40px)}
+}
+
+/* ---------- film ---------- */
+#film{position:fixed;inset:0;z-index:20;background:#000;display:grid;place-items:center}
+#film video{width:100%;height:100%;object-fit:contain;background:#000;display:block}
+#film .bar{position:absolute;top:0;inset-inline:0;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 0;display:flex;justify-content:space-between;align-items:center;gap:10px;z-index:3}
+.pill{display:inline-flex;align-items:center;min-height:38px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(15,17,20,.55);color:#fff;font-family:var(--la);font-size:15px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);text-decoration:none}
+.pill.gold{border-color:var(--brass);color:var(--light)}
+#skip{opacity:0;pointer-events:none;transition:opacity .5s}
+#skip.on{opacity:1;pointer-events:auto}
+#prog{position:absolute;bottom:0;inset-inline:0;height:4px;background:rgba(255,255,255,.18);z-index:3}
+#prog i{display:block;height:100%;width:0;background:var(--brass)}
+#tap{position:absolute;inset:0;z-index:4;display:grid;place-items:center;background:rgba(0,0,0,.35)}
+#tap span{font-family:var(--la);font-size:22px;color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:12px 26px;background:rgba(15,17,20,.6)}
+#ded{position:absolute;inset:0;z-index:2;display:grid;place-items:center;align-content:center;text-align:center;pointer-events:none;opacity:0;transition:opacity 1.1s ease;padding:0 24px;background:radial-gradient(ellipse at center,rgba(0,0,0,.42) 0%,rgba(0,0,0,.72) 100%)}
+#ded.on{opacity:1}
+#ded .l{font-family:var(--he);font-weight:300;font-size:clamp(14px,2.6vmin,20px);letter-spacing:.14em;color:var(--brass);text-shadow:0 2px 14px rgba(0,0,0,.9)}
+#ded .n{font-family:var(--la);font-size:clamp(28px,6.4vmin,56px);line-height:1.15;color:var(--light);text-shadow:0 2px 18px rgba(0,0,0,.95),0 0 40px rgba(0,0,0,.7)}
+#ded .r{width:64px;height:1px;background:var(--brass);margin:10px auto 0;box-shadow:0 0 12px rgba(226,168,102,.8)}
+@media (prefers-reduced-motion:reduce){ #ded,#skip{transition:none} }
+
+/* ---------- quote ---------- */
+#quote{padding-block:0 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:620px;margin:0 auto}
+.qbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 0 4px}
+.qbar .pill{min-height:36px;font-size:14px;background:transparent;color:var(--stone)}
+.qbar .pill.gold{color:var(--light)}
+.qbar .t{color:var(--mist);font-size:13px}
+
+header.q{position:relative;padding:14px 0 14px;border-bottom:1px solid var(--line);display:grid;gap:10px}
+header.q .lg{height:72px;width:auto}
+.qgift{position:absolute;top:14px;left:0;display:flex;align-items:center;gap:10px;max-width:52%;padding:8px 12px 8px 10px;border:1px solid rgba(240,196,106,.55);border-radius:14px;background:linear-gradient(135deg,rgba(240,196,106,.14),rgba(240,196,106,.03));color:var(--light);text-decoration:none;box-shadow:0 0 22px rgba(240,196,106,.18)}
+.qgift[hidden]{display:none}
+.qgift svg{flex:none;width:38px;height:38px;filter:drop-shadow(0 0 6px rgba(240,196,106,.45))}
+.qgift span{display:grid;gap:2px;font-size:13px;line-height:1.3}
+.qgift small{font-size:12px;color:#f0c46a;letter-spacing:.04em}
+.qgift b{font-weight:500;font-size:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+header.q .row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+header.q h2{font-family:var(--la);font-size:32px;line-height:1.1;color:var(--light)}
+.meta{color:var(--mist);font-size:14px;line-height:1.5}
+.meta b{color:var(--stone);font-weight:500}
+.demo{display:inline-block;font-size:12px;letter-spacing:.04em;color:var(--brass);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin-top:4px}
+
+.who{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+.who h3{font-size:13px;color:var(--brass);letter-spacing:.04em;margin-bottom:4px;font-family:var(--he)}
+.who p{font-size:15px}
+.who a{color:var(--stone);text-decoration:none;border-bottom:1px dotted var(--line)}
+@media (max-width:380px){.who{grid-template-columns:1fr}}
+
+.items{display:grid;gap:14px;padding:18px 0 6px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.item .pic{position:relative;aspect-ratio:16/10;background:#1b1f24}
+.item .pic img.room{width:100%;height:100%;object-fit:cover}
+.item .pic .tile{position:absolute;left:14px;bottom:-18px;width:78px;height:130px;object-fit:cover;border-radius:8px;border:2px solid var(--brass);box-shadow:0 14px 30px rgba(0,0,0,.55)}
+.item .pic .k{position:absolute;right:14px;top:12px;font-family:var(--la);font-size:14px;color:var(--night);background:var(--brass);border-radius:999px;padding:3px 12px}
+.item .pic.none{aspect-ratio:16/6;display:grid;place-items:center;background:radial-gradient(ellipse at 30% 20%,rgba(226,168,102,.22),rgba(20,23,27,0) 60%),var(--panel)}
+.item .pic.none .mono{font-family:var(--la);font-size:28px;color:var(--light);letter-spacing:.02em}
+.item .body{padding:14px 16px 16px;display:grid;gap:8px}
+.item h3{font-family:var(--la);font-size:22px;line-height:1.15;color:var(--light)}
+.item .pic:not(.none) + .body h3,.item .pic:not(.none) + .body .sub{padding-left:96px}
+.item .sub{color:var(--mist);font-size:14px}
+.item .calc{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:15.5px;margin-top:6px;padding-top:10px;border-top:1px dashed var(--line)}
+.item .calc .t{color:var(--mist)}
+.item .calc .sum{font-family:var(--la);font-size:22px;color:var(--light);grid-column:1/-1;display:flex;justify-content:space-between;align-items:baseline;margin-top:4px}
+
+.total{margin-top:18px;padding:18px 18px 16px;border-radius:16px;border:1px solid var(--brass);background:linear-gradient(180deg,rgba(226,168,102,.12),rgba(226,168,102,.04))}
+.total .line{display:flex;justify-content:space-between;gap:12px;font-size:14.5px;color:var(--mist);padding:4px 0;border-bottom:1px dashed rgba(226,168,102,.18)}
+.total .line span:first-child{min-width:0;overflow-wrap:anywhere}
+.total .th{font-family:var(--la);font-weight:400;font-size:17px;color:var(--brass);margin:0 0 8px}
+.total .grand{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:8px;padding-top:12px;border-top:1px solid var(--line)}
+.total .grand b{white-space:nowrap;font-family:var(--la);font-weight:400;font-size:20px;color:var(--stone)}
+.total .grand .num{white-space:nowrap;font-family:var(--la);font-size:clamp(24px,7.6vw,34px);color:var(--light)}
+.qt{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;column-gap:12px;align-items:baseline;font-size:15px}
+.qt .h{font-size:12.5px;color:var(--brass);padding-bottom:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.qt .c{padding:12px 0;border-bottom:1px dashed rgba(226,168,102,.22);white-space:nowrap;text-align:left;color:var(--stone)}
+.qt .c.n{white-space:normal;text-align:right;color:var(--light);font-weight:500;line-height:1.3;overflow-wrap:anywhere}
+.qt .c.n small{display:block;font-weight:400;font-size:12.5px;color:var(--mist);margin-top:2px}
+.qt .c.s{color:var(--light);font-weight:500}
+.qt .h.r{text-align:left}
+.qsum{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin-top:12px;font-size:14.5px;color:var(--mist)}
+.qsum .num{text-align:left;color:var(--stone)}
+@media (max-width:360px){.qt{column-gap:8px;font-size:14px}}
+.total .fine{color:var(--mist);font-size:13px;margin-top:10px;line-height:1.5}
+
+.acts{display:grid;gap:10px;margin-top:18px}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:0 18px;border-radius:999px;text-decoration:none;font-family:var(--la);font-size:19px;border:1px solid var(--brass);color:var(--stone);background:transparent}
+.btn.go{background:var(--brass);color:var(--night)}
+.btn.wa{border-color:var(--ok);color:#dff7e8}
+.btn small{font-family:var(--he);font-size:13px;color:inherit;opacity:.8}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row2 .btn{min-height:46px;font-size:16px}
+
+.terms{margin-top:22px;color:var(--mist);font-size:13.5px;line-height:1.6;display:grid;gap:6px}
+.terms b{color:var(--stone);font-weight:500}
+footer{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--mist);font-size:12.5px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+footer span[dir=ltr]{font-family:var(--la);color:var(--brass)}
+:focus-visible{outline:2px solid var(--light);outline-offset:3px}
+/* ---------- the handshake: the Queen's table at the end of the quote ---------- */
+.hs-tease{display:block;width:100%;margin:14px 0 0;padding:10px 16px;border-radius:14px;border:1px solid var(--brass);background:linear-gradient(135deg,rgba(226,168,102,.18),rgba(226,168,102,.04));color:var(--light);font-family:var(--la);font-size:16.5px;line-height:1.35;text-align:center}
+.hs{margin-top:18px;border:1px solid var(--brass);border-radius:18px;background:linear-gradient(180deg,rgba(226,168,102,.13),var(--panel) 46%);padding:16px;display:grid;gap:14px;scroll-margin-top:12px}
+.hs > *{min-width:0}
+.hs-stage{display:grid;grid-template-columns:132px minmax(0,1fr);gap:14px;align-items:end}
+.hs-arch{width:132px;height:176px;border-radius:66px 66px 12px 12px;border:1px solid var(--brass);overflow:hidden;position:relative;background:#1b1f24;box-shadow:0 14px 30px rgba(0,0,0,.45);transition:box-shadow .5s}
+.hs-arch.lit{box-shadow:0 0 0 3px rgba(226,168,102,.35),0 0 44px rgba(226,168,102,.5)}
+.hs-fig{position:absolute;inset:0;background:url(m/queen.jpg) 0 0/100% 1600% no-repeat}
+.hs-arch.bow .hs-fig{animation:hsbow 1.6s steps(15) forwards}
+@keyframes hsbow{to{background-position:0 100%}}
+.hs-talk{display:grid;gap:6px;min-width:0}
+.hs-who{font-family:var(--la);font-size:17px;color:var(--brass);line-height:1.2}
+.hs-bubble{background:var(--stone);color:var(--night);border-radius:16px 16px 4px 16px;padding:10px 14px;font-size:16.5px;line-height:1.45;min-height:4.6em;display:flex;align-items:center}
+.hs-bubble.in{animation:hspop .35s ease-out}
+@keyframes hspop{from{opacity:.25;transform:translateY(5px)}}
+.hs-think{display:inline-flex;align-items:center;gap:10px;color:#4a4f60}
+.hs-dots{display:inline-flex;gap:4px}
+.hs-dots i{width:7px;height:7px;border-radius:50%;background:#4a4f60;animation:hsdot 1s ease-in-out infinite}
+.hs-dots i:nth-child(2){animation-delay:.15s}.hs-dots i:nth-child(3){animation-delay:.3s}
+@keyframes hsdot{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+.hs-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:28px}
+.hs-tok{display:flex;align-items:center;gap:7px;color:var(--mist);font-size:14px}
+.hs-tok i{width:14px;height:16px;flex:none;background:var(--brass);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.hs-tok i.used{background:rgba(243,238,230,.2)}
+.hs-tok span{margin-inline-start:4px}
+.hs-link{background:none;border:0;color:var(--mist);text-decoration:underline;text-underline-offset:3px;font-size:14.5px;min-height:44px;padding:0 6px}
+.hs-bid{display:grid;gap:12px}
+.hs-track{--a:1;--o:.9;position:relative;height:66px;direction:ltr}
+.hs-flag{position:absolute;top:0;left:calc(14px + (100% - 28px) * var(--a));transform:translateX(calc(-100% * var(--a)));transition:left .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1);pointer-events:none}
+.hs-flag b{display:block;font-family:var(--la);font-weight:400;font-size:14.5px;line-height:1.5;color:var(--night);background:var(--brass);border-radius:8px;padding:0 9px;white-space:nowrap}
+.hs-stem{position:absolute;top:21px;left:calc(14px + (100% - 28px) * var(--a));width:2px;height:27px;margin-left:-1px;background:var(--brass);transition:left .8s cubic-bezier(.2,.7,.2,1);pointer-events:none}
+.hs-rail{position:absolute;left:0;right:0;top:38px;height:8px;border-radius:99px;background:rgba(243,238,230,.12);overflow:hidden}
+.hs-fill{position:absolute;top:0;bottom:0;left:0;width:calc(14px + (100% - 28px) * var(--o));background:var(--line)}
+.hs-zone{position:absolute;top:0;bottom:0;right:0;left:calc(14px + (100% - 28px) * var(--a));background:repeating-linear-gradient(135deg,rgba(243,238,230,.26) 0 3px,transparent 3px 7px);transition:left .8s cubic-bezier(.2,.7,.2,1)}
+.hs-tick{position:absolute;top:35px;width:2px;height:14px;margin-left:-1px;background:rgba(243,238,230,.5);pointer-events:none}
+#hsSlide{position:absolute;left:0;top:24px;width:100%;height:36px;margin:0;padding:0;border:0;background:transparent;-webkit-appearance:none;appearance:none;direction:ltr;touch-action:pan-y;cursor:pointer}
+#hsSlide::-webkit-slider-runnable-track{height:36px;background:transparent}
+#hsSlide::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;margin-top:4px;border-radius:50%;background:var(--stone);border:3px solid var(--brass);box-shadow:0 2px 10px rgba(0,0,0,.55)}
+#hsSlide::-moz-range-track{height:36px;background:transparent}
+#hsSlide::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--stone);border:3px solid var(--brass)}
+#hsSlide:disabled{opacity:.5}
+.hs-offer{display:grid;gap:6px}
+.hs-offer label{font-size:14px;color:var(--mist)}
+.hs-amount{display:grid;grid-template-columns:52px minmax(0,1fr) 52px;gap:8px;direction:ltr}
+.hs-amount input{width:100%;min-height:56px;text-align:center;font:inherit;font-family:var(--la);font-size:30px;line-height:1;color:var(--stone);background:#0c0e11;border:1px solid var(--line);border-radius:12px;padding:0 6px;direction:ltr}
+.hs-step{min-height:56px;border-radius:12px;border:1px solid var(--line);background:transparent;font-size:28px;line-height:1}
+.hs-btn{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 8px;width:100%;min-height:54px;padding:6px 18px;border-radius:999px;border:1px solid var(--brass);background:transparent;color:var(--stone);font-family:var(--la);font-size:19px;line-height:1.2;text-decoration:none;text-align:center}
+.hs-btn.go{background:var(--brass);color:var(--night)}
+.hs-btn span{pointer-events:none}
+.hs-btn:disabled,.hs-step:disabled{opacity:.45}
+.hs-shake{display:grid;gap:8px;justify-items:center;text-align:center}
+.hs-price{font-family:var(--la);font-size:clamp(36px,11vw,48px);line-height:1;color:var(--light)}
+.hs-gift{color:var(--brass);font-size:15.5px}
+.hs-note{color:var(--mist);font-size:14.5px;line-height:1.5}
+.hs-hold{position:relative;width:150px;height:150px;border-radius:50%;border:0;padding:0;background:radial-gradient(circle at 50% 42%,rgba(226,168,102,.26),rgba(226,168,102,.05) 70%);touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;transition:transform .2s}
+.hs-hold.on{transform:scale(.97)}
+.hs-hold svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hs-hold .hs-trk{fill:none;stroke:var(--line);stroke-width:3}
+.hs-hold .hs-prg{fill:none;stroke:var(--brass);stroke-width:5;stroke-linecap:round;stroke-dasharray:326.73;transform:rotate(-90deg);transform-origin:60px 60px}
+.hs-hold .hs-hl{fill:var(--stone)}
+.hs-hold .hs-hr{fill:var(--brass)}
+.hs-hold.done .hs-hl{fill:var(--brass)}
+.hs-hold.done{animation:hssealed .5s ease-out}
+@keyframes hssealed{40%{transform:scale(1.08);box-shadow:0 0 0 10px rgba(226,168,102,.25)}}
+.hs-ht{position:absolute;left:0;right:0;bottom:26px;font-family:var(--la);font-size:15px;color:var(--stone);pointer-events:none}
+.hs-links{display:flex;flex-wrap:wrap;justify-content:center;gap:0 10px}
+.hs-cert{border:1px dashed var(--brass);border-radius:16px;background:var(--deep);overflow:hidden;display:grid;gap:8px;padding:0 16px 16px;text-align:center;justify-items:center}
+.hs-band{justify-self:stretch;margin:0 -16px;height:54px;background:#1b1f24 url(m/tiles_band.jpg) center/cover}
+.hs-seals{display:flex;gap:10px;margin-top:-30px}
+.hs-seal{width:46px;height:52px;position:relative;display:grid;place-items:center;background:var(--brass);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.hs-seal::before{content:"";position:absolute;inset:3px;background:var(--deep);clip-path:inherit}
+.hs-seal svg{position:relative;width:22px;height:22px;stroke:var(--night);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.hs-seal.on::before{background:var(--brass)}
+.hs-seal.on svg{opacity:1}
+.hs-seal.on{animation:hsstamp .5s cubic-bezier(.2,1.4,.4,1)}
+@keyframes hsstamp{from{transform:scale(1.9) rotate(-14deg);opacity:0}}
+.hs-cert h3{font-family:var(--la);font-size:26px;color:var(--brass);line-height:1.1}
+.hs-parties{color:var(--mist);font-size:14.5px}
+.hs-cprice{font-family:var(--la);font-size:clamp(40px,12vw,56px);line-height:1;color:var(--light)}
+.hs-was{font-size:15px;color:var(--mist)}
+.hs-was b{color:var(--brass);font-weight:500}
+.hs-cgift{font-size:15.5px}
+.hs-kept{justify-self:stretch;display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-top:1px solid rgba(243,238,230,.14);padding-top:10px;text-align:start;font-size:14.5px;color:var(--mist)}
+.hs-kept b{font-family:var(--la);font-weight:400;font-size:20px;color:var(--brass);flex:none}
+.hs-fine{font-size:12.5px;color:var(--mist);line-height:1.5}
+.hs-second,.hs-gone{border-radius:16px;background:#0c0e11;border:1px solid rgba(243,238,230,.14);padding:14px 16px;display:grid;gap:8px;justify-items:center;text-align:center}
+.hs-sect{font-size:16px}
+@media (max-width:359px){ .hs-stage{grid-template-columns:112px minmax(0,1fr)} .hs-arch{width:112px;height:150px;border-radius:56px 56px 12px 12px} .hs-amount{grid-template-columns:46px minmax(0,1fr) 46px} .hs-amount input{font-size:26px} }
+@media (prefers-reduced-motion:reduce){ .hs *,.hs *::before{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important} }
+</style>
+</head>
+<body>
+
+<!-- 1 · entry -->
+<section id="entry" aria-label="פתיחה">
+  <div class="bg" aria-hidden="true"></div>
+  <div class="top"><img src="m/logo.png" alt="אקספו קרמיקה" width="305" height="385"></div>
+  <div class="mid"></div>
+  <div class="bot">
+    <p class="eyebrow">אקספו קרמיקה מגישים</p>
+    <h1 id="h1">הבית של משפחת בן משה</h1>
+    <p class="sub">הסרט שלכם, 40 שניות, ואחריו הצעת המחיר שלכם.</p>
+    <button class="big" id="start" type="button">לחצו כדי להתחיל</button>
+    <p class="hint">עם סאונד. אפשר לסובב את הטלפון לרוחב.</p>
+  </div>
+</section>
+
+<!-- 2 · film -->
+<section id="film" aria-label="הסרט" hidden>
+  <video id="v" playsinline webkit-playsinline preload="metadata" poster="m/poster_v.jpg"></video>
+  <div id="ded" aria-live="polite"><div class="l">לכבוד</div><div class="n" id="dedn">משפחת בן משה</div><div class="r"></div></div>
+  <div id="tap" hidden><span>לחצו להפעלה</span></div>
+  <div class="bar">
+    <button class="pill" id="back" type="button">אחורה</button>
+    <button class="pill gold" id="skip" type="button">להצעת המחיר</button>
+  </div>
+  <div id="prog" aria-hidden="true"><i></i></div>
+</section>
+
+<!-- 3 · quote -->
+<main id="quote" hidden>
+<div class="wrap">
+  <div class="qbar">
+    <button class="pill gold" id="again" type="button">לצפות שוב</button>
+    <span class="t" id="qt">הצעת מחיר · משפחת בן משה</span>
+  </div>
+
+  <header class="q">
+    <a class="qgift" id="qgift" href="gift/" hidden><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="6" y="17" width="28" height="19" rx="2" fill="#16120c" stroke="#f0c46a" stroke-width="1.4"/><rect x="4" y="12" width="32" height="7" rx="1.5" fill="#1f1910" stroke="#f0c46a" stroke-width="1.4"/><rect x="18" y="12" width="4" height="24" fill="#c8202a"/><path d="M20 12c-3-6-10-7-10-3s6 3 10 3zM20 12c3-6 10-7 10-3s-6 3-10 3z" fill="#c8202a" stroke="#8e141b" stroke-width=".8"/></svg><span><small>מתנה בשבילכם</small><b id="qgiftT"></b></span></a>
+    <img class="lg" src="m/logo.png" alt="אקספו קרמיקה" width="305" height="385">
+    <div class="row">
+      <div>
+        <h2>הצעת מחיר</h2>
+        <p class="meta" id="meta"></p>
+      </div>
+      <p class="meta">אקספו קרמיקה · אולם תצוגה<br>אזור התעשייה, סח׳נין (בניין אלדוחה)<br><span class="num">04-6747666</span></p>
+    </div>
+    <span class="demo">הדגמה · cinemacome</span>
+  </header>
+  <button type="button" class="hs-tease" id="hsTease" hidden></button>
+
+  <section class="who" aria-label="פרטי הלקוח" id="who"></section>
+  <section class="items" aria-label="הפריטים" id="items"></section>
+  <section class="total" aria-label="סיכום" id="total"></section>
+  <section class="hs" id="hs" aria-label="השולחן של המלכה" hidden>
+    <div class="hs-stage">
+      <div class="hs-arch" id="hsArch"><div class="hs-fig" role="img" aria-label="מלכת המשושים, מתוך הסרט"></div></div>
+      <div class="hs-talk"><p class="hs-who">מלכת המשושים</p><div class="hs-bubble" id="hsBubble" aria-live="polite"></div></div>
+    </div>
+    <div class="hs-meta"><p class="hs-tok" id="hsTok"></p><button type="button" class="hs-link" id="hsReset" hidden>להתחיל מחדש</button></div>
+
+    <div class="hs-bid" id="hsBid">
+      <div class="hs-track" id="hsTrack">
+        <div class="hs-flag"><b dir="rtl">המלכה · <span class="num" id="hsFlagV"></span></b></div>
+        <i class="hs-stem"></i>
+        <div class="hs-rail"><div class="hs-fill"></div><div class="hs-zone"></div></div>
+        <input type="range" id="hsSlide" aria-label="ההצעה שלכם">
+      </div>
+      <div class="hs-offer">
+        <label for="hsIn">ההצעה שלכם, בשקלים</label>
+        <div class="hs-amount">
+          <button type="button" class="hs-step" id="hsMinus" aria-label="להוריד את ההצעה">−</button>
+          <input id="hsIn" type="text" inputmode="numeric" autocomplete="off" maxlength="9">
+          <button type="button" class="hs-step" id="hsPlus" aria-label="להעלות את ההצעה">+</button>
+        </div>
+      </div>
+      <button type="button" class="hs-btn go" id="hsBidBtn">להציע <span class="num" id="hsBidV"></span></button>
+      <button type="button" class="hs-btn" id="hsTake" hidden>לקחת את המחיר שלה · <span class="num" id="hsTakeV"></span></button>
+    </div>
+
+    <div class="hs-shake" id="hsShake" hidden>
+      <p class="hs-price num" id="hsPrice"></p>
+      <p class="hs-gift" id="hsGift"></p>
+      <button type="button" class="hs-hold" id="hsHold" aria-describedby="hsHint">
+        <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="hs-trk" cx="60" cy="60" r="52"/><circle class="hs-prg" cx="60" cy="60" r="52"/><polygon class="hs-hl" points="60,28 40.9,39 40.9,61 60,72"/><polygon class="hs-hr" points="60,28 79.1,39 79.1,61 60,72"/></svg>
+        <span class="hs-ht">להחזיק</span>
+      </button>
+      <p class="hs-note" id="hsHint">לוחצים ומחזיקים עד שהטבעת נסגרת. זו לחיצת היד.</p>
+      <div class="hs-links">
+        <button type="button" class="hs-link" id="hsTap">לאשר בנגיעה אחת</button>
+        <button type="button" class="hs-link" id="hsBack" hidden>עוד לא. חזרה לשולחן</button>
+      </div>
+    </div>
+
+    <div class="hs-cert" id="hsCert" hidden>
+      <div class="hs-band"></div>
+      <div class="hs-seals" id="hsSeals"></div>
+      <h3 id="hsCertT">לחיצת יד</h3>
+      <p class="hs-parties" id="hsCertP"></p>
+      <p class="hs-cprice num" id="hsCertPrice"></p>
+      <p class="hs-was" id="hsCertWas"></p>
+      <p class="hs-cgift" id="hsCertGift"></p>
+      <div class="hs-kept"><span id="hsKept"></span><b class="num" id="hsCd" aria-label="הזמן שנשאר"></b></div>
+      <a class="hs-btn go" id="hsSend" href="https://wa.me/" target="_blank" rel="noopener" hidden>לשלוח למי שלא היה באולם</a>
+      <button type="button" class="hs-link" id="hsTogether" hidden>אנחנו ביחד, ליד אותו טלפון</button>
+      <a class="hs-btn go" id="hsWa" href="https://wa.me/" target="_blank" rel="noopener" hidden>לסגור בוואטסאפ</a>
+      <p class="hs-fine" id="hsFine"></p>
+    </div>
+
+    <div class="hs-second" id="hsSecond" hidden>
+      <p class="hs-sect" id="hsSecT"></p>
+      <button type="button" class="hs-hold" id="hsHold2" aria-describedby="hsHint2">
+        <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="hs-trk" cx="60" cy="60" r="52"/><circle class="hs-prg" cx="60" cy="60" r="52"/><polygon class="hs-hl" points="60,28 40.9,39 40.9,61 60,72"/><polygon class="hs-hr" points="60,28 79.1,39 79.1,61 60,72"/></svg>
+        <span class="hs-ht">להחזיק</span>
+      </button>
+      <p class="hs-note" id="hsHint2">היד השנייה נועלת את המחיר.</p>
+      <button type="button" class="hs-link" id="hsTap2">לאשר בנגיעה אחת</button>
+    </div>
+
+    <div class="hs-gone" id="hsGone" hidden>
+      <p class="hs-sect" id="hsGoneT"></p>
+      <a class="hs-btn" id="hsGoneWa" href="https://wa.me/" target="_blank" rel="noopener">לבקש הצעה חדשה בוואטסאפ</a>
+    </div>
+  </section>
+
+  <div class="acts">
+    <a class="btn go" id="approve" href="#" target="_blank" rel="noopener">לאשר את ההזמנה <small>בוואטסאפ</small></a>
+    <a class="btn" id="viz" href="#" target="_blank" rel="noopener" style="display:none">ההדמיה שלכם <small>Design Pro Max</small></a>
+    <div class="row2">
+      <a class="btn" href="tel:+97246747666">להתקשר לאולם</a>
+      <a class="btn" href="https://waze.com/ul?q=%D7%90%D7%A7%D7%A1%D7%A4%D7%95%20%D7%A7%D7%A8%D7%9E%D7%99%D7%A7%D7%94%20%D7%A1%D7%97%D7%A0%D7%99%D7%9F&navigate=yes" target="_blank" rel="noopener">לאולם בסח׳נין</a>
+    </div>
+    <a class="btn wa" id="share" href="#" target="_blank" rel="noopener">לשלוח למשפחה ולחבר שמשפץ</a>
+  </div>
+
+  <section class="terms">
+    <p><b>תוקף:</b> ההצעה בתוקף 14 יום. המחירים לפי מלאי קיים באולם.</p>
+    <p><b>אספקה:</b> איסוף מהאולם או הובלה בתיאום. זמן אספקה נמסר באישור ההזמנה.</p>
+    <p><b>תשלום:</b> מקדמה באישור ההזמנה, היתרה לפני האספקה. אפשר בוואטסאפ, בטלפון או באולם.</p>
+  </section>
+
+  <footer>
+    <span>אקספו קרמיקה · אזור התעשייה, סח׳נין</span>
+    <span dir="ltr">cinemacome</span>
+  </footer>
+</div>
+</main>
+
+<script>
+(function(){
+  var $=function(s){return document.querySelector(s)};
+  var WA_BIZ='';
+
+  /* ---- the data: from the link (#q=...) or the Ben Moshe example ---- */
+  var DEFAULT={v:1,fam:'בן משה',name:'זיו בן משה',phone:'0524476717',addr:'האדמון 9, נוף הגליל',
+    no:'1106-01',date:'6.11.2026',until:'20.11.2026',work:'ריצוף לכל הבית',
+    items:[
+      {t:'ונוס גריי',s:'120/60',k:'ריצוף פורצלן · גימור מט',q:120,p:55,room:'m/r_venus.jpg',tile:'m/t_venus.jpg'},
+      {t:'סמנט בז׳',s:'120/60',k:'ריצוף פורצלן · גימור מט',q:160,p:68,room:'m/r_cement.jpg',tile:'m/t_cement.jpg'}
+    ]};
+  function b64u8(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; var b=atob(s); var u=new Uint8Array(b.length); for(var i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return u; }
+  function codeFromLink(){
+    var h=location.hash||''; var m=h.match(/[#&]q=([A-Za-z0-9_\-]+)/);
+    if(!m){ var q=location.search||''; m=q.match(/[?&]q=([A-Za-z0-9_\-]+)/); }
+    return m?m[1]:null;
+  }
+  async function fromLink(){
+    try{
+      var c=codeFromLink(); if(!c) return null;
+      var json;
+      if(c.charAt(0)==='z'){
+        if(!window.DecompressionStream) return null;
+        var ds=new DecompressionStream('deflate-raw'); var w=ds.writable.getWriter(); w.write(b64u8(c.slice(1))); w.close();
+        json=await new Response(ds.readable).text();
+      } else if(c.charAt(0)==='j'){ json=new TextDecoder().decode(b64u8(c.slice(1))); }
+      else { json=new TextDecoder().decode(b64u8(c)); }
+      var d=JSON.parse(json);
+      if(!d||!d.fam) return null;
+      d.items=d.items||[]; d.heroes=d.heroes||[];
+      if(!d.items.length&&!d.heroes.length) return null;
+      return d;
+    }catch(e){ return null; }
+  }
+  var D=DEFAULT;
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function money(n){ n=Math.round((+n||0)*100)/100; return n.toLocaleString('he-IL',n%1?{minimumFractionDigits:2,maximumFractionDigits:2}:{maximumFractionDigits:0})+' ₪'; }
+  function telLink(p){ return String(p||'').replace(/[^\d+]/g,''); }
+  function telShow(p){ var d=String(p||'').replace(/\D/g,''); return d.length===10 ? d.slice(0,3)+'-'+d.slice(3) : p; }
+
+  function render(){
+    var fam='משפחת '+D.fam;
+    document.title='הבית של '+fam;
+    $('#h1').textContent='הבית של '+fam;
+    $('#dedn').textContent=fam;
+    $('#qt').textContent='הצעת מחיר · '+fam;
+    $('#meta').innerHTML='מספר <b class="num">'+esc(D.no||'')+'</b> · <b>'+esc(D.date||'')+'</b>'+(D.until?' · בתוקף עד <b>'+esc(D.until)+'</b>':'');
+    function fmt(n){ n=+n||0; return n.toLocaleString('he-IL',{maximumFractionDigits:2}); }
+    function unitOf(it){ return it&&it.u?esc(it.u):'מ״ר'; }
+    function money2(n){ return (+n||0).toLocaleString('he-IL',{minimumFractionDigits:2,maximumFractionDigits:2})+' ₪'; }
+    var items=D.items||[], heroes=D.heroes||[];
+    var qty=0; items.forEach(function(it){ if(!it.u||/מ.?ר/.test(it.u)) qty+=(+it.q||0); });
+    $('#who').innerHTML=
+      '<div><h3>לכבוד</h3><p><b>'+esc(D.name||fam)+'</b>'+(D.addr?'<br>'+esc(D.addr):'')+(D.phone?'<br><a class="num" href="tel:'+esc(telLink(D.phone))+'">'+esc(telShow(D.phone))+'</a>':'')+'</p></div>'+
+      '<div><h3>העבודה</h3><p>'+esc(D.work||'ריצוף וחיפוי')+(items.length?'<br>'+(items.length===1?'פריט אחד':items.length+' פריטים')+(qty?' · <span class="num">'+fmt(qty)+'</span> '+unitOf(items[0]):''):'')+'<br>אספקה מהאולם בסח׳נין</p></div>';
+    var html='', total=0, lines='';
+    /* v1 links: pictures on the items themselves */
+    var picItems=items.filter(function(it){return it.room||it.tile;});
+    var bigs=heroes.length?heroes:picItems;
+    bigs.forEach(function(it,i){
+      var pic;
+      if(it.room||it.tile) pic='<div class="pic">'+(it.room?'<img class="room" src="'+esc(it.room)+'" alt="" loading="lazy">':'')+'<span class="k">'+(i+1)+'</span>'+(it.tile?'<img class="tile" src="'+esc(it.tile)+'" alt="">':'')+'</div>';
+      else if(it.img) pic='<div class="pic"><img class="room" src="'+esc(it.img)+'" alt="" loading="lazy"><span class="k">'+(i+1)+'</span></div>';
+      else pic='<div class="pic none"><span class="k">'+(i+1)+'</span><span class="mono num">'+esc(it.s||'')+'</span></div>';
+      var calc='';
+      if(it.q&&it.p){ var sum=(+it.q)*(+it.p); calc='<div class="calc"><span class="t">כמות</span><span class="num">'+esc(it.q)+' מ״ר</span><span class="t">מחיר למ״ר</span><span class="num">'+esc(it.p)+' ₪</span><span class="sum"><span>סה״כ לפריט</span><span class="num">'+money(sum)+'</span></span></div>'; }
+      html+='<article class="item">'+pic+'<div class="body"><h3>'+esc(it.t)+'</h3><p class="sub">'+esc([it.k,it.s?it.s+' ס״מ':''].filter(Boolean).join(' · '))+'</p>'+calc+'</div></article>';
+    });
+    $('#items').innerHTML=html;
+    lines='<div class="qt" role="table" aria-label="פירוט ההצעה"><span class="h" role="columnheader">פריט</span><span class="h r" role="columnheader">כמות</span><span class="h r" role="columnheader">מחיר ליח׳</span><span class="h r" role="columnheader">סה״כ</span>';
+    items.forEach(function(it){ var sum=(+it.q||0)*(+it.p||0); total+=sum; var u=unitOf(it);
+      lines+='<span class="c n" role="cell">'+esc(it.t)+(it.s&&String(it.t).indexOf(it.s)<0?'<small>'+esc(it.s)+' ס״מ</small>':'')+'</span><span class="c num" role="cell">'+fmt(it.q)+' '+u+'</span><span class="c num" role="cell">'+fmt(it.p)+' ₪</span><span class="c s num" role="cell">'+money(sum)+'</span>'; });
+    lines+='</div>';
+    if(D.total) total=+D.total;
+    var before=Math.round(total/1.18*100)/100, vat=Math.round((total-before)*100)/100;
+    var sumBox='<div class="qsum"><span>סכום לפני מע״מ</span><span class="num">'+money2(before)+'</span><span>מע״מ 18%</span><span class="num">'+money2(vat)+'</span></div>';
+    $('#total').innerHTML='<h3 class="th">פירוט ההצעה</h3>'+lines+sumBox+'<div class="grand"><b>סה״כ לתשלום</b><span class="num">'+money(total)+'</span></div><p class="fine">'+esc(D.note||'המחירים כוללים מע״מ. הובלה, פחת חיתוך ואביזרים נקבעים מול נציג האולם.')+'</p>';
+    var msg='שלום, '+(D.name||fam)+'. ראיתי את הסרט ואת הצעת המחיר'+(D.no?' מספר '+D.no:'')+' ('+money(total)+') ואני רוצה לאשר את ההזמנה.';
+    $('#approve').href='https://wa.me/'+WA_BIZ+'?text='+encodeURIComponent(msg); var qg=$('#qgift'); if(qg){ if(D.gift){ $('#qgiftT').textContent=D.gift; var cc=codeFromLink(); qg.href='gift/'+(cc?'#q='+cc:''); qg.hidden=false; } else qg.hidden=true; } var vz=$('#viz'); if(vz){ if(D.viz){ vz.href='../design/#'+D.viz; vz.style.display=''; } else vz.style.display='none'; }
+    hsInit(total);
+  }
+
+  /* ---- the handshake: the Queen bargains for the showroom at night, and the customer shakes on a price.
+     The seller turns it on in the owners' room; the link then carries hs:{p,n,h,two,g}. A link without it looks exactly as before.
+     p = the owner's last word in percent, n = offers, h = hours the handshake is kept, two = both partners must shake, g = a gift for those who shake. ---- */
+  /*ENGINE · keep identical to the one in o-b7q4x9/index.html*/
+  /* The bargaining engine. The owner gives one number (the last word, in percent). The character walks down a fixed
+     path of asks toward it; an offer at or above the round's ask closes at the offer; the last round ends at the last word. */
+  var HS=(function(){
+    function stepOf(T){ return T<2000?5:T<10000?10:T<50000?50:100; }
+    function bumpOf(T){ return T<2000?10:T<10000?50:100; }
+    function plan(T,p,n){
+      var st=stepOf(T), L=Math.min(T,Math.ceil(T*(1-p/100)/st)*st), gap=T-L;
+      if(gap<st) return {step:st,L:T,asks:[T],fixed:true};
+      var FR={1:[1],2:[.55,1],3:[.4,.75,1],4:[.3,.55,.8,1]}[n]||[.4,.75,1];
+      var top=Math.floor((T-1)/st)*st, asks=[];
+      for(var i=0;i<FR.length;i++){
+        var a=i===FR.length-1?L:Math.round((T-gap*FR[i])/st)*st;
+        a=Math.max(L,Math.min(a,top));
+        if(!asks.length||a<asks[asks.length-1]) asks.push(a);
+      }
+      if(asks[asks.length-1]!==L) asks.push(L);
+      return {step:st,L:L,asks:asks,fixed:false};
+    }
+    function respond(g,O){
+      var n=g.asks.length, k=g.k+1, A=g.asks[Math.min(k,n)-1];
+      if(!g.fixed&&O>=A) return {k:k,type:'deal',price:Math.min(O,g.ask)};
+      if(k>=n) return {k:k,type:'final',price:g.L};
+      var gap=g.T-g.L, tone=O<g.L-Math.max(gap,0.06*g.T)?'insult':(O<g.L?'far':'near');
+      return {k:k,type:'counter',price:A,tone:tone};
+    }
+    return {stepOf:stepOf,bumpOf:bumpOf,plan:plan,respond:respond};
+  })();
+  /*END ENGINE*/
+  var hs=null, hsBusy=false, hsGID=0, hsApprove=$('#approve').innerHTML;
+  var hsBox=$('#hs'), hsTease=$('#hsTease'), hsBubble=$('#hsBubble'), hsTrack=$('#hsTrack'), hsSlide=$('#hsSlide'), hsIn=$('#hsIn'), hsArch=$('#hsArch');
+  var HS_DAYS=['יום ראשון','יום שני','יום שלישי','יום רביעי','יום חמישי','יום שישי','שבת'];
+  function hsM(n){ return '<span class="num">'+money(n)+'</span>'; }
+  function hs2(n){ return (n<10?'0':'')+n; }
+  function hsWhen(ms){ var d=new Date(ms); return HS_DAYS[d.getDay()]+', '+d.getDate()+'.'+(d.getMonth()+1)+', בשעה '+hs2(d.getHours())+':'+hs2(d.getMinutes()); }
+  function hsDigits(s){ var n=parseInt(String(s).replace(/[^\d]/g,''),10); return isFinite(n)?n:0; }
+  function hsFmt(n){ return Math.round(n).toLocaleString('he-IL'); }
+  function hsStill(){ try{ return matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ return false; } }
+  var HSL={
+    open:'המחיר שקיבלתם באולם הוא המחיר הרשמי. אצלי אפשר להציע.',
+    insult:function(A){ return 'בסכום הזה אני לא מכסה אפילו את הדבק. אבל באתי לסגור: '+hsM(A)+'.'; },
+    far:function(r,A){ return r===1?'רחוק מדי. אני יורדת ל־'+hsM(A)+'.':r===2?'פתחתי את הפנקס של בעל הבית. יש לי רשות לרדת עוד: '+hsM(A)+'.':'עוד צעד מהצד שלי: '+hsM(A)+'.'; },
+    near:function(r,A){ return r===1?'קרוב. '+hsM(A)+', וסוגרים.':r===2?'כמעט שם. בעל הבית מרשה לי '+hsM(A)+'.':'עוד קצת. '+hsM(A)+'.'; },
+    deal:function(O,i){ return i%2?hsM(O)+'? יש עסקה.':'על '+hsM(O)+' אני לוחצת יד.'; },
+    final:function(L){ return hsM(L)+'. זו המילה האחרונה שלי. מתחתיה גם בעל הבית לא יורד.'; },
+    take:function(A){ return hsM(A)+'. מחיר טוב לשני הצדדים. יד?'; },
+    fixed:function(g){ return 'המחיר הזה לא זז, ואני אומרת את זה ישר. מה שכן: '+esc(g)+', עליי, למי שלוחץ יד.'; },
+    stand:function(A,left){ return hsM(A)+'. זה המחיר שלי כרגע. '+(left===1?'נשארה לכם הצעה אחת.':'אפשר להציע שוב.'); },
+    again:'בבקשה. אני כאן.',
+    half:'יד אחת יש. חסרה היד של מי שלא היה באולם.',
+    halfYou:'היד הראשונה כבר לחצה. חסרה רק היד שלך.',
+    sealed:function(g){ return 'לחצנו יד.'+(g?' '+esc(g)+', עליי.':'')+' נתראה באולם.'; },
+    gone:'לחיצת היד שלנו פגה, והמחיר חזר למחיר הרשמי. אפשר לבקש מהאולם הצעה חדשה.'
+  };
+  function hsSay(html){ hsBubble.classList.remove('in'); hsBubble.innerHTML='<span>'+html+'</span>'; void hsBubble.offsetWidth; hsBubble.classList.add('in'); }
+  function hsThink(deep){ hsSay('<span class="hs-think"><span class="hs-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>'+(deep?'המלכה פותחת את הפנקס של בעל הבית':'המלכה חושבת')+'</span></span>'); }
+  function hsKey(){ return 'hs_'+String(D.no||'x')+'_'+Math.round(hs.T); }
+  function hsPos(v){ var p=(v-hs.lo)/(hs.T-hs.lo); return Math.max(0,Math.min(1,p)); }
+  function hsMax(){ return Math.floor((hs.ask-1)/hs.step)*hs.step; }
+  function hsSetOffer(v,typed){
+    v=Math.round(v/hs.step)*hs.step; v=Math.max(typed?hs.step:hs.lo,Math.min(hsMax(),v));
+    hs.offer=v; hsSlide.value=v; hsIn.value=hsFmt(v);
+    hsTrack.style.setProperty('--o',String(hsPos(v)));
+    $('#hsBidV').textContent=money(v);
+  }
+  function hsLock(on){ [hsSlide,hsIn,$('#hsBidBtn'),$('#hsTake'),$('#hsMinus'),$('#hsPlus')].forEach(function(el){ el.disabled=on; }); }
+  function hsSave(){
+    if(!hs||hs.mode==='gone') return;
+    var m=hs.mode==='take'?'talk':hs.mode;
+    try{ localStorage.setItem(hsKey(),JSON.stringify({k:hs.k,ask:hs.ask,mode:m,price:m==='talk'?null:hs.price,deadline:hs.deadline,hands:hs.hands,offers:hs.offers,via:hs.via})); }catch(e){}
+  }
+  function hsValid(s){
+    var n=hs.asks.length;
+    if(['talk','deal','final','half','sealed'].indexOf(s.mode)<0) return false;
+    if(!(s.k>=0&&s.k<=n)||(s.mode==='talk'&&s.k>=n)) return false;
+    if(!(s.ask>=hs.L-0.5&&s.ask<=hs.T+0.5)) return false;
+    if(s.mode!=='talk'&&!(s.price>=hs.L-0.5&&s.price<=hs.T+0.5)) return false;
+    if((s.mode==='half'||s.mode==='sealed')&&!(s.deadline>0)) return false;
+    return true;
+  }
+  /* the second hand travels in the link: the price, the minute the handshake ends, and a small check */
+  function hsSum(P,m){ var s=String(D.no||''), a=0; for(var i=0;i<s.length;i++) a=(a*31+s.charCodeAt(i))%46656; return ((P*7+m*13+a)%46656).toString(36); }
+  function hsCode(){ var P=Math.round(hs.price), m=Math.floor(hs.deadline/60000); return P.toString(36)+'.'+m.toString(36)+'.'+hsSum(P,m); }
+  function hsFromLink(){
+    var h=(location.hash||'').match(/[#&]k=([0-9a-z.]+)/); if(!h) return null;
+    var a=h[1].split('.'); if(a.length!==3) return null;
+    var P=parseInt(a[0],36), m=parseInt(a[1],36);
+    if(!isFinite(P)||!isFinite(m)||hsSum(P,m)!==a[2]) return null;
+    return {price:P,deadline:m*60000};
+  }
+  function hsTickMark(O){ var t=document.createElement('i'); t.className='hs-tick'; t.style.left='calc(14px + (100% - 28px) * '+hsPos(O)+')'; hsTrack.appendChild(t); }
+  function hsToks(){
+    var n=hs.asks.length, left=n-hs.k, h='';
+    for(var i=0;i<n;i++) h+='<i'+(i<hs.k?' class="used"':'')+'></i>';
+    $('#hsTok').innerHTML=h+'<span>'+(hs.mode!=='talk'?'':left>1?'נשארו לכם '+left+' הצעות':left===1?'נשארה לכם הצעה אחת':'')+'</span>';
+  }
+  function hsBidDo(){
+    if(!hs||hs.mode!=='talk'||hsBusy) return;
+    hsSetOffer(hsDigits(hsIn.value)||hs.offer,true);
+    var O=hs.offer, r=HS.respond(hs,O), id=hs.id, deep=r.type==='counter'&&r.k===2&&hs.asks.length>=3;
+    hs.offers.push(O); hs.k=r.k; hsBusy=true; hsLock(true); hsTickMark(O); hsToks(); hsThink(deep);
+    setTimeout(function(){
+      if(!hs||hs.id!==id) return;
+      hsBusy=false; hsLock(false);
+      if(r.type==='deal'){ hs.mode='deal'; hs.price=r.price; hsSay(HSL.deal(r.price,r.k)); }
+      else if(r.type==='final'){ hs.mode='final'; hs.ask=r.price; hs.price=r.price; hsSay(hs.fixed?HSL.fixed(hs.gift):HSL.final(r.price)); }
+      else { hs.ask=r.price; hsSay(r.tone==='insult'&&r.k===1?HSL.insult(r.price):(r.tone==='near'?HSL.near(r.k,r.price):HSL.far(r.k,r.price))); }
+      hsSave(); hsDraw();
+    }, hsStill()?200:(deep?1900:1000));
+  }
+  function hsTakeDo(){ if(!hs||hs.mode!=='talk'||hsBusy||hs.k<1) return; hs.mode='take'; hs.price=hs.ask; hsSay(HSL.take(hs.ask)); hsDraw(); }
+  function hsBackDo(){ if(!hs||hs.mode!=='take') return; hs.mode='talk'; hs.price=null; hsSay(HSL.again); hsDraw(); }
+  function hsFirst(){
+    if(!hs||!(hs.mode==='deal'||hs.mode==='final'||hs.mode==='take')) return;
+    hs.deadline=Math.floor((Date.now()+hs.h*3600e3)/60000)*60000; hs.hands=1;
+    if(hs.two){ hs.mode='half'; hs.via='self'; hsSay(HSL.half); } else { hs.mode='sealed'; hsSay(HSL.sealed(hs.gift)); }
+    hsSave(); hsDraw();
+  }
+  function hsSecondDo(){ if(!hs||hs.mode!=='half') return; hs.hands=2; hs.mode='sealed'; hsSay(HSL.sealed(hs.gift)); hsSave(); hsDraw(); }
+  function hsMsg(){
+    return 'שלום, '+(D.name||'משפחת '+D.fam)+'. ראיתי את הסרט, ו'+(hs.two?'שנינו לחצנו יד':'לחצנו יד')+' עם המלכה על '+money(hs.price)+' להצעת מחיר'+(D.no?' מספר '+D.no:'')+
+      (hs.price<hs.T?' (במקום '+money(hs.T)+')':'')+(hs.gift?', כולל '+hs.gift:'')+'. לחיצת היד שמורה עד '+hsWhen(hs.deadline)+'. אני רוצה לאשר את ההזמנה.';
+  }
+  /* the hold: a ring that closes while the finger stays, and two halves of a seal that meet */
+  function hsMakeHold(btn,cb){
+    var ring=btn.querySelector('.hs-prg'), hl=btn.querySelector('.hs-hl'), hr=btn.querySelector('.hs-hr'), LEN=326.73, DUR=1300, raf=0, t0=0, done=false, on=false;
+    function draw(p){ ring.style.strokeDashoffset=String(LEN*(1-p)); hl.setAttribute('transform','translate('+(-14*(1-p))+' 0)'); hr.setAttribute('transform','translate('+(14*(1-p))+' 0)'); }
+    function tick(now){ var p=Math.min(1,(now-t0)/DUR); draw(p); if(p>=1) fin(); else raf=requestAnimationFrame(tick); }
+    function begin(){ if(done||on||btn.disabled) return; on=true; t0=performance.now(); btn.classList.add('on'); raf=requestAnimationFrame(tick); }
+    function stop(){ if(done||!on) return; on=false; cancelAnimationFrame(raf); btn.classList.remove('on'); draw(0); }
+    function fin(){ if(done) return; done=true; on=false; cancelAnimationFrame(raf); btn.classList.remove('on'); btn.classList.add('done'); draw(1);
+      try{ if(navigator.vibrate) navigator.vibrate([30,40,90]); }catch(e){}
+      setTimeout(cb, hsStill()?0:420); }
+    btn.addEventListener('pointerdown',function(e){ if(e.button) return; e.preventDefault(); try{ btn.setPointerCapture(e.pointerId); }catch(x){} begin(); });
+    btn.addEventListener('pointerup',stop); btn.addEventListener('pointercancel',stop); btn.addEventListener('lostpointercapture',stop);
+    btn.addEventListener('keydown',function(e){ if((e.key===' '||e.key==='Enter')&&!e.repeat){ e.preventDefault(); begin(); } });
+    btn.addEventListener('keyup',function(e){ if(e.key===' '||e.key==='Enter') stop(); });
+    btn.addEventListener('blur',stop);
+    btn.addEventListener('contextmenu',function(e){ e.preventDefault(); });
+    draw(0);
+    return { reset:function(){ done=false; on=false; cancelAnimationFrame(raf); btn.classList.remove('on','done'); draw(0); }, instant:function(){ if(!done) fin(); } };
+  }
+  var hsHold1=hsMakeHold($('#hsHold'),hsFirst), hsHold2=hsMakeHold($('#hsHold2'),hsSecondDo);
+  function hsClock(){
+    if(!hs||!hs.deadline||!(hs.mode==='half'||hs.mode==='sealed')) return;
+    var s=Math.floor((hs.deadline-Date.now())/1000);
+    if(s<=0){ hs.mode='gone'; hsDraw(); hsSay(HSL.gone); return; }
+    $('#hsCd').textContent=hs2(Math.floor(s/3600))+':'+hs2(Math.floor(s%3600/60))+':'+hs2(s%60);
+  }
+  function hsDraw(){
+    var m=hs.mode, shaking=m==='deal'||m==='final'||m==='take', code=codeFromLink(), ap=$('#approve');
+    $('#hsBid').hidden=m!=='talk';
+    $('#hsShake').hidden=!shaking;
+    $('#hsCert').hidden=!(m==='half'||m==='sealed');
+    $('#hsSecond').hidden=!(m==='half'&&(hs.via==='partner'||hs.together));
+    $('#hsGone').hidden=m!=='gone';
+    $('#hsReset').hidden=!hs.demo;
+    hsArch.classList.toggle('bow',m!=='talk'&&m!=='gone');
+    hsArch.classList.toggle('lit',m==='sealed');
+    hsToks();
+    if(m==='talk'){
+      hsSlide.min=hs.lo; hsSlide.max=hs.T; hsSlide.step=hs.step;
+      hsTrack.style.setProperty('--a',String(hsPos(hs.ask)));
+      $('#hsFlagV').textContent=money(hs.ask);
+      hsSetOffer(hs.offer||hs.T*0.97);
+      $('#hsTake').hidden=hs.k<1; $('#hsTakeV').textContent=money(hs.ask);
+    }
+    if(shaking){
+      $('#hsPrice').textContent=money(hs.price);
+      $('#hsGift').textContent=hs.gift?'כולל '+hs.gift:''; $('#hsGift').hidden=!hs.gift;
+      $('#hsBack').hidden=m!=='take';
+      hsHold1.reset();
+    }
+    if(m==='half'||m==='sealed'){
+      var full=m==='sealed', self=!full&&hs.via==='self', n=hs.two?2:1, h='';
+      for(var i=0;i<n;i++) h+='<i class="hs-seal'+(i<hs.hands?' on':'')+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></i>';
+      $('#hsSeals').innerHTML=h;
+      $('#hsCertT').textContent=full?'לחיצת יד':'יד אחת מתוך שתיים';
+      $('#hsCertP').textContent='משפחת '+D.fam+' · אקספו קרמיקה';
+      $('#hsCertPrice').textContent=money(hs.price);
+      $('#hsCertWas').innerHTML=hs.price<hs.T?'במקום <s class="num">'+money(hs.T)+'</s> · חיסכון <b class="num">'+money(hs.T-hs.price)+'</b>':'המחיר הרשמי';
+      $('#hsCertGift').textContent=hs.gift?'ועוד: '+hs.gift:''; $('#hsCertGift').hidden=!hs.gift;
+      $('#hsKept').textContent='שמור עד '+hsWhen(hs.deadline);
+      $('#hsSend').hidden=!self; $('#hsTogether').hidden=!self||hs.together;
+      if(self){
+        var link=location.href.split('#')[0]+'#'+(code?'q='+code+'&':'')+'k='+hsCode();
+        $('#hsSend').href='https://wa.me/?text='+encodeURIComponent('לחצתי יד עם המלכה של אקספו קרמיקה על '+money(hs.price)+(hs.price<hs.T?' במקום '+money(hs.T):'')+(hs.gift?', כולל '+hs.gift:'')+
+          '. המחיר שמור לנו עד '+hsWhen(hs.deadline)+'. הסרט וההצעה כאן, וחסרה רק היד שלך:\n'+link);
+      }
+      $('#hsWa').hidden=!full; if(full) $('#hsWa').href='https://wa.me/'+(hs.demo?'':WA_BIZ)+'?text='+encodeURIComponent(hsMsg());
+      var fine=full?'המחיר כולל מע״מ. '+(hs.demo?'בדוגמה ההודעה לא נשלחת לאולם: בוואטסאפ בוחרים למי לשלוח אותה.':'ההודעה נפתחת בוואטסאפ של האולם, ונשאר רק לשלוח אותה.'):(self?'המחיר ננעל כשגם היד השנייה לוחצת, עד השעה שכתובה כאן.':'');
+      $('#hsFine').textContent=fine; $('#hsFine').hidden=!fine;
+      $('#hsSecT').innerHTML=hs.via==='partner'?'היד הראשונה כבר לחצה על '+hsM(hs.price)+'. המחיר שמור עד '+esc(hsWhen(hs.deadline))+'. חסרה רק היד שלך.':'ועכשיו היד השנייה.';
+      hsClock();
+    }
+    if(m==='gone'){
+      $('#hsGoneT').innerHTML='לחיצת היד על '+hsM(hs.price)+' הייתה שמורה עד '+esc(hsWhen(hs.deadline))+'.';
+      $('#hsGoneWa').href='https://wa.me/'+(hs.demo?'':WA_BIZ)+'?text='+encodeURIComponent('שלום, '+(D.name||'משפחת '+D.fam)+'. ראיתי את הסרט. לחיצת היד שלנו על '+money(hs.price)+' להצעת מחיר'+(D.no?' מספר '+D.no:'')+' פגה. אפשר לקבל הצעה חדשה?');
+    }
+    var tz=m==='talk'?'המלכה מחכה לכם למטה. איתה אפשר לדבר על המחיר.':shaking?'המלכה מושיטה לכם יד, למטה.':m==='half'?(hs.via==='partner'?'יד אחת כבר לחצה. חסרה רק היד שלך, למטה.':'יד אחת מתוך שתיים. חסרה היד השנייה.'):m==='sealed'?'לחצתם יד על '+money(hs.price)+'.':'';
+    hsTease.hidden=!tz; hsTease.textContent=tz;
+    if(m==='sealed') ap.hidden=true;
+    else if(m==='gone'){ ap.hidden=false; ap.innerHTML=hsApprove; ap.classList.add('go'); }
+    else { ap.hidden=false; ap.innerHTML='לאשר במחיר הרשמי <small>בלי להתמקח</small>'; ap.classList.remove('go'); }
+  }
+  function hsInit(T){
+    var c=D.hs, code=codeFromLink(), ap=$('#approve');
+    hsGID++; hsBusy=false; hs=null; hsLock(false);
+    ap.hidden=false; ap.innerHTML=hsApprove; ap.classList.add('go');
+    hsBox.hidden=true; hsTease.hidden=true;
+    [].forEach.call(hsTrack.querySelectorAll('.hs-tick'),function(t){ t.remove(); });
+    if(!c||!(T>0)||(code&&D===DEFAULT)) return;
+    var p=Math.max(0,Math.min(30,+c.p||0)), n=Math.max(2,Math.min(4,Math.round(+c.n)||3)), h=(+c.h===24||+c.h===72)?+c.h:48;
+    var pl=HS.plan(T,p,n), gift=String(c.g||'').slice(0,80);
+    if(pl.fixed&&!gift) return;
+    hs={id:hsGID,T:T,h:h,two:!!c.two,gift:gift,step:pl.step,L:pl.L,asks:pl.asks,fixed:pl.fixed,k:0,ask:T,mode:'talk',price:null,deadline:null,hands:0,offers:[],via:'self',together:false,offer:0,
+        lo:Math.floor(T*0.7/pl.step)*pl.step,demo:!code};
+    var s=null; try{ s=JSON.parse(localStorage.getItem(hsKey())||'null'); }catch(e){}
+    if(s&&typeof s==='object'&&hsValid(s)){ hs.k=s.k; hs.ask=s.ask; hs.mode=s.mode; hs.price=s.price; hs.deadline=s.deadline||null; hs.hands=s.hands||0; hs.offers=Array.isArray(s.offers)?s.offers.slice(0,8):[]; hs.via=s.via==='partner'?'partner':'self'; }
+    var k=hs.two?hsFromLink():null;
+    if(k&&hs.mode!=='sealed'&&k.price>=hs.L-0.5&&k.price<=hs.T+0.5&&k.deadline<Date.now()+73*3600e3){ hs.mode='half'; hs.price=hs.fixed?hs.T:k.price; hs.deadline=k.deadline; hs.hands=1; hs.via='partner'; hs.k=hs.asks.length; }
+    if(hs.deadline&&Date.now()>hs.deadline&&(hs.mode==='half'||hs.mode==='sealed')) hs.mode='gone';
+    hs.offers.forEach(hsTickMark);
+    hsHold2.reset();
+    hsBox.hidden=false;
+    hsDraw();
+    var m=hs.mode;
+    hsSay(m==='talk'?(hs.k?HSL.stand(hs.ask,hs.asks.length-hs.k):HSL.open):m==='deal'?HSL.deal(hs.price,0):m==='final'?(hs.fixed?HSL.fixed(hs.gift):HSL.final(hs.price)):m==='half'?(hs.via==='partner'?HSL.halfYou:HSL.half):m==='sealed'?HSL.sealed(hs.gift):HSL.gone);
+  }
+  hsSlide.addEventListener('input',function(){ if(hs) hsSetOffer(+hsSlide.value); });
+  hsIn.addEventListener('input',function(){ var n=hsDigits(hsIn.value); hsIn.value=n?hsFmt(n):''; });
+  hsIn.addEventListener('change',function(){ if(hs) hsSetOffer(hsDigits(hsIn.value)||hs.offer,true); });
+  hsIn.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); hsBidDo(); } });
+  $('#hsMinus').addEventListener('click',function(){ if(hs) hsSetOffer(hs.offer-HS.bumpOf(hs.T)); });
+  $('#hsPlus').addEventListener('click',function(){ if(hs) hsSetOffer(hs.offer+HS.bumpOf(hs.T)); });
+  $('#hsBidBtn').addEventListener('click',hsBidDo);
+  $('#hsTake').addEventListener('click',hsTakeDo);
+  $('#hsBack').addEventListener('click',hsBackDo);
+  $('#hsTap').addEventListener('click',function(){ hsHold1.instant(); });
+  $('#hsTap2').addEventListener('click',function(){ hsHold2.instant(); });
+  $('#hsTogether').addEventListener('click',function(){
+    if(!hs||hs.mode!=='half') return; hs.together=true; hsHold2.reset(); hsDraw();
+    try{ $('#hsSecond').scrollIntoView({behavior:hsStill()?'auto':'smooth',block:'center'}); }catch(e){}
+  });
+  hsTease.addEventListener('click',function(){ try{ hsBox.scrollIntoView({behavior:hsStill()?'auto':'smooth',block:'start'}); }catch(e){} });
+  $('#hsReset').addEventListener('click',function(){
+    if(!hs||!hs.demo) return; var T=hs.T;
+    try{ localStorage.removeItem(hsKey()); }catch(e){}
+    try{ if(/[#&]k=/.test(location.hash)) history.replaceState(null,'',location.href.split('#')[0]); }catch(e){}
+    hsInit(T);
+  });
+  setInterval(hsClock,1000);
+
+  render();
+  fromLink().then(function(d){ if(d){ D=d; render(); } });
+
+  /* ---- the screens ---- */
+  var entry=$('#entry'), film=$('#film'), quote=$('#quote'), v=$('#v'), tap=$('#tap');
+  var start=$('#start'), back=$('#back'), skip=$('#skip'), again=$('#again'), prog=$('#prog i'), share=$('#share'), ded=$('#ded');
+  var SRC={v:'m/film_v.mp4', h:'m/film_h.mp4'}, POSTER={v:'m/poster_v.jpg', h:'m/poster_h.jpg'};
+  var mq=window.matchMedia('(orientation: portrait)');
+  var cur=null, skipTimer=null;
+
+  function want(){ return mq.matches ? 'v' : 'h'; }
+  function setSrc(keepTime){
+    var k=want(); if(k===cur) return;
+    var t=keepTime ? (v.currentTime||0) : 0, resume=keepTime && !film.hidden && !v.ended;
+    cur=k; v.poster=POSTER[k]; v.src=SRC[k]; v.load();
+    if(t>0.05){
+      var seek=function(){ v.removeEventListener('loadedmetadata',seek); try{ v.currentTime=Math.min(t,(v.duration||t+1)-0.3); }catch(e){} };
+      if(v.readyState>=1) seek(); else v.addEventListener('loadedmetadata',seek);
+      v.addEventListener('playing',function fix(){ v.removeEventListener('playing',fix); if(Math.abs(v.currentTime-t)>1.2){ try{ v.currentTime=t; }catch(e){} } });
+    }
+    /* play right away: some phones load nothing until play() is called */
+    if(resume){ tryPlay(); setTimeout(function(){ if(!film.hidden && v.paused && !v.ended) tap.hidden=false; },1800); }
+  }
+  function tryPlay(){ var p=v.play(); if(p&&p.catch) p.catch(function(){ tap.hidden=false; }); }
+  function goFull(){
+    var el=document.documentElement;
+    try{ var f=el.requestFullscreen||el.webkitRequestFullscreen;
+      if(f && !document.fullscreenElement){ var r=f.call(el,{navigationUI:'hide'}); if(r&&r.catch) r.catch(function(){}); } }catch(e){}
+  }
+  function show(which){
+    entry.hidden = which!=='entry'; film.hidden = which!=='film'; quote.hidden = which!=='quote';
+    document.body.style.overflow = which==='quote' ? '' : 'hidden';
+    if(which==='quote') window.scrollTo(0,0);
+  }
+  function playFilm(){
+    show('film'); setSrc(false); tap.hidden=true; ded.classList.remove('on');
+    try{ v.currentTime=0; }catch(e){}
+    tryPlay();
+    skip.classList.remove('on'); clearTimeout(skipTimer);
+    skipTimer=setTimeout(function(){ skip.classList.add('on'); },8000);
+  }
+
+  start.addEventListener('click',function(){ goFull(); playFilm(); });
+  tap.addEventListener('click',function(){ tap.hidden=true; tryPlay(); });
+  back.addEventListener('click',function(){ v.pause(); show('entry'); });
+  skip.addEventListener('click',function(){ v.pause(); show('quote'); });
+  again.addEventListener('click',function(){ goFull(); playFilm(); });
+  v.addEventListener('ended',function(){ show('quote'); });
+  v.addEventListener('timeupdate',function(){
+    if(v.duration) prog.style.width=(100*v.currentTime/v.duration)+'%';
+    var t=v.currentTime, on=t>0.35 && t<4.6;
+    if(on!==ded.classList.contains('on')) ded.classList.toggle('on',on);
+  });
+
+  /* never swap the film file while it is on screen: iPhone stalls on a mid-play swap. The film keeps playing, fitted to the new shape; the right version is picked on the next start. */
+  var onOrient=function(){ if(film.hidden) setSrc(false); };
+  if(mq.addEventListener) mq.addEventListener('change',onOrient); else if(mq.addListener) mq.addListener(onOrient);
+
+  var wasPlaying=false;
+  document.addEventListener('visibilitychange',function(){
+    if(document.hidden){ wasPlaying=!film.hidden && !v.paused && !v.ended; if(wasPlaying) v.pause(); }
+    else if(wasPlaying){ wasPlaying=false; tryPlay(); }
+  });
+
+  share.addEventListener('click',function(){
+    try{ share.href='https://wa.me/?text='+encodeURIComponent('תראו מה קיבלנו מאקספו קרמיקה, הבית שלנו בסרט: '+location.href); }catch(e){}
+  });
+
+  document.body.style.overflow='hidden';
+})();
+</script>
+</body>
+</html>

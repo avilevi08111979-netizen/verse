@@ -1,0 +1,1082 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>חדר הבעלים · אקספו קרמיקה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one column for a salesperson's phone. Paste the quote, tap the main tiles, press, send. The night look of ״ארץ האריחים״. */
+:root{
+  --night:#0F1114; --panel:#14171B; --stone:#F3EEE6; --mist:#ADA89F; --brass:#E2A866; --light:#FFDDA8;
+  --line:rgba(226,168,102,.38); --ok:#5fc48f; --field:#1b2027;
+  --he:"Heebo","Assistant","Arial Hebrew",Arial,sans-serif; --la:"Secular One","Heebo",Arial,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--night)}
+body{margin:0;background:var(--night);color:var(--stone);font-family:var(--he);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  padding-block:calc(12px + env(safe-area-inset-top,0px)) 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:560px;margin:0 auto;display:grid;gap:16px;min-width:0}
+h1,h2{margin:0;font-weight:400;font-family:var(--la)}
+h1{font-size:28px;color:var(--light);line-height:1.1}
+h2{font-size:17px;color:var(--brass);margin-bottom:8px}
+p{margin:0}
+.top{display:flex;align-items:center;gap:12px}
+.top img{height:48px;width:auto}
+.top .s{color:var(--mist);font-size:13px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}
+label{display:grid;gap:4px;font-size:13.5px;color:var(--mist)}
+input,select,textarea{font:inherit;color:var(--stone);background:var(--field);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 12px;min-height:46px;width:100%}
+textarea{min-height:120px;line-height:1.4}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--brass);outline-offset:1px;border-color:transparent}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid{display:grid;gap:10px}
+.num{direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.hint{color:var(--mist);font-size:13px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border-radius:999px;border:1px solid var(--brass);color:var(--stone);text-decoration:none;font:inherit;font-family:var(--la);font-size:17px;background:transparent;width:100%;cursor:pointer}
+.btn.wa{background:#1f8f5a;border-color:#1f8f5a;color:#fff}
+.btn.sm{min-height:42px;font-size:15px}
+.go{display:flex;align-items:center;justify-content:center;min-height:58px;border-radius:999px;border:0;background:var(--brass);color:var(--night);font:inherit;font-family:var(--la);font-size:21px;width:100%;box-shadow:0 12px 34px rgba(0,0,0,.45);cursor:pointer}
+.go:disabled{opacity:.5}
+
+/* parsed quote */
+.rows{display:grid;gap:6px}
+.row{display:grid;grid-template-columns:1fr 76px 52px 66px 24px;gap:6px;align-items:center}
+.row input{min-height:38px;padding:6px 6px;font-size:14px;border-radius:8px}
+.row .x{background:transparent;border:0;color:var(--mist);font-size:18px;cursor:pointer;padding:0}
+.rows .h{display:grid;grid-template-columns:1fr 76px 52px 66px 24px;gap:6px;font-size:12px;color:var(--mist)}
+.total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:10px;margin-top:6px}
+.total b{font-family:var(--la);font-weight:400;font-size:26px;color:var(--light)}
+
+/* heroes */
+.heroes{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));grid-auto-rows:max-content;gap:8px}
+.hero{position:relative;border:2px solid var(--brass);border-radius:10px;overflow:hidden;background:#222;height:128px}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.hero .noimg{height:100%;display:grid;place-items:center;font-family:var(--la);color:var(--brass)}
+.hero .n{position:absolute;inset-inline:0;bottom:0;background:rgba(15,17,20,.75);font-size:11px;padding:4px 6px;line-height:1.25}
+.hero .x{position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(15,17,20,.8);color:#fff;font-size:14px;cursor:pointer}
+.pick{display:none;gap:8px}
+.pick.on{display:grid}
+.cat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:max-content;align-content:start;gap:8px;max-height:60vh;overflow:auto;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px}
+.cat .c{display:block;min-height:208px;border:2px solid transparent;border-radius:10px;background:var(--field);overflow:hidden;cursor:pointer;color:var(--stone);text-align:center;min-width:0}
+.cat .c .im{display:block;width:100%;height:150px;background:#2a2f36 center/cover no-repeat}
+.cat .c .t{font-size:12px;line-height:1.25;padding:6px 6px 8px;color:var(--mist);display:block;height:3.6em;overflow:hidden}
+.cat .c .noimg{height:150px;display:grid;place-items:center;font-family:var(--la);color:var(--brass);font-size:16px}
+.cat .c:active,.cat .c:focus-visible{border-color:var(--brass)}
+.busy{opacity:.6;pointer-events:none}
+#which{display:none}
+#which.on{display:grid}
+
+.out{display:none;gap:10px}
+.out.on{display:grid}
+.link{font-size:12px;color:var(--mist);word-break:break-all;overflow-wrap:anywhere;direction:ltr;text-align:left;background:var(--field);border-radius:10px;padding:10px;max-height:110px;overflow:auto}
+.msg{font-size:14.5px;background:var(--field);border-radius:10px;padding:10px;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
+.hist{display:grid;gap:6px;font-size:14px}
+.hist div{display:flex;justify-content:space-between;gap:10px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px}
+.hist a{color:var(--brass);text-decoration:none}
+.count{font-family:var(--la);font-size:34px;color:var(--light);line-height:1}
+:focus-visible{outline:2px solid var(--light);outline-offset:3px}
+#hist .del{font:inherit;font-size:13px;color:#d98a7a;background:none;border:0;padding:4px 2px;cursor:pointer;min-height:32px}
+/* the handshake settings: set once, kept on this phone */
+.hsbox{border:1px solid var(--brass);border-radius:12px;padding:12px;display:grid;gap:10px;background:linear-gradient(180deg,rgba(226,168,102,.10),rgba(226,168,102,0))}
+.chk{display:flex;align-items:flex-start;gap:10px;color:var(--stone);font-size:14.5px;line-height:1.45;cursor:pointer}
+.chk input{flex:none;width:24px;height:24px;min-height:24px;padding:0;margin:0;accent-color:var(--brass)}
+.chk b{font-family:var(--la);font-weight:400;font-size:17px;color:var(--light)}
+input[type=range]{padding:0;min-height:36px;border:0;background:transparent;accent-color:var(--brass);direction:ltr}
+.hsout{font-family:var(--la);font-size:22px;color:var(--light);line-height:1.2}
+/* the quote by voice: one big brass button, what was heard, and what was understood */
+.voice{display:grid;gap:12px;border-color:var(--brass);background:linear-gradient(180deg,rgba(226,168,102,.12),var(--panel) 46%)}
+.voice h2{margin-bottom:2px}
+.mic{justify-self:center;width:112px;height:112px;border-radius:50%;border:0;background:var(--brass);color:var(--night);display:grid;place-items:center;align-content:center;gap:2px;font:inherit;font-family:var(--la);font-size:18px;cursor:pointer;box-shadow:0 12px 34px rgba(0,0,0,.45)}
+.mic.on{background:var(--light);animation:vpulse 1.4s ease-out infinite}
+@keyframes vpulse{0%{box-shadow:0 0 0 0 rgba(255,221,168,.55)}100%{box-shadow:0 0 0 26px rgba(255,221,168,0)}}
+@media (prefers-reduced-motion:reduce){.mic.on{animation:none;outline:4px solid var(--light);outline-offset:4px}}
+.vex{color:var(--stone);font-size:14.5px;line-height:1.5;text-align:center;text-wrap:balance}
+#vtext{min-height:84px}
+.btn.ghost{border-color:rgba(255,255,255,.25);color:var(--mist)}
+#vstate:empty{display:none}
+#vstate.warn,.vmiss{color:#f0b9a8}
+#vsum{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:12px}
+#vsum[hidden]{display:none}
+.vlist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.vlist li{display:grid;grid-template-columns:64px minmax(0,1fr);gap:10px;align-items:baseline;font-size:15.5px}
+.vlist .k{color:var(--mist);font-size:13px}
+.vlist .v{min-width:0;overflow-wrap:anywhere}
+.vlist b{font-weight:500;color:var(--light)}
+.vlist small{display:block;color:var(--mist);font-size:13.5px}
+.vlist i{color:#f0b9a8;font-style:normal}
+.vmiss{font-size:14.5px}
+/* the unit of each line sits inside the quantity box: tap to change it */
+.row .qu{display:flex;align-items:stretch;min-width:0;background:var(--field);border:1px solid rgba(255,255,255,.12);border-radius:8px;overflow:hidden}
+.row .qu:focus-within{outline:2px solid var(--brass);outline-offset:1px;border-color:transparent}
+.row .qu input{flex:1;min-width:0;width:auto;border:0;border-radius:0;background:transparent;padding:6px 6px 6px 2px;outline:0}
+.row .qu .u{flex:none;border:0;border-inline-start:1px solid rgba(255,255,255,.12);background:transparent;color:var(--brass);font:inherit;font-size:11.5px;line-height:1.1;padding:0 4px;min-width:34px;max-width:40px;cursor:pointer;white-space:normal;overflow-wrap:anywhere}
+/* what the page corrected by itself, and the phone's dictionary */
+.vfix{color:var(--mist);font-size:14px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.vfix[hidden]{display:none}
+.vfix .fx{display:inline-flex;align-items:center;max-width:100%;color:var(--stone)}
+.vfix button,.vdl button{flex:none;border:1px solid rgba(255,255,255,.25);background:transparent;color:var(--stone);font:inherit;font-size:13px;border-radius:999px;padding:6px 14px;min-height:40px;cursor:pointer;margin-inline-start:6px}
+.vdict{border-top:1px solid var(--line);padding-top:10px}
+.vdict summary{cursor:pointer;color:var(--brass);font-family:var(--la);font-size:16px;min-height:40px;display:flex;align-items:center;gap:8px;list-style:none}
+.vdict summary::-webkit-details-marker{display:none}
+.vdict summary::before{content:"+";display:inline-grid;place-items:center;width:24px;height:24px;border:1px solid var(--line);border-radius:50%;font-family:var(--body)}
+.vdict[open] summary::before{content:"−"}
+.vdbody{display:grid;gap:12px;padding-top:6px}
+#vdn:empty,#vdsay:empty{display:none}
+.vdl{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.vdl li{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:15px;border-bottom:1px solid rgba(255,255,255,.08);padding:4px 0}
+.vdl li span{min-width:0;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <img src="../m/logo.png" alt="אקספו קרמיקה">
+    <div><h1>חדר הבעלים</h1><p class="s">כל הצעת מחיר הופכת לסרט אישי. דקה אחת.</p></div>
+  </div>
+
+  <section class="card voice" id="voice" aria-labelledby="vh">
+    <div>
+      <h2 id="vh">הצעה בקול</h2>
+      <p class="hint">אומרים הכול ברצף, והטופס מתמלא לבד.</p>
+    </div>
+    <button type="button" class="mic" id="vmic" aria-pressed="false">
+      <svg viewBox="0 0 24 24" width="34" height="34" aria-hidden="true"><path d="M12 15a3.5 3.5 0 0 0 3.5-3.5v-6a3.5 3.5 0 0 0-7 0v6A3.5 3.5 0 0 0 12 15Z" fill="currentColor"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span id="vmicT">לדבר</span>
+    </button>
+    <p class="vex">״משפחת כהן, טלפון 052-1234567, 80 מטר סמנט גריי ב־66, שלושה ברזים ב־450, הובלה מתנה״</p>
+    <label>מה שנאמר (אפשר גם להקליד, או לדבר דרך המיקרופון שבמקלדת)
+      <textarea id="vtext" rows="3" enterkeyhint="done"></textarea></label>
+    <div class="grid2">
+      <button class="btn sm" type="button" id="vfill">למלא את הטופס</button>
+      <button class="btn sm ghost" type="button" id="vclear">לנקות</button>
+    </div>
+    <p class="hint" id="vstate" role="status" aria-live="polite"></p>
+    <div id="vsum" hidden>
+      <h2>הבנתי כך</h2>
+      <ul class="vlist" id="vlist"></ul>
+      <p class="vfix" id="vfix" hidden></p>
+      <p class="vmiss" id="vmiss" role="status" aria-live="polite" hidden></p>
+      <button class="go" type="button" id="vgo">נכון. צור את הסרט האישי</button>
+      <p class="hint">משהו לא נכון? מתקנים בשדות למטה, או מדברים שוב. שם של פריט שתוקן למטה, הדף זוכר לפעם הבאה.</p>
+    </div>
+    <details class="vdict" id="vdict">
+      <summary>המילון של הטלפון הזה <span class="num" id="vdn"></span></summary>
+      <div class="vdbody">
+      <p class="hint">מילה שהטלפון שומע לא נכון? מלמדים אותו פעם אחת, והדף מתקן אותה לבד מעכשיו. נשמר רק בטלפון הזה.</p>
+      <div class="grid2">
+        <label>הטלפון כותב<input id="vdh" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
+        <label>צריך להיות<input id="vds" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
+      </div>
+      <button class="btn sm" type="button" id="vdadd">ללמד</button>
+      <p class="hint" id="vdsay" role="status" aria-live="polite"></p>
+      <ul class="vdl" id="vdl"></ul>
+      </div>
+    </details>
+  </section>
+
+  <form id="f" class="card grid" autocomplete="off">
+    <h2>1 · מי הלקוח</h2>
+    <div class="grid2">
+      <label>שם משפחה<input name="fam" required placeholder="בן משה"></label>
+      <label>שם מלא (איך פונים)<input name="name" placeholder="זיו בן משה"></label>
+    </div>
+    <div class="grid2">
+      <label>טלפון נייד<input name="phone" inputmode="tel" required placeholder="052-4476717"></label>
+      <label>כתובת<input name="addr" placeholder="האדמון 9, נוף הגליל"></label>
+    </div>
+    <label>מה העבודה<input name="work" placeholder="ריצוף לכל הבית"></label>
+
+    <h2 style="margin-top:8px">2 · הצעת המחיר מחשבשבת</h2>
+    <label>מדביקים כאן את הטקסט של ההצעה, כמו שהוא
+      <textarea id="paste" placeholder="פריט   כמות   מחיר   סה״כ&#10;ונוס גריי 120/60   120   55   6,600&#10;סמנט בז׳ 120/60   160   68   10,880&#10;..."></textarea></label>
+    <div class="grid2">
+      <label class="btn sm" style="margin:0" id="ocrlbl">צלם את ההצעה<input id="ocr" type="file" accept="image/*" capture="environment" hidden></label>
+      <button class="btn sm" type="button" id="parse">לקרוא את ההצעה</button>
+    </div>
+    <p class="hint" id="ocrhint">צילום של הצעה מודפסת או מסך: הכתוב נקרא בטלפון ונכנס לתיבה למעלה, ואז ״לקרוא את ההצעה״.</p>
+    <div id="parsed" hidden>
+      <div class="rows" id="rows"><div class="h"><span>פריט</span><span>כמות</span><span>מחיר</span><span>סה״כ</span><span></span></div></div>
+      <button class="btn sm" type="button" id="addrow" style="margin-top:8px">+ שורה</button>
+      <div class="total"><span>סה״כ לתשלום</span><b id="tot" class="num">0 ₪</b></div>
+      <label style="margin-top:6px">סה״כ אחר (אם בהצעה כתוב סכום סופי שונה, למשל אחרי הנחה)<input id="totover" inputmode="decimal" placeholder="לא חובה"></label>
+    </div>
+
+    <h2 style="margin-top:8px">3 · האריחים הראשיים (עד 4, אלה שמקבלים תמונה גדולה)</h2>
+    <div class="heroes" id="heroes"></div>
+    <div class="grid2">
+      <button class="btn sm" type="button" id="openpick">לבחור מהקטלוג</button>
+      <label class="btn sm" style="margin:0" id="camlbl">צלם אריח<input id="cam" type="file" accept="image/*" capture="environment" hidden></label>
+    </div>
+    <div class="pick" id="pick">
+      <input id="q" placeholder="חיפוש: שיש, בטון, 120/60, פרקט...">
+      <div class="cat" id="cat"></div>
+      <button class="btn sm" type="button" id="closepick">סגירה</button>
+    </div>
+    <p class="hint" id="camhint">הצילום עולה למגירת התמונות של cinemacome ונכנס לכרטיס של האריח.</p>
+
+    <label>המתנה ללקוח (לא חובה)<input name="gift" maxlength="80" placeholder="אתם מחליטים: למשל ״אריחי דקור לנישה במקלחת, במתנה״"></label>
+    <label>ההדמיה מ־Design Pro Max (לא חובה)<input name="viz" inputmode="url" placeholder="מדביקים כאן את הקישור של ההדמיה"></label>
+    <p style="margin:-4px 0 6px;font-size:14px"><a href="../../design/" target="_blank" rel="noopener" style="color:inherit">לפתוח את Design Pro Max ולעצב עם הלקוח ←</a></p>
+    <label>הערה בהצעה (לא חובה)<textarea name="note" rows="2" style="min-height:60px" placeholder="המחירים כוללים מע״מ. הובלה, פחת חיתוך ואביזרים נקבעים מול נציג האולם."></textarea></label>
+    <div class="hsbox" id="hsbox">
+      <label class="chk"><input type="checkbox" id="hsOn"><span><b>לחיצת יד</b><br>המלכה מתמקחת עם הלקוח בסוף הסרט, עד המילה האחרונה שלכם, והוא סוגר בלילה.</span></label>
+      <div class="grid" id="hsSet" hidden>
+        <label>המילה האחרונה שלי: עד כמה יורדים מהסכום
+          <span class="hsout num" id="hsOut">5%</span>
+          <input type="range" id="hsP" min="0" max="15" step="1" value="5"></label>
+        <div class="grid2">
+          <label>כמה הצעות ללקוח<select id="hsN"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option></select></label>
+          <label>לחיצת היד שמורה<select id="hsH"><option value="24">24 שעות</option><option value="48" selected>48 שעות</option><option value="72">72 שעות</option></select></label>
+        </div>
+        <label>מתנה ללוחצי יד (לא חובה)<input id="hsG" maxlength="60" placeholder="למשל: הובלה עד הבית"></label>
+        <label class="chk"><input type="checkbox" id="hsTwo"><span>שתי ידיים: המחיר ננעל רק כשגם מי שלא היה באולם לוחץ, מהטלפון שלו.</span></label>
+        <p class="hint" id="hsRule"></p>
+        <p class="hint">מה אומרים ללקוח באולם: ״זה המחיר הרשמי. הערב תקבלו את הסרט שלכם, ובתוכו מחכה לכם המלכה. איתה אפשר לדבר על המחיר.״</p>
+      </div>
+    </div>
+    <button class="go" type="submit" id="go">צור את הסרט האישי</button>
+  </form>
+
+  <div id="which" style="position:fixed;inset:0;z-index:50;background:rgba(15,17,20,.92);place-items:center;padding:16px">
+    <div class="card" style="width:100%;max-width:520px;max-height:85vh;overflow:auto">
+      <h2>איזה פריט בהצעה זה?</h2>
+      <div id="whichlist" class="grid"></div>
+      <button class="btn sm" type="button" id="whichother" style="margin-top:10px">פריט אחר (להקליד שם)</button>
+      <button class="btn sm" type="button" id="whichcancel" style="margin-top:6px;border-color:rgba(255,255,255,.25)">ביטול</button>
+    </div>
+  </div>
+
+  <section class="card out" id="out">
+    <h2>מוכן. ככה זה יוצא ללקוח:</h2>
+    <p class="msg" id="msg"></p>
+    <a class="btn wa" id="wa" href="#" target="_blank" rel="noopener">לשלוח בוואטסאפ ללקוח</a>
+    <div class="grid2">
+      <a class="btn sm" id="open" href="#" target="_blank" rel="noopener">לפתוח ולבדוק</a>
+      <button class="btn sm" type="button" id="copy">להעתיק קישור</button>
+    </div>
+    <p class="link" id="link"></p>
+  </section>
+
+  <section class="card">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
+      <h2>נשלחו מהטלפון הזה</h2><span class="count" id="count">0</span>
+    </div>
+    <div class="hist" id="hist"></div>
+    <p class="hint" style="margin-top:8px">הספירה נשמרת רק בטלפון הזה. לקוח שחוזר כותב ״ראיתי את הסרט״ בוואטסאפ של האולם.</p>
+  </section>
+</div>
+
+<script src="../../cat/cat.js"></script>
+<script>
+(function(){
+  var $=function(s){return document.querySelector(s)};
+  var BASE=new URL(location.protocol==='file:'?'../index.html':'../',location.href).href;
+  var CLOUD='gtqmsqvz', PRESET='verse_photos';
+  var CAT=window.CAT||[];
+  var f=$('#f'), rows=$('#rows'), tot=$('#tot'), out=$('#out'), heroesEl=$('#heroes');
+  var heroes=[], lastTotal=0;
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function money(n){ return Math.round(n).toLocaleString('he-IL')+' ₪'; }
+  function num(s){ s=String(s==null?'':s).replace(/[^\d.,-]/g,'').replace(/,/g,''); var n=parseFloat(s); return isFinite(n)?n:0; }
+  function today(){ var d=new Date(); return d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear(); }
+  function plus14(){ var d=new Date(); d.setDate(d.getDate()+14); return d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear(); }
+  function quoteNo(){ var d=new Date(), k='bq_no_'+d.getFullYear()+(d.getMonth()+1)+d.getDate(), n=1; try{ n=(+localStorage.getItem(k)||0)+1; localStorage.setItem(k,n); }catch(e){} return (d.getMonth()+1<10?'0':'')+(d.getMonth()+1)+(d.getDate()<10?'0':'')+d.getDate()+'-'+(n<10?'0':'')+n; }
+  function intl(p){ var d=String(p||'').replace(/\D/g,''); if(d.indexOf('972')===0) return d; if(d.charAt(0)==='0') d=d.slice(1); return '972'+d; }
+
+  /* ---- link encoding: deflate when the browser can, plain otherwise ---- */
+  function b64(u8){ var b=''; for(var i=0;i<u8.length;i++) b+=String.fromCharCode(u8[i]); return btoa(b).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+  async function encode(obj){
+    var json=JSON.stringify(obj), u8=new TextEncoder().encode(json);
+    try{
+      if(window.CompressionStream){
+        var cs=new CompressionStream('deflate-raw'); var w=cs.writable.getWriter(); w.write(u8); w.close();
+        var buf=await new Response(cs.readable).arrayBuffer(); return 'z'+b64(new Uint8Array(buf));
+      }
+    }catch(e){}
+    return 'j'+b64(u8);
+  }
+
+  function shrink(file,max){ return new Promise(function(res,rej){ var img=new Image(); var u=URL.createObjectURL(file); img.onload=function(){ var w=img.width,h=img.height,k=Math.min(1,max/Math.max(w,h)); var c=document.createElement('canvas'); c.width=Math.round(w*k); c.height=Math.round(h*k); c.getContext('2d').drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(u); c.toBlob(function(b){ b?res(b):rej(new Error('blob')); },'image/jpeg',0.86); }; img.onerror=rej; img.src=u; }); }
+
+  /*SPEECH*/
+  /* One spoken sentence becomes a quote. Pure: no page, no network, so it can be tested alone.
+     It reads who the customer is, the phone, each line (quantity, unit, name, price), the gift, a final total and the last word.
+     Speech engines write no commas, so lines are told apart by their numbers: a line is whole once it has a quantity and a price. */
+  var SP=(function(){
+    var UNITS={'אפס':0,'אחד':1,'אחת':1,'שניים':2,'שתיים':2,'שנים':2,'שתים':2,'שני':2,'שתי':2,'שלוש':3,'שלושה':3,'שלשה':3,'ארבע':4,'ארבעה':4,'חמש':5,'חמישה':5,'חמשה':5,'שש':6,'שישה':6,'ששה':6,'שבע':7,'שבעה':7,'שמונה':8,'תשע':9,'תשעה':9};
+    var TENS={'עשרים':20,'שלושים':30,'שלשים':30,'ארבעים':40,'חמישים':50,'חמשים':50,'שישים':60,'ששים':60,'שבעים':70,'שמונים':80,'תשעים':90};
+    var HUNDS={'מאה':100,'מאתיים':200,'מאתים':200};
+    var CONSTR={'שלושת':3,'שלשת':3,'ארבעת':4,'חמשת':5,'חמישת':5,'ששת':6,'שבעת':7,'שמונת':8,'תשעת':9,'עשרת':10};
+    var DIG=/^\d{1,3}(?:,\d{3})+(?:\.\d+)?$|^\d+(?:\.\d+)?$/;
+    /* the unit a quantity is counted in; '' is square metres, the default of the quote */
+    var UNIT={'מטר':'','מטרים':'','מ"ר':'','מר':'','יחידות':'יח׳','יחידה':'יח׳',"יח'":'יח׳','יח':'יח׳','קרטון':'קרטון','קרטונים':'קרטון','חבילות':'חבילה','חבילה':'חבילה','שקים':'שק','שק':'שק','שקי':'שק','משטח':'משטח','משטחים':'משטח','ליטר':'ליטר','ליטרים':'ליטר','קילו':'ק״ג','ק"ג':'ק״ג','קילוגרם':'ק״ג'};
+    var PRICE_MARK={'ב':1,'לפי':1,'במחיר':1,'מחיר':1};
+    var PRICE_SUF={'שקל':1,'שקלים':1,'ש"ח':1,'שח':1,'₪':1};
+    var PER={'למטר':'','למ"ר':'','למר':'','מרובע':'','רבוע':'','ליחידה':'יח׳',"ליח'":'יח׳','ליח':'יח׳','לקרטון':'קרטון','לשק':'שק','לחבילה':'חבילה','למשטח':'משטח','לליטר':'ליטר','לקילו':'ק״ג'};
+    var FAMKEY={'משפחת':1,'למשפחת':1};
+    var NAMEKEY={'לקוח':1,'ללקוח':1,'הלקוח':1,'לקוחה':1,'ללקוחה':1,'הלקוחה':1,'לכבוד':1};
+    var PHONEKEY={'טלפון':1,'הטלפון':1,'נייד':1,'הנייד':1,'פלאפון':1,'סלולרי':1};
+    var ADDRKEY={'כתובת':1,'הכתובת':1,'בכתובת':1,'רחוב':1,'ברחוב':1};
+    var WORKKEY={'עבודה':1,'העבודה':1};
+    var GIFTKEY={'מתנה':1,'במתנה':1,'המתנה':1,'ומתנה':1,'חינם':1,'בחינם':1};
+    var NOTEKEY={'הערה':1,'הערות':1};
+    var PART={'בן':1,'בר':1,'אבו':1,'אבן':1,'בת':1,'דה':1,'ון':1,'אל':1,'עבד':1};
+    var FILL={'ו':1,'וגם':1,'ועוד':1,'גם':1,'עוד':1,'בנוסף':1,'פלוס':1,'אז':1,'יש':1,'של':1,'את':1,'כולל':1};
+    var SKIP={'היא':1,'הוא':1,'זה':1,'זו':1,'של':1,'שלו':1,'שלה':1,'שלהם':1,'שלי':1};
+    var TOTFILL={'לתשלום':1,'סופי':1,'על':1,'כולל':1,'מע"מ':1};
+    var SIZEWORD={'מידה':1,'במידה':1,'מידות':1,'גודל':1,'בגודל':1};
+    var KEY={'סה"כ':1,'סהכ':1,'סך':1,'בסך':1,'סגרנו':1,'מילה':1,'המילה':1,'לחיצת':1,'כמות':1,'וגם':1,'ועוד':1,'בנוסף':1};
+    [FAMKEY,NAMEKEY,PHONEKEY,ADDRKEY,WORKKEY,GIFTKEY,NOTEKEY,PRICE_MARK].forEach(function(o){ for(var k in o) KEY[k]=1; });
+    function has(o,k){ return k!=null&&Object.prototype.hasOwnProperty.call(o,k); }
+
+    function kind(w){
+      if(w==null) return null;
+      if(DIG.test(w)) return {k:'d',v:parseFloat(w.replace(/,/g,'')),s:w.replace(/,/g,'')};
+      if(has(UNITS,w)) return {k:'u',v:UNITS[w]};
+      if(w==='עשר'||w==='עשרה') return {k:'ten',v:10};
+      if(has(TENS,w)) return {k:'tens',v:TENS[w]};
+      if(has(HUNDS,w)) return {k:'h',v:HUNDS[w]};
+      if(w==='מאות') return {k:'hm'};
+      if(w==='אלף') return {k:'th'};
+      if(w==='אלפיים') return {k:'th2'};
+      if(w==='אלפים') return {k:'thp'};
+      if(has(CONSTR,w)) return {k:'c',v:CONSTR[w]};
+      if(w==='חצי') return {k:'half'};
+      if(w==='רבע') return {k:'quarter'};
+      return null;
+    }
+    /* a number said in digits or in words, starting at word i. "ב" stuck to it marks a price, "ו" joins it to what came before. */
+    function readNumber(W,i){
+      function tk(idx,first){
+        var w=W[idx]; if(w==null) return null;
+        var k=kind(w); if(k) return {k:k.k,v:k.v,s:k.s,and:false,pre:''};
+        var m=w.match(/^(ו)?-?(ב)?-?(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)$/);
+        if(m&&(m[1]||m[2])) return {k:'d',v:parseFloat(m[3].replace(/,/g,'')),s:m[3].replace(/,/g,''),and:!!m[1],pre:m[2]?'ב':''};
+        if(w.length>2&&w.charAt(0)==='ו'){
+          k=kind(w.slice(1)); if(k&&k.k!=='d') return {k:k.k,v:k.v,and:true,pre:''};
+          if(w.charAt(1)==='ב'&&w.length>3){ k=kind(w.slice(2)); if(k&&k.k!=='d'&&k.k!=='half'&&k.k!=='quarter') return {k:k.k,v:k.v,and:true,pre:'ב'}; }
+        }
+        if(w.length>2&&w.charAt(0)==='ב'){ k=kind(w.slice(1)); if(k&&k.k!=='d'&&k.k!=='half'&&k.k!=='quarter'&&k.k!=='hm'&&k.k!=='thp') return {k:k.k,v:k.v,and:false,pre:'ב'}; }
+        return null;
+      }
+      var j=i, tot=0, cur=0, frac=0, got=false, raw=null, digits=false, lastK='';
+      var t=tk(j,true); if(!t) return null;
+      var pre=t.pre, conj=t.and;
+      while(t){
+        var k=t.k, ok=false, nx=kind(W[j+1]);
+        if(k==='d'){
+          if(!got){ cur=t.v; raw=t.s; digits=true; ok=true; }
+          else if(lastK==='th'&&cur===0&&t.v<1000&&!t.pre){ cur=t.v; ok=true; }
+        } else if(k==='u'){
+          if(nx&&nx.k==='ten'&&cur%100===0&&!digits&&(!got||t.and||lastK==='h'||lastK==='th')){ cur+=10+t.v; j++; ok=true; k='teen'; }
+          else if(nx&&nx.k==='hm'&&cur===0&&t.v>=3&&(!got||tot>0)){ cur=t.v*100; j++; ok=true; k='h'; }
+          else if(nx&&nx.k==='thp'&&cur===0&&tot===0&&t.v>=3&&!got){ tot=t.v*1000; j++; ok=true; k='th'; }
+          else if(!got){ cur=t.v; ok=true; }
+          else if(t.and&&!digits&&cur%10===0&&(cur>0||tot>0)){ cur+=t.v; ok=true; }
+        } else if(k==='ten'){
+          if(!got){ cur=10; ok=true; }
+          else if(!digits&&cur%100===0&&(cur>0||tot>0)){ cur+=10; ok=true; }
+        } else if(k==='tens'){
+          if(!got){ cur=t.v; ok=true; }
+          else if(!digits&&cur%100===0&&(cur>0||tot>0)){ cur+=t.v; ok=true; }
+        } else if(k==='h'){
+          if(!got){ cur=t.v; ok=true; }
+          else if(cur===0&&tot>0){ cur=t.v; ok=true; }
+        } else if(k==='th'){
+          if(!got){ tot=1000; ok=true; }
+          else if(tot===0&&cur>0&&cur<1000){ tot=cur*1000; cur=0; raw=null; ok=true; }
+        } else if(k==='thp'){
+          if(!got){ tot=2000; ok=true; k='th'; }
+          else if(tot===0&&cur>0&&cur<1000&&digits){ tot=cur*1000; cur=0; raw=null; ok=true; k='th'; }
+        } else if(k==='th2'){
+          if(!got){ tot=2000; ok=true; k='th'; }
+        } else if(k==='c'){
+          if(!got&&nx&&nx.k==='thp'){ tot=t.v*1000; j++; ok=true; k='th'; }
+        } else if(k==='half'||k==='quarter'){
+          var fr=k==='half'?0.5:0.25;
+          if(got&&t.and&&frac===0){ frac=fr; ok=true; }
+          else if(!got&&!t.and&&!t.pre&&has(UNIT,W[j+1])){ frac=fr; ok=true; }
+        }
+        if(!ok) break;
+        got=true; lastK=k; j++;
+        if(frac) break;
+        t=tk(j,false);
+        if(t&&t.pre) break;
+      }
+      if(!got) return null;
+      var v=Math.round((tot+cur+frac)*100)/100;
+      return {v:v,s:(raw!=null&&!frac&&!tot)?raw:String(v),n:j-i,pre:pre,conj:conj};
+    }
+
+    function tokenize(text){
+      var s=String(text||'').replace(/[״“”„]/g,'"').replace(/[׳’‘`]/g,"'").replace(/[־–—]/g,'-')
+        .replace(/(\d)\s*(?:₪|ש"ח)/g,'$1 ₪ ').replace(/₪\s*(\d)/g,'₪ $1').replace(/(\d)\s*%/g,'$1 אחוז ')
+        .replace(/(\d)\s*[xX×*]\s*(\d)/g,'$1/$2')
+        .replace(/\r?\n/g,' ; ').replace(/,(?!\d{3}(?!\d))/g,' , ').replace(/;/g,' ; ');
+      var out=[];
+      s.split(/\s+/).forEach(function(ch){
+        if(!ch) return;
+        if(ch===','||ch===';'){ out.push({sep:true}); return; }
+        var sep=false;
+        ch=ch.replace(/^[,;:.!?()\[\]-]+/,'');
+        ch=ch.replace(/[,;:.!?()\[\]-]+$/,function(m){ if(/[,;.!?]/.test(m)) sep=true; return ''; });
+        if(ch){
+          var d=ch.replace(/\D/g,'');
+          if(/^\+?\d[\d-]{7,14}$/.test(ch)&&d.length>=9&&d.length<=12&&/^(0|972)/.test(d)&&/-|^\+|^0\d{8,9}$|^972/.test(ch)) out.push({w:ch,ph:d});
+          else out.push({w:ch});
+        }
+        if(sep) out.push({sep:true});
+      });
+      return out;
+    }
+    function phoneShow(d){ d=String(d||'').replace(/\D/g,''); if(d.indexOf('972')===0) d='0'+d.slice(3); return d.length===10?d.slice(0,3)+'-'+d.slice(3):d; }
+    function nstr(n){ return String(Math.round(n*100)/100); }
+
+    function parse(text){
+      var R={fam:'',name:'',phone:'',addr:'',work:'',items:[],gift:'',over:0,note:'',hs:null,left:[]};
+      var toks=tokenize(text), W=toks.map(function(t){ return t.sep?null:t.w; }), T=[], i=0, k;
+      while(i<toks.length){
+        var t=toks[i];
+        if(t.sep){ T.push({t:'sep'}); i++; continue; }
+        if(t.ph){ T.push({t:'ph',s:t.ph}); i++; continue; }
+        /* "כל אחד" is "each", not the number one */
+        if((t.w==='אחד'||t.w==='אחת')&&i>0&&/^ל?כל$/.test(W[i-1]||'')){ T.push({t:'w',w:t.w}); i++; continue; }
+        var n=readNumber(W,i);
+        if(n){ T.push({t:'n',v:n.v,s:n.s,pre:n.pre,conj:n.conj,raw:W.slice(i,i+n.n).join(' ')}); i+=n.n; }
+        else { T.push({t:'w',w:t.w}); i++; }
+      }
+      /* sizes said as "60 על 120" become one word of the name */
+      for(i=0;i<T.length-2;i++){
+        if(T[i].t==='n'&&T[i+1].t==='w'&&T[i+1].w==='על'&&T[i+2].t==='n'&&!T[i].pre&&!T[i+2].pre&&T[i].v>=5&&T[i].v<=400&&T[i+2].v>=5&&T[i+2].v<=400) T.splice(i,3,{t:'w',w:T[i].s+'/'+T[i+2].s,size:true});
+      }
+      for(i=0;i<T.length;i++){ if(T[i].t==='w'&&/^\d+(?:\.\d+)?\/\d+(?:\.\d+)?$/.test(T[i].w)) T[i].size=true; }
+      /* a run of digits that reads as a mobile number, said with or without the word "טלפון" */
+      for(i=0;i<T.length;i++){
+        if(T[i].t!=='n'||T[i].pre||!/^0\d*$/.test(T[i].s)) continue;
+        var d=T[i].s, j=i+1;
+        while(d.length<10&&T[j]&&T[j].t==='n'&&!T[j].pre&&/^\d+$/.test(T[j].s)&&(d+T[j].s).length<=10){ d+=T[j].s; j++; }
+        if(d.length>=9){ T.splice(i,j-i,{t:'ph',s:d}); }
+      }
+
+      var cur, pendP=false, pendQ=false;
+      function fresh(){ cur={name:[],q:null,p:null,u:null,unit:false}; }
+      function whole(){ return cur.q!=null&&cur.p!=null; }
+      function close(){ if(cur.name.length||cur.q!=null||cur.p!=null) R.items.push(cur); fresh(); pendP=false; pendQ=false; }
+      function word(x){ return T[x]&&T[x].t==='w'?T[x].w:null; }
+      function stop(x){ var w=word(x); return w==null||T[x].size||has(KEY,w)||has(UNIT,w)||has(PRICE_SUF,w); }
+      function skip(x){ while(has(SKIP,word(x))) x++; return x; }
+      function unitAfter(x){ var w=word(x+1); return has(UNIT,w)||has(PRICE_SUF,w)||has(PER,w); }
+      fresh();
+
+      for(i=0;i<T.length;i++){
+        var x=T[i];
+        if(x.t==='sep'){ if(whole()) close(); continue; }
+        if(x.t==='ph'){ if(whole()) close(); if(!R.phone) R.phone=phoneShow(x.s); continue; }
+
+        if(x.t==='w'){
+          var w=x.w, w2=word(i+1);
+          /* who */
+          if(has(FAMKEY,w)||(w==='שם'&&w2==='משפחה')){
+            close(); k=skip(i+(w==='שם'?2:1)); var fm=[];
+            if(!stop(k)){ fm.push(word(k)); k++; if(has(PART,fm[0])&&!stop(k)){ fm.push(word(k)); k++; } }
+            if(fm.length) R.fam=fm.join(' ');
+            i=k-1; continue;
+          }
+          if(has(NAMEKEY,w)){
+            close(); k=skip(i+1); var nm=[];
+            if(!stop(k)){ nm.push(word(k)); k++;
+              if(!stop(k)){ nm.push(word(k)); k++; if(has(PART,nm[1])&&!stop(k)){ nm.push(word(k)); k++; } } }
+            if(nm.length===1) R.fam=nm[0];
+            else if(nm.length===2&&has(PART,nm[0])) R.fam=nm.join(' ');
+            else if(nm.length>=2){ R.name=nm.join(' '); R.fam=nm.slice(1).join(' '); }
+            i=k-1; continue;
+          }
+          if(has(PHONEKEY,w)){
+            close(); k=skip(i+1); var ph='';
+            if(T[k]&&T[k].t==='ph'){ ph=T[k].s; k++; }
+            else while(T[k]&&T[k].t==='n'&&!T[k].pre&&/^\d+$/.test(T[k].s)&&(ph+T[k].s).length<=12){ ph+=T[k].s; k++; }
+            if(ph.length>=7){ R.phone=phoneShow(ph); i=k-1; }
+            continue;
+          }
+          if(has(ADDRKEY,w)){
+            close(); k=skip(i+1); var a=[], c=0;
+            if(w==='רחוב'||w==='ברחוב') a.push('רחוב');
+            while(!stop(k)&&c<4){ a.push(word(k)); k++; c++; }
+            if(c&&T[k]&&T[k].t==='n'&&!T[k].pre&&T[k].v<1000&&/^\d+$/.test(T[k].s)&&!unitAfter(k)){
+              var hn=T[k].s, city=[]; k++; if(T[k]&&T[k].t==='sep'&&!stop(k+1)) k++;
+              c=0; while(!stop(k)&&c<3){ city.push(word(k)); k++; c++; }
+              R.addr=a.join(' ')+' '+hn+(city.length?', '+city.join(' '):'');
+            } else if(c) R.addr=a.join(' ');
+            i=k-1; continue;
+          }
+          if(has(WORKKEY,w)){
+            close(); k=skip(i+1); var wk=[];
+            while(!stop(k)&&wk.length<6){ wk.push(word(k)); k++; }
+            if(wk.length) R.work=wk.join(' ');
+            i=k-1; continue;
+          }
+          /* the gift: "הובלה מתנה" (said after) or "מתנה: הובלה עד הבית" (said before) */
+          if(has(GIFTKEY,w)){
+            if(!whole()&&cur.name.length){ R.gift=((cur.q!=null?nstr(cur.q)+' ':'')+cur.name.join(' ')).trim(); fresh(); continue; }
+            close(); k=skip(i+1); var g=[];
+            while(T[k]&&g.length<8&&T[k].t!=='sep'&&T[k].t!=='ph'&&!(T[k].t==='w'&&has(KEY,T[k].w))&&!(T[k].t==='n'&&(unitAfter(k)||T[k].pre))){ g.push(T[k].t==='n'?T[k].s:T[k].w); k++; }
+            if(g.length) R.gift=g.join(' ');
+            i=k-1; continue;
+          }
+          if(has(NOTEKEY,w)){
+            close(); k=i+1; var nt=[];
+            while(T[k]&&!(T[k].t==='w'&&(has(FAMKEY,T[k].w)||has(PHONEKEY,T[k].w)||has(GIFTKEY,T[k].w)))){ nt.push(T[k].t==='sep'?',':T[k].t==='n'?T[k].raw:T[k].t==='ph'?phoneShow(T[k].s):T[k].w); k++; }
+            R.note=nt.join(' ').replace(/\s+,/g,',').replace(/^[,\s]+|[,\s]+$/g,'');
+            i=k-1; continue;
+          }
+          /* a final total: "סך הכול 12,000", "סגרנו על 12 אלף", "אחרי הנחה 11,500" */
+          var tl=0;
+          if(w==='סה"כ'||w==='סהכ') tl=1;
+          else if((w==='סך'||w==='בסך')&&/^הכו?ל$/.test(w2||'')) tl=2;
+          else if(w==='סגרנו'&&w2==='על') tl=2;
+          else if(w==='מחיר'&&w2==='סופי') tl=2;
+          else if(w==='אחרי'&&/^ה?הנחה$/.test(w2||'')) tl=2;
+          if(tl){
+            close(); k=i+tl; while(has(SKIP,word(k))||has(TOTFILL,word(k))) k++;
+            if(T[k]&&T[k].t==='n'){ R.over=T[k].v; k++; while(has(PRICE_SUF,word(k))) k++; }
+            i=k-1; continue;
+          }
+          /* the last word of the handshake: "מילה אחרונה חמישה אחוז" */
+          if((/^ה?מילה$/.test(w)&&/^ה?אחרונה$/.test(w2||''))||(w==='לחיצת'&&w2==='יד')){
+            close(); k=i+2; while(has(SKIP,word(k))||word(k)==='עד') k++;
+            R.hs=R.hs||{};
+            if(T[k]&&T[k].t==='n'){ R.hs.p=Math.max(0,Math.min(15,Math.round(T[k].v))); k++; while(/^אחוז(ים)?$/.test(word(k)||'')) k++; }
+            i=k-1; continue;
+          }
+          /* inside a line */
+          if(has(PRICE_MARK,w)){ pendP=true; continue; }
+          if(w==='של'&&pendP) continue;
+          if(w==='כמות'){ pendQ=true; continue; }
+          if(has(PRICE_SUF,w)||has(PER,w)||has(UNIT,w)) continue;
+          if((w==='כל'||w==='לכל')&&/^אח[דת]$/.test(w2||'')){ if(!cur.unit&&cur.u==null&&(cur.q!=null||cur.p!=null)) cur.u='יח׳'; i++; continue; }
+          if(has(SIZEWORD,w)&&T[i+1]&&T[i+1].size) continue;
+          if(whole()) close();
+          if(has(FILL,w)&&!cur.name.length) continue;
+          cur.name.push(w); pendP=false; pendQ=false;
+          continue;
+        }
+
+        /* a number: is it a quantity or a price? */
+        var nw=word(i+1), role='';
+        if(x.pre||pendP) role='p';
+        else if(pendQ) role='q';
+        else if(has(PRICE_SUF,nw)||has(PER,nw)) role='p';
+        else if(has(UNIT,nw)) role='q';
+        pendP=false; pendQ=false;
+        if(!role){
+          if(cur.q==null) role='q';
+          else if(cur.p==null) role='p';
+          else { close(); role='q'; }
+        }
+        if(role==='p'){
+          if(cur.p!=null) close();
+          cur.p=x.v; k=i+1;
+          for(;;){
+            var pw=word(k); if(pw==null) break;
+            if(has(PRICE_SUF,pw)){ k++; continue; }
+            if(has(PER,pw)){ if(PER[pw]){ if(!cur.unit) cur.u=PER[pw]; } else cur.m2=true; k++; continue; }
+            if(has(UNIT,pw)&&UNIT[pw]===''){ cur.m2=true; k++; continue; }
+            if((pw==='כל'||pw==='לכל')&&/^אח[דת]$/.test(word(k+1)||'')){ if(!cur.unit) cur.u='יח׳'; k+=2; continue; }
+            break;
+          }
+          i=k-1;
+        } else {
+          if(cur.q!=null) close();
+          cur.q=x.v;
+          if(has(UNIT,nw)){
+            cur.unit=true; cur.u=UNIT[nw]||null; k=i+2; var uw=word(k);
+            if(UNIT[nw]===''&&/^(מרובע|רבוע|מרובעים|רבועים)$/.test(uw||'')) k++;
+            else if(UNIT[nw]===''&&/^(אורך|רץ)$/.test(uw||'')){ cur.u='מ׳ אורך'; k++; }
+            i=k-1;
+          }
+        }
+      }
+      close();
+
+      var out=[];
+      R.items.forEach(function(it,idx){
+        var name=it.name.join(' ').replace(/^(?:של|את)\s+/,'').replace(/\s+(?:של|את)$/,'').trim();
+        if(it.q==null&&it.p==null){
+          if(name&&out.length&&!out[out.length-1].t) out[out.length-1].t=name; else if(name) R.left.push(name);
+          return;
+        }
+        /* a lone price at the very end is the total that was agreed */
+        if(it.q==null&&!name&&idx===R.items.length-1&&out.length){ R.over=it.p; return; }
+        /* "3 ברזים": a small whole number with no unit said is a count of things, not square metres */
+        if(!it.u&&!it.unit&&!it.m2&&it.q!=null&&it.q===Math.round(it.q)&&it.q<=30) it.u='יח׳';
+        var o={t:name,q:it.q==null?'':it.q,p:it.p==null?'':it.p}; if(it.u) o.u=it.u; out.push(o);
+      });
+      R.items=out;
+      return R;
+    }
+    /* ---- words the phone hears wrong. The ear of the phone cannot be changed, so the page corrects after it:
+       a dictionary of pairs, names that were already sent, and the shop's own words. ---- */
+    var FIN={'ך':'כ','ם':'מ','ן':'נ','ף':'פ','ץ':'צ'};
+    var CLS={'א':1,'ע':1,'ה':1,'ו':2,'י':2,'ס':3,'צ':3,'ש':3,'ז':3,'ט':4,'ת':4,'ד':4,'כ':5,'ק':5,'ח':5,'ג':5,'ב':6,'פ':6};
+    function softL(c){ return c==='א'||c==='ה'||c==='ע'||c==='ו'||c==='י'; }
+    /* roughly how a word sounds: letters only, final forms folded, doubled vav and yod folded */
+    function norm(s){ return String(s||'').toLowerCase().replace(/[ךםןףץ]/g,function(c){ return FIN[c]; }).replace(/[^א-תa-z0-9]/g,'').replace(/יי+/g,'י').replace(/וו+/g,'ו'); }
+    /* the distance between two words by ear: letters that sound alike, and the vowel letters, cost half.
+       With hard=10 the result is under 10 only when every difference is of that soft kind. */
+    function dist(a,b,hard){
+      a=norm(a); b=norm(b); hard=hard||1;
+      var n=a.length, m=b.length, i, j, prev=[0], cur;
+      for(j=1;j<=m;j++) prev[j]=prev[j-1]+(softL(b.charAt(j-1))?0.5:hard);
+      for(i=1;i<=n;i++){
+        var x=a.charAt(i-1); cur=[prev[0]+(softL(x)?0.5:hard)];
+        for(j=1;j<=m;j++){
+          var y=b.charAt(j-1), sub=x===y?0:((CLS[x]&&CLS[x]===CLS[y])||(x==='ב'&&y==='ו')||(x==='ו'&&y==='ב')?0.5:hard);
+          cur[j]=Math.min(prev[j-1]+sub,prev[j]+(softL(x)?0.5:hard),cur[j-1]+(softL(y)?0.5:hard));
+        }
+        prev=cur;
+      }
+      return prev[m];
+    }
+    function near(a,b){ var L=Math.max(norm(a).length,norm(b).length); return L?dist(a,b)/L:1; }
+    var SIZE_W=/^[\d.,\/x×X*-]+$/;
+    /* the words of a name, without sizes and numbers */
+    function wordsOnly(t){ return String(t||'').split(/\s+/).filter(function(w){ return w&&!SIZE_W.test(w); }).join(' '); }
+    function swapWords(it,said){ var sizes=String(it.t).split(/\s+/).filter(function(w){ return SIZE_W.test(w); }); it.t=(said+(sizes.length?' '+sizes.join(' '):'')).trim(); }
+    /* replaces what the phone wrote with what was meant: whole words only, longest first */
+    function applyDict(text,dict){
+      var used=[], s=String(text||'');
+      (dict||[]).slice().sort(function(a,b){ return String(b.h).length-String(a.h).length; }).forEach(function(p){
+        if(!p||!p.h||!p.s) return;
+        var pat=String(p.h).trim().replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/\s+/g,'\\s+'); if(!pat) return;
+        var hit=false, re=new RegExp('(^|[\\s,.;:!?()\\[\\]"\\u05F4\\u05BE-])'+pat+'(?=$|[\\s,.;:!?()\\[\\]"\\u05F4\\u05BE-])','gi');
+        s=s.replace(re,function(m,pre){ hit=true; return pre+p.s; });
+        if(hit) used.push({h:p.h,s:p.s});
+      });
+      return {text:s,used:used};
+    }
+    /* corrects the names of the lines by ear. A whole name is matched to a name this phone already sent, when all that
+       differs is how it was heard (up to two such letters). Then single words are matched to the shop's own words, when
+       exactly one letter was swapped for one that sounds like it. Anything in keep is left as it was heard. */
+    function fixNames(items,known,vocab,keep){
+      var fixes=[], kn=[], seen={}, keepN={}, vset={};
+      (keep||[]).forEach(function(w){ keepN[norm(w)]=1; });
+      (known||[]).forEach(function(nm){ nm=wordsOnly(nm); var k=norm(nm); if(k&&!seen[k]){ seen[k]=1; kn.push(nm); nm.split(/\s+/).forEach(function(w){ var wk=norm(w); if(wk&&!keepN[wk]) keepN[wk]=2; }); } });
+      (vocab||[]).forEach(function(w){ var k=norm(w); if(k.length>=4&&!vset[k]) vset[k]=w; });
+      (items||[]).forEach(function(it){
+        var heard=wordsOnly(it.t), hn=norm(heard); if(!heard||keepN[hn]===1) return;
+        var best=null, bd=99;
+        if(hn.length>=4) kn.forEach(function(nm){ var d=dist(heard,nm,10); if(d<bd){ bd=d; best=nm; } });
+        if(best&&bd<=1){ if(best!==heard){ swapWords(it,best); if(bd>0) fixes.push({h:heard,s:best}); } return; }
+        var out=heard.split(/\s+/).map(function(w){
+          var k=norm(w); if(k.length<4||keepN[k]||vset[k]) return w;
+          for(var v in vset){ if(v.length===k.length&&dist(k,v,10)===0.5){ fixes.push({h:w,s:vset[v]}); return vset[v]; } }
+          return w;
+        }).join(' ');
+        if(out!==heard) swapWords(it,out);
+      });
+      return fixes;
+    }
+    return {parse:parse,readNumber:readNumber,tokenize:tokenize,phoneShow:phoneShow,norm:norm,dist:dist,near:near,wordsOnly:wordsOnly,applyDict:applyDict,fixNames:fixNames};
+  })();
+  /*END SPEECH*/
+
+  /* ---- 2 · parse the pasted quote ---- */
+  var NUM=/-?\d{1,3}(?:,\d{3})+(?:\.\d+)?|-?\d+(?:\.\d+)?/g;
+  function parseQuote(text){
+    var items=[], over=0;
+    text.split(/\r?\n/).forEach(function(line){
+      var L=line.trim(); if(!L) return;
+      if(/הצעת מחיר|מס'|מספר|תאריך|לכבוד|טלפון/.test(L)&&!/\d+\s*[x×*]\s*\d+/.test(L)&&(L.match(NUM)||[]).length<3) return;
+      if(/סה.?כ|לתשלום|מע.?מ|הנחה|total/i.test(L)){ var ns=(L.match(NUM)||[]).map(num).filter(function(n){return n>0;}); if(/לתשלום|סה.?כ/.test(L)&&ns.length) over=ns[ns.length-1]; return; }
+      if(!/[\u0590-\u05FFA-Za-z]/.test(L)) return;
+      var nums=(L.match(NUM)||[]); if(nums.length<2) return;
+      var vals=nums.map(num);
+      var best=null;
+      for(var i=0;i<vals.length;i++) for(var j=0;j<vals.length;j++) for(var k=0;k<vals.length;k++){
+        if(i===j||j===k||i===k) continue;
+        var q=vals[i],pr=vals[j],t=vals[k];
+        if(q>0&&pr>0&&t>0&&Math.abs(q*pr-t)<=Math.max(1,t*0.015)&&(!best||t>best.t)){ var idx=[i,j,k].sort(function(a,b){return a-b;}); var mid=idx[1], oth=[idx[0],idx[2]]; var ti=vals[oth[0]]>=vals[oth[1]]?oth[0]:oth[1], qi=ti===oth[0]?oth[1]:oth[0]; best={q:vals[qi],p:vals[mid],t:vals[ti],ni:[nums[qi],nums[mid],nums[ti]]}; }
+      }
+      if(!best){ /* a written line with only quantity and price: "סמנט גריי 188 מר לפי 66 שח למר" (sizes like 120/60 are ignored) */
+        var L2=L.replace(/\d+(?:\.\d+)?\s*[\/x×*]\s*\d+(?:\.\d+)?/g,' '); var re=/(\d[\d,]*(?:\.\d+)?)/g, mm, cand=[];
+        while((mm=re.exec(L2))){ var after=L2.slice(mm.index+mm[0].length,mm.index+mm[0].length+8), before=L2.slice(Math.max(0,mm.index-8),mm.index); cand.push({s:mm[0],v:num(mm[0]),pr:/^\s*(ש.?ח|₪|למ.?ר|ליח|ל.?יח)/.test(after)||/(לפי|במחיר|₪)\s*$/.test(before),qt:/^\s*(מ.?ר|מטר|יח|יחידות|קרטון)/.test(after)}); }
+        if(cand.length===2){ var pi=cand[0].pr&&!cand[1].pr?0:(cand[1].pr&&!cand[0].pr?1:(cand[0].qt?1:(cand[1].qt?0:1))); var qc=cand[1-pi], pc=cand[pi];
+          if(qc.v>0&&pc.v>0) best={q:qc.v,p:pc.v,t:qc.v*pc.v,ni:[qc.s,pc.s]}; } }
+      if(!best){ var t2=vals[vals.length-1], p2=vals[vals.length-2]; if(!(t2>0&&p2>0&&t2>=p2)) return; best={q:Math.round(t2/p2*100)/100,p:p2,t:t2,ni:[nums[nums.length-1],nums[nums.length-2]]}; }
+      var desc=L; best.ni.forEach(function(n){ var i2=desc.lastIndexOf(n); if(i2>=0) desc=desc.slice(0,i2)+desc.slice(i2+n.length); });
+      desc=desc.replace(/^[\s|:;]*[A-Za-z0-9][A-Za-z0-9\-\.]{2,14}\s+(?=[\u0590-\u05FFA-Za-z])/,'').replace(/^[\s|:;]*\d{1,3}[\s.|]+(?=[\u0590-\u05FF])/,'').replace(/[|\t]+/g,' ').replace(/\s{2,}/g,' ').replace(/[\s\-:;|%₪]+$/,'').replace(/^[\s\-:;|]+/,'').trim();
+      desc=(' '+desc+' ').replace(/(^|\s)(לפי|במחיר|ל?מ["״׳']?ר|מטר|ש["״׳']?ח|₪|ליח["״׳']?|יח["״׳']?|יחידות|כ"?א)(?=\s|$)/g,' ').replace(/\s{2,}/g,' ').trim();
+      if(!desc) desc='פריט';
+      items.push({t:desc,q:best.q,p:best.p});
+    });
+    return {items:items,over:over};
+  }
+  var UCYC=['','יח׳','קרטון','מ׳ אורך'];
+  function addRow(v){
+    v=v||{}; var d=document.createElement('div'); d.className='row'; d.dataset.u=v.u||'';
+    d.innerHTML='<input data-k="t" placeholder="פריט" value="'+esc(v.t||'')+'"><span class="qu"><input data-k="q" inputmode="decimal" aria-label="כמות" value="'+esc(v.q||'')+'"><button class="u" type="button" aria-label="יחידת המידה. נגיעה מחליפה">'+esc(v.u||'מ״ר')+'</button></span><input data-k="p" inputmode="decimal" value="'+esc(v.p||'')+'"><input data-k="s" readonly tabindex="-1" class="num"><button class="x" type="button" aria-label="הסרה">×</button>';
+    d.querySelector('.x').addEventListener('click',function(){ d.remove(); calc(); });
+    d.querySelector('.u').addEventListener('click',function(){ d.dataset.u=UCYC[(UCYC.indexOf(d.dataset.u)+1)%UCYC.length]; this.textContent=d.dataset.u||'מ״ר'; });
+    d.addEventListener('input',calc); rows.appendChild(d); calc();
+  }
+  function readRows(){ return [].map.call(rows.querySelectorAll('.row'),function(d){ var g=function(k){return d.querySelector('[data-k="'+k+'"]').value.trim();}; var o={t:g('t'),q:num(g('q')),p:num(g('p'))}; if(d.dataset.u) o.u=d.dataset.u; return o; }).filter(function(x){return x.t;}); }
+  function calc(){ var t=0; [].forEach.call(rows.querySelectorAll('.row'),function(d){ var q=num(d.querySelector('[data-k="q"]').value), p=num(d.querySelector('[data-k="p"]').value); t+=q*p; d.querySelector('[data-k="s"]').value=Math.round(q*p).toLocaleString('he-IL'); }); tot.textContent=money(t); lastTotal=t; hsShow(); return t; }
+  $('#parse').addEventListener('click',function(){
+    var r=parseQuote($('#paste').value);
+    rows.querySelectorAll('.row').forEach(function(d){ d.remove(); });
+    r.items.forEach(addRow); if(!r.items.length) addRow();
+    if(r.over) $('#totover').value=r.over;
+    $('#parsed').hidden=false;
+    autoHeroes(r.items);
+  });
+  $('#addrow').addEventListener('click',function(){ addRow(); });
+
+  /* photograph the quote: read its text on the phone (tesseract, loaded only when needed) */
+  function loadScript(u){ return new Promise(function(res,rej){ var sc=document.createElement('script'); sc.src=u; sc.onload=res; sc.onerror=rej; document.head.appendChild(sc); }); }
+  $('#ocr').addEventListener('change',async function(){
+    var file=this.files&&this.files[0]; if(!file) return; this.value='';
+    var lbl=$('#ocrlbl'); lbl.classList.add('busy'); lbl.firstChild.textContent='קורא...';
+    try{
+      if(!window.Tesseract) await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js');
+      var blob=await shrink(file,2000);
+      var worker=await Tesseract.createWorker('heb+eng',1,{logger:function(m){ if(m.status==='recognizing text') lbl.firstChild.textContent='קורא... '+Math.round((m.progress||0)*100)+'%'; }});
+      var r=await worker.recognize(blob); await worker.terminate();
+      var text=(r&&r.data&&r.data.text||'').trim();
+      if(!text) throw new Error('empty');
+      $('#paste').value=text; $('#parse').click();
+    }catch(e){ alert('לא הצלחתי לקרוא את הצילום. אפשר לצלם שוב ישר מול הדף, באור טוב, או להדביק את הטקסט.'); }
+    lbl.classList.remove('busy'); lbl.firstChild.textContent='צלם את ההצעה';
+  });
+  $('#totover').addEventListener('input',calc);
+
+  /* ---- the handshake: the owner's settings. Set once, kept on this phone, and carried inside each new link as hs:{p,n,h,two,g}.
+     Off until someone turns it on. The page of the personal film does the bargaining; this room only says how far it may go. ---- */
+  /*ENGINE · keep identical to the one in ../index.html*/
+  /* The bargaining engine. The owner gives one number (the last word, in percent). The character walks down a fixed
+     path of asks toward it; an offer at or above the round's ask closes at the offer; the last round ends at the last word. */
+  var HS=(function(){
+    function stepOf(T){ return T<2000?5:T<10000?10:T<50000?50:100; }
+    function bumpOf(T){ return T<2000?10:T<10000?50:100; }
+    function plan(T,p,n){
+      var st=stepOf(T), L=Math.min(T,Math.ceil(T*(1-p/100)/st)*st), gap=T-L;
+      if(gap<st) return {step:st,L:T,asks:[T],fixed:true};
+      var FR={1:[1],2:[.55,1],3:[.4,.75,1],4:[.3,.55,.8,1]}[n]||[.4,.75,1];
+      var top=Math.floor((T-1)/st)*st, asks=[];
+      for(var i=0;i<FR.length;i++){
+        var a=i===FR.length-1?L:Math.round((T-gap*FR[i])/st)*st;
+        a=Math.max(L,Math.min(a,top));
+        if(!asks.length||a<asks[asks.length-1]) asks.push(a);
+      }
+      if(asks[asks.length-1]!==L) asks.push(L);
+      return {step:st,L:L,asks:asks,fixed:false};
+    }
+    function respond(g,O){
+      var n=g.asks.length, k=g.k+1, A=g.asks[Math.min(k,n)-1];
+      if(!g.fixed&&O>=A) return {k:k,type:'deal',price:Math.min(O,g.ask)};
+      if(k>=n) return {k:k,type:'final',price:g.L};
+      var gap=g.T-g.L, tone=O<g.L-Math.max(gap,0.06*g.T)?'insult':(O<g.L?'far':'near');
+      return {k:k,type:'counter',price:A,tone:tone};
+    }
+    return {stepOf:stepOf,bumpOf:bumpOf,plan:plan,respond:respond};
+  })();
+  /*END ENGINE*/
+  var hsOn=$('#hsOn'), hsSet=$('#hsSet'), hsP=$('#hsP'), hsN=$('#hsN'), hsH=$('#hsH'), hsG=$('#hsG'), hsTwo=$('#hsTwo');
+  function hsShow(){
+    if(!hsOn) return;
+    hsSet.hidden=!hsOn.checked;
+    var over=num($('#totover').value), T=over>0?over:lastTotal, p=+hsP.value, L=T>0?HS.plan(T,p,3).L:0;
+    $('#hsOut').textContent=p+'%'+(T>0?'  ·  '+money(L):'');
+    $('#hsRule').textContent=!(T>0)?'אחרי שקוראים את ההצעה, יופיע כאן הסכום של המילה האחרונה.'
+      :p===0?(hsG.value.trim()?'המחיר לא זז. המלכה נותנת רק את המתנה, ורק למי שלוחץ יד.':'בלי הנחה ובלי מתנה אין למלכה על מה לדבר, והשולחן לא יופיע בסרט.')
+      :'אף אחד לא סוגר מתחת ל־'+money(L)+'. מי שהציע יותר, סגר ביותר. לחיצת יד מחייבת את האולם עד השעה שכתובה בה.';
+  }
+  function hsStore(){
+    try{ localStorage.setItem('vq_hs',JSON.stringify({on:hsOn.checked,p:+hsP.value,n:+hsN.value,h:+hsH.value,g:hsG.value.trim(),two:hsTwo.checked})); }catch(e){}
+    hsShow();
+  }
+  (function(){
+    var s=null; try{ s=JSON.parse(localStorage.getItem('vq_hs')||'null'); }catch(e){}
+    if(s&&typeof s==='object'){ hsOn.checked=!!s.on; if(s.p>=0&&s.p<=15) hsP.value=s.p; if([2,3,4].indexOf(s.n)>=0) hsN.value=s.n; if([24,48,72].indexOf(s.h)>=0) hsH.value=s.h; hsG.value=String(s.g||'').slice(0,60); hsTwo.checked=!!s.two; }
+  })();
+  [hsOn,hsP,hsN,hsH,hsG,hsTwo].forEach(function(el){ el.addEventListener('input',hsStore); el.addEventListener('change',hsStore); });
+  hsShow();
+
+  /* ---- 3 · heroes: from the catalog, from a photo, or matched automatically ---- */
+  var GENERIC=/^(פורצלן|אריח|אריחי|ריצוף|חיפוי|מט|מבריק|גימור|תוצרת|דמוי|במידה|מידה|דרגת|r10|סמ|לריצוף|וחיפוי|איטלקי|איטליה|ספרד|תואם|יח|כמות|גוון|בגימור|קיים|נוגד|החלקה|אנטי|סליפ|פנים|חוץ|ס״מ|ס"מ|מ״ר|מ"ר)$/;
+  function words(s){ return String(s||'').toLowerCase().replace(/[^\u0590-\u05FFa-z0-9\/]+/g,' ').split(' ').filter(function(w){return w.length>1&&!GENERIC.test(w);}); }
+  function catUrl(c){ return c.img ? new URL('../../cat/img/'+c.id+'.jpg',location.href).href : ''; }
+  function autoHeroes(items){
+    if(heroes.length) return;
+    items.slice(0,6).forEach(function(it){
+      if(heroes.length>=3) return;
+      var ws=words(it.t); if(!ws.length) return;
+      var best=null,bs=0;
+      CAT.forEach(function(c){ if(!c.img) return; var cw=words(c.full+' '+c.s+' '+c.l); var sc=0; ws.forEach(function(w){ if(cw.indexOf(w)>=0) sc+=w.length; }); if(sc>bs){bs=sc;best=c;} });
+      if(best&&bs>=6) heroes.push({t:it.t,s:best.s,img:catUrl(best),q:it.q,p:it.p});
+    });
+    drawHeroes();
+  }
+  /* which quote item does this picture belong to? */
+  function askWhich(img,defaultName,defaultSize){
+    var items=readRows(); var box=$('#which'), list=$('#whichlist');
+    function done(t,sz){ box.classList.remove('on'); if(heroes.length>=4) heroes.shift(); heroes.push({t:t,s:sz||'',img:img}); drawHeroes(); }
+    function guessSize(t){ var m=String(t).match(/\d{2,3}\s*[\/x×X]\s*\d{2,3}/); return m?m[0].replace(/\s+/g,''):(defaultSize||''); }
+    if(!items.length){ var n=prompt('שם האריח כמו שהלקוח מכיר אותו:',defaultName||''); if(n===null) return; var sz=prompt('מידה (למשל 120/60):',defaultSize||'')||''; done(n||defaultName||'אריח',sz); return; }
+    list.innerHTML=items.map(function(it,i){ return '<button class="btn sm" type="button" data-i="'+i+'" style="justify-content:space-between"><span style="text-align:right;overflow:hidden;text-overflow:ellipsis">'+esc(it.t)+'</span><span class="num" style="color:var(--mist);font-family:var(--he);font-size:13px">'+esc(it.q)+' × '+esc(it.p)+'</span></button>'; }).join('');
+    list.querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ var it=items[+b.dataset.i]; var t=it.t.replace(/\s*\d{2,3}\s*[\/x×X]\s*\d{2,3}.*$/,'').trim()||it.t; done(t,guessSize(it.t)); }); });
+    $('#whichother').onclick=function(){ var n=prompt('שם האריח כמו שהלקוח מכיר אותו:',defaultName||''); if(n===null) return; var sz=prompt('מידה (למשל 120/60):',defaultSize||'')||''; done(n||defaultName||'אריח',sz); };
+    $('#whichcancel').onclick=function(){ box.classList.remove('on'); };
+    box.classList.add('on');
+  }
+  function drawHeroes(){
+    heroesEl.innerHTML=heroes.map(function(h,i){ return '<div class="hero">'+(h.img?'<img src="'+esc(h.img)+'" alt="">':'<div class="noimg">'+esc(h.s||'')+'</div>')+'<div class="n">'+esc(h.t)+'</div><button class="x" type="button" data-i="'+i+'" aria-label="הסרה">×</button></div>'; }).join('');
+    heroesEl.querySelectorAll('.x').forEach(function(b){ b.addEventListener('click',function(){ heroes.splice(+b.dataset.i,1); drawHeroes(); }); });
+  }
+  function drawCat(q){
+    var ws=words(q); var list=CAT.filter(function(c){ if(!ws.length) return true; var s=(c.full+' '+c.s+' '+c.l+' '+c.f).toLowerCase(); return ws.every(function(w){return s.indexOf(w)>=0;}); }).slice(0,80);
+    $('#cat').innerHTML=list.map(function(c){ return '<div class="c" role="button" tabindex="0" data-id="'+c.id+'">'+(c.img?'<span class="im" style="background-image:url(\''+esc(catUrl(c))+'\')"></span>':'<span class="noimg">'+esc(c.s||'')+'</span>')+'<span class="t">'+esc(c.n)+(c.s?' · '+esc(c.s):'')+'</span></div>'; }).join('');
+    $('#cat').querySelectorAll('.c').forEach(function(b){ var pick=function(){ var c=CAT.find(function(x){return x.id==b.dataset.id;}); if(!c) return; $('#pick').classList.remove('on'); askWhich(catUrl(c), c.n.replace(/^אריח(י)? פורצלן /,'').slice(0,40), c.s); }; b.addEventListener('click',pick); b.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pick(); } }); });
+  }
+  $('#openpick').addEventListener('click',function(){ $('#pick').classList.add('on'); drawCat($('#q').value); $('#q').focus(); });
+  $('#closepick').addEventListener('click',function(){ $('#pick').classList.remove('on'); });
+  $('#q').addEventListener('input',function(){ drawCat($('#q').value); });
+
+  /* photo: shrink on the phone, upload, keep the address */
+  $('#cam').addEventListener('change',async function(){
+    var file=this.files&&this.files[0]; if(!file) return; this.value='';
+    var lbl=$('#camlbl'); lbl.classList.add('busy'); lbl.firstChild.textContent='מעלה...';
+    try{
+      var blob=await shrink(file,1400);
+      var fd=new FormData(); fd.append('file',blob,'tile.jpg'); fd.append('upload_preset',PRESET); fd.append('folder','verse/bisharat');
+      var r=await fetch('https://api.cloudinary.com/v1_1/'+CLOUD+'/image/upload',{method:'POST',body:fd});
+      var j=await r.json(); if(!j.secure_url) throw new Error(j.error&&j.error.message||'upload');
+      var url=j.secure_url.replace('/upload/','/upload/f_auto,q_auto,w_1200/');
+      askWhich(url,'','');
+    }catch(e){ alert('ההעלאה לא הצליחה. אפשר לנסות שוב, או לשלוח את התמונה בוואטסאפ ליד הקישור.'); }
+    lbl.classList.remove('busy'); lbl.firstChild.textContent='צלם אריח';
+  });
+
+  /* ---- 0 · the quote by voice: say it once, the form fills itself, look it over, send.
+     The page's own microphone is used where the browser has one; everywhere else the keyboard's microphone types into the same box. ---- */
+  var vText=$('#vtext'), vMic=$('#vmic'), vState=$('#vstate'), vSum=$('#vsum');
+  var SRC=window.SpeechRecognition||window.webkitSpeechRecognition, rec=null, listening=false, wantStop=true, vBase='', vTimer=0, vWatch=0;
+  var V_KEYB='כאן מדברים דרך המקלדת: נוגעים בתיבה, לוחצים על המיקרופון של המקלדת (בשורה שמעליה, או בפינה שמתחתיה), מדברים, ואז ״למלא את הטופס״.';
+  function vSay(t,warn){ vState.textContent=t||''; vState.classList.toggle('warn',!!warn); }
+  function vUi(on){ listening=on; vMic.classList.toggle('on',on); vMic.setAttribute('aria-pressed',on?'true':'false'); $('#vmicT').textContent=on?'לסיים':'לדבר'; }
+  function vStop(fill){
+    wantStop=true; clearTimeout(vTimer); clearTimeout(vWatch);
+    try{ if(rec) rec.stop(); }catch(e){}
+    vUi(false);
+    if(fill&&vText.value.trim()) vFill(); else if(fill) vSay('לא שמעתי כלום. אפשר לנסות שוב, או לדבר דרך המיקרופון שבמקלדת.',true);
+  }
+  /* listening again after a pause: some phones need a moment before the microphone can be opened again */
+  function vAgain(n){
+    clearTimeout(vWatch);
+    vWatch=setTimeout(function(){
+      if(wantStop) return;
+      try{ rec.start(); vWatch=setTimeout(function(){ if(listening) vStop(true); },3000); }
+      catch(e){ if(n<2) vAgain(n+1); else vStop(true); }
+    },n?300:120);
+  }
+  function vStart(){
+    if(!SRC){ vText.focus(); vSay(V_KEYB); return; }
+    wantStop=false; vBase=vText.value.trim(); if(vBase) vBase+=' ';
+    try{
+      rec=new SRC(); rec.lang='he-IL'; rec.interimResults=true; rec.continuous=false; rec.maxAlternatives=1;
+      rec.onstart=function(){ clearTimeout(vWatch); };
+      rec.onresult=function(e){
+        var fin='', inter='';
+        for(var i=0;i<e.results.length;i++){ var r=e.results[i]; if(r.isFinal) fin+=r[0].transcript+' '; else inter+=r[0].transcript; }
+        vText.value=(vBase+fin+inter).replace(/\s+/g,' ').trim();
+      };
+      rec.onerror=function(e){
+        var c=e&&e.error;
+        if(c==='not-allowed'||c==='service-not-allowed'||c==='audio-capture'){ vStop(false); vSay('המיקרופון של הדף חסום כאן. '+V_KEYB,true); vText.focus(); }
+        else if(c==='network'){ vStop(false); vSay('אין חיבור לזיהוי הדיבור. '+V_KEYB,true); }
+        else if(c==='no-speech'){ vStop(true); }   /* a long silence: the sentence is over */
+      };
+      /* a short pause ends one stretch of listening: keep what was said and go on listening until ״לסיים״ or a long silence */
+      rec.onend=function(){
+        if(wantStop) return;
+        vBase=vText.value.trim(); if(vBase) vBase+=' ';
+        vAgain(0);
+      };
+      rec.start(); vUi(true); vSay('מקשיב. אומרים הכול ברצף, ובסוף לוחצים ״לסיים״.');
+      vTimer=setTimeout(function(){ if(listening) vStop(true); },90000);
+    }catch(e){ vUi(false); wantStop=true; vText.focus(); vSay('המיקרופון של הדף לא נפתח. '+V_KEYB,true); }
+  }
+  vMic.addEventListener('click',function(){ if(listening) vStop(true); else vStart(); });
+  $('#vfill').addEventListener('click',function(){ if(listening) vStop(false); if(vText.value.trim()) vFill(); else { vText.focus(); vSay('קודם אומרים או מקלידים משפט.',true); } });
+  $('#vclear').addEventListener('click',function(){ if(listening) vStop(false); vText.value=''; vSum.hidden=true; vSay(''); vText.focus(); });
+
+  /* ---- words the phone hears wrong ----
+     Three things correct them after the phone: pairs this phone was taught (bq_dict), names it has already sent (bq_names),
+     and the shop's own words from the catalogue. bq_keep holds what the salesperson said to leave as it was heard. */
+  var SEED=[];   /* pairs every phone starts with: {h:'what the phone writes',s:'what was meant'} */
+  function lsGet(k){ try{ var v=JSON.parse(localStorage.getItem(k)||'[]'); return Array.isArray(v)?v:[]; }catch(e){ return []; } }
+  function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+  function sameH(a,b){ return SP.norm(a)===SP.norm(b)&&String(a).trim().split(/\s+/).length===String(b).trim().split(/\s+/).length; }
+  /* this phone's pairs first; a pair with nothing in it means "forget the one every phone starts with" */
+  function dictAll(){ var mine=lsGet('bq_dict'); return mine.concat(SEED.filter(function(p){ return !mine.some(function(m){ return sameH(m.h,p.h); }); })).filter(function(p){ return p&&p.h&&p.s; }); }
+  function dictAdd(h,s){
+    h=String(h||'').replace(/\s+/g,' ').trim(); s=String(s||'').replace(/\s+/g,' ').trim();
+    if(!h||!s||h===s||!SP.norm(h)) return false;
+    var d=lsGet('bq_dict').filter(function(p){ return p&&!sameH(p.h,h); }); d.unshift({h:h,s:s}); lsSet('bq_dict',d.slice(0,300)); return true;
+  }
+  function dictDel(h){
+    var d=lsGet('bq_dict').filter(function(p){ return p&&!sameH(p.h,h); });
+    if(SEED.some(function(p){ return sameH(p.h,h); })) d.unshift({h:h,s:''});
+    lsSet('bq_dict',d);
+  }
+  var VOC=(function(){
+    var m={}; (window.CAT||[]).forEach(function(c){ String((c.n||'')+' '+(c.l||'')+' '+(c.f||'')+' '+(c.full||'')).split(/[^\u05D0-\u05EA]+/).forEach(function(w){ if(w.length>=4) m[w]=1; }); });
+    ['ברזים','אסלה','אסלות','כיור','כיורים','אמבטיה','מקלחון','אינטרפוץ','שיפולים','פנלים','מראה','ארון','משטח','דבק','רובה'].forEach(function(w){ m[w]=1; });
+    return Object.keys(m);
+  })();
+  var vLast=null;
+  function vDictDraw(){
+    var d=dictAll();
+    $('#vdn').textContent=d.length?'('+d.length+')':'';
+    $('#vdl').innerHTML=d.map(function(p){ return '<li><span>״'+esc(p.h)+'״ ← ״'+esc(p.s)+'״</span><button type="button" data-forget="'+esc(p.h)+'">לשכוח</button></li>'; }).join('');
+  }
+  $('#vdadd').addEventListener('click',function(){
+    var h=$('#vdh').value, s=$('#vds').value;
+    if(!dictAdd(h,s)){ $('#vdsay').textContent='ממלאים את שתי התיבות: מה הטלפון כותב, ומה צריך להיות.'; return; }
+    $('#vdh').value=''; $('#vds').value=''; $('#vdsay').textContent='נלמד.'; vDictDraw();
+    if(vText.value.trim()) vFill();
+  });
+  function vForget(e){
+    var b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.forget){ dictDel(b.dataset.forget); }
+    else if(b.dataset.keep){ var k=lsGet('bq_keep'); k.unshift(b.dataset.keep); lsSet('bq_keep',k.slice(0,300)); }
+    else return;
+    vDictDraw(); if(vText.value.trim()) vFill();
+  }
+  $('#vdl').addEventListener('click',vForget); $('#vfix').addEventListener('click',vForget);
+  /* when a film is made: remember the names that were sent, and learn from what the salesperson corrected by hand.
+     Only a correction that sounds like what was heard is learned, so choosing another product teaches nothing. */
+  function vLearn(D){
+    var names=lsGet('bq_names'), seen={};
+    (D.items||[]).forEach(function(it){ var w=SP.wordsOnly(it.t); if(w&&w.length<=60) names.unshift(w); });
+    lsSet('bq_names',names.filter(function(n){ var k=SP.norm(n); if(!k||seen[k]) return false; seen[k]=1; return true; }).slice(0,400));
+    if(vLast){
+      if(vLast.items.length===(D.items||[]).length) D.items.forEach(function(it,i){ var h=vLast.items[i], s=SP.wordsOnly(it.t); if(h&&s&&h!==s&&SP.near(h,s)<=0.5) dictAdd(h,s); });
+      if(vLast.fam&&D.fam&&vLast.fam!==D.fam&&SP.near(vLast.fam,D.fam)<=0.34) dictAdd(vLast.fam,D.fam);
+      vLast=null;
+    }
+    vDictDraw();
+  }
+  vDictDraw();
+
+  function nshow(n){ return (+n||0).toLocaleString('he-IL',{maximumFractionDigits:2}); }
+  function vFill(){
+    var dd=SP.applyDict(vText.value,dictAll()), r=SP.parse(dd.text), E=f.elements;
+    vLast={fam:r.fam,items:r.items.map(function(it){ return SP.wordsOnly(it.t); }),dict:dd.used,auto:[]};
+    vLast.auto=SP.fixNames(r.items,lsGet('bq_names'),VOC,lsGet('bq_keep'));
+    if(r.fam){ E.fam.value=r.fam; E.name.value=r.name||''; }
+    if(r.phone) E.phone.value=r.phone;
+    if(r.addr) E.addr.value=r.addr;
+    if(r.work) E.work.value=r.work;
+    if(r.gift) E.gift.value=r.gift.slice(0,80);
+    if(r.note) E.note.value=r.note;
+    if(r.items.length){
+      rows.querySelectorAll('.row').forEach(function(d){ d.remove(); });
+      r.items.forEach(addRow); $('#parsed').hidden=false;
+      $('#totover').value=r.over>0?r.over:'';
+      autoHeroes(r.items);
+    } else if(r.over>0&&rows.querySelector('.row')) $('#totover').value=r.over;
+    if(r.hs){ hsOn.checked=true; if(r.hs.p!=null) hsP.value=r.hs.p; hsStore(); }
+    calc();
+    vRecap(r);
+  }
+  /* what was understood, in words a salesperson can check at a glance, and what is still missing */
+  function vRecap(r){
+    var E=f.elements, fam=E.fam.value.trim(), ph=E.phone.value.trim(), items=readRows(), L=[], miss=[];
+    function li(k,v){ L.push('<li><span class="k">'+k+'</span><span class="v">'+v+'</span></li>'); }
+    li('לקוח',fam?esc(E.name.value.trim()||('משפחת '+fam))+(ph?' · <span class="num">'+esc(ph)+'</span>':''):'<i>לא שמעתי שם</i>');
+    if(!fam) miss.push('שם המשפחה'); if(!ph) miss.push('טלפון');
+    if(r.addr) li('כתובת',esc(r.addr));
+    if(r.work) li('עבודה',esc(r.work));
+    var sum=0;
+    items.forEach(function(it,i){
+      var s=(+it.q||0)*(+it.p||0); sum+=s;
+      li(String(i+1),'<b>'+esc(it.t||'פריט')+'</b><small><span class="num">'+(it.q?nshow(it.q):'?')+'</span> '+esc(it.u||'מ״ר')+' × <span class="num">'+(it.p?nshow(it.p)+' ₪':'?')+'</span>'+(s?' · <span class="num">'+money(s)+'</span>':'')+'</small>');
+      if(!it.p) miss.push('מחיר ל״'+it.t+'״'); if(!it.q) miss.push('כמות ל״'+it.t+'״');
+    });
+    if(!items.length) miss.push('פריטים');
+    if(r.gift) li('מתנה',esc(r.gift));
+    var over=num($('#totover').value);
+    if(items.length) li('סה״כ','<b class="num">'+money(over>0?over:sum)+'</b>'+(over>0&&Math.round(over)!==Math.round(sum)?' <small>במקום <span class="num">'+money(sum)+'</span></small>':''));
+    if(r.hs&&hsOn.checked) li('לחיצת יד','מילה אחרונה <span class="num">'+esc(hsP.value)+'%</span>');
+    $('#vlist').innerHTML=L.join('');
+    var fxs=[];
+    if(vLast){
+      vLast.dict.forEach(function(p){ fxs.push('<span class="fx">״'+esc(p.h)+'״ ← ״'+esc(p.s)+'״<button type="button" data-forget="'+esc(p.h)+'">לשכוח</button></span>'); });
+      vLast.auto.forEach(function(p){ fxs.push('<span class="fx">״'+esc(p.h)+'״ ← ״'+esc(p.s)+'״<button type="button" data-keep="'+esc(p.h)+'">לבטל</button></span>'); });
+    }
+    $('#vfix').innerHTML=fxs.length?'תיקנתי לבד: '+fxs.join(' '):''; $('#vfix').hidden=!fxs.length;
+    var w=$('#vmiss'), parts=[];
+    if(miss.length) parts.push('חסר: '+miss.map(esc).join(', ')+'.');
+    if(r.left.length) parts.push('לא הבנתי: ״'+r.left.map(esc).join('״, ״')+'״.');
+    w.innerHTML=parts.join(' ')+(parts.length?' אומרים שוב, או משלימים בשדות למטה.':''); w.hidden=!parts.length;
+    vSum.hidden=false; vSay(''); vBtn();
+    try{ vSum.scrollIntoView({behavior:'smooth',block:'nearest'}); }catch(e){}
+  }
+  /* the big button under the summary: sends when everything is there, otherwise takes the salesperson to the first thing that is missing */
+  function vFirstMissing(){
+    var E=f.elements; if(!E.fam.value.trim()) return E.fam; if(!E.phone.value.trim()) return E.phone;
+    var rw=rows.querySelectorAll('.row'); if(!rw.length) return vText;
+    for(var i=0;i<rw.length;i++){ var q=rw[i].querySelector('[data-k="q"]'), p=rw[i].querySelector('[data-k="p"]'); if(!num(q.value)) return q; if(!num(p.value)) return p; }
+    return null;
+  }
+  function vBtn(){ $('#vgo').textContent=vFirstMissing()?'להשלים את החסר':'נכון. צור את הסרט האישי'; }
+  f.addEventListener('input',function(){ if(!vSum.hidden) vBtn(); });
+  $('#vgo').addEventListener('click',function(){
+    var el=vFirstMissing();
+    if(el){ try{ el.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){} try{ el.focus({preventScroll:true}); }catch(e){ el.focus(); } return; }
+    if(f.requestSubmit) f.requestSubmit($('#go')); else $('#go').click();
+  });
+
+  /* ---- 4 · make the link ---- */
+  f.addEventListener('submit',async function(e){
+    e.preventDefault();
+    var fd=new FormData(f);
+    var items=readRows();
+    if(!items.length&&$('#paste').value.trim()){ var r0=parseQuote($('#paste').value); rows.querySelectorAll('.row').forEach(function(d){ d.remove(); }); r0.items.forEach(addRow); if(r0.over) $('#totover').value=r0.over; $('#parsed').hidden=false; items=readRows(); }
+    if(!items.length&&!heroes.length){ alert('קודם מדביקים את ההצעה או בוחרים אריח.'); return; }
+    var D={v:2,fam:(fd.get('fam')||'').trim(),name:(fd.get('name')||'').trim(),phone:(fd.get('phone')||'').trim(),addr:(fd.get('addr')||'').trim(),
+      work:(fd.get('work')||'').trim(),no:quoteNo(),date:today(),until:plus14(),items:items,heroes:heroes.map(function(h){return {t:h.t,s:h.s,img:h.img};})};
+    var over=num($('#totover').value); if(over>0) D.total=over;
+    var note=(fd.get('note')||'').trim(); if(note) D.note=note; var gift=(fd.get('gift')||'').trim(); if(gift) D.gift=gift; var viz=(fd.get('viz')||'').trim(); var vm=viz.match(/\/design\/?#(.+)$/); if(vm) D.viz=vm[1];
+    if(!D.name) D.name='משפחת '+D.fam;
+    /* the handshake rides in the link only when it is on and has something to give */
+    var hsT=over>0?over:items.reduce(function(a,it){ return a+(+it.q||0)*(+it.p||0); },0), hsLw=0;
+    if(hsOn.checked&&hsT>0){ var hp=+hsP.value, hg=hsG.value.trim(); if(hp>0||hg){ D.hs={p:hp,n:+hsN.value,h:+hsH.value}; if(hsTwo.checked) D.hs.two=1; if(hg) D.hs.g=hg; hsLw=HS.plan(hsT,hp,D.hs.n).L; } }
+    $('#go').disabled=true;
+    var code=await encode(D);
+    $('#go').disabled=false;
+    var link=BASE+'#q='+code;
+    var total=D.total||calc();
+    var msg='שלום משפחת '+D.fam+', תודה שביקרתם היום באולם של אקספו קרמיקה. הכנו לכם את הבית שלכם: הסרט והצעת המחיר שלכם, כאן:\n'+link+'\nפותחים בטלפון, עם סאונד.'+(D.hs?'\nובסוף הסרט מחכה לכם המלכה. איתה אפשר לדבר על המחיר.':'')+(D.gift?'\n\nויש לכם גם מתנה מאיתנו 🎁\n'+BASE+'gift/#q='+code:'');
+    $('#msg').textContent=msg; $('#link').textContent=link; $('#open').href=link;
+    $('#wa').href='https://wa.me/'+intl(D.phone)+'?text='+encodeURIComponent(msg);
+    vLearn(D);
+    out.classList.add('on'); out.scrollIntoView({behavior:'smooth',block:'start'});
+    try{ var h=JSON.parse(localStorage.getItem('vq_hist')||'[]'); h.unshift({fam:D.fam,no:D.no,total:total,link:link,at:D.date,lw:hsLw}); localStorage.setItem('vq_hist',JSON.stringify(h.slice(0,50))); }catch(x){}
+    hist();
+  });
+  $('#copy').addEventListener('click',function(){ var t=$('#link').textContent, b=$('#copy'); try{ navigator.clipboard.writeText(t).then(function(){ b.textContent='הועתק'; setTimeout(function(){ b.textContent='להעתיק קישור'; },1500); }); }catch(e){} });
+  function hist(){ var h=[]; try{ h=JSON.parse(localStorage.getItem('vq_hist')||'[]'); }catch(e){} $('#count').textContent=h.length; $('#hist').innerHTML=h.slice(0,8).map(function(x,i){ return '<div><span>משפחת '+esc(x.fam)+' · '+esc(x.at)+(x.lw?' · מילה אחרונה <b class="num">'+money(x.lw)+'</b>':'')+'</span><span><b class="num">'+money(x.total)+'</b> · <a href="'+esc(x.link)+'" target="_blank" rel="noopener">לפתוח</a> · <button type="button" class="del" data-i="'+i+'" aria-label="למחוק את ההצעה של משפחת '+esc(x.fam)+'">מחיקה</button></span></div>'; }).join(''); }
+  document.addEventListener('click',function(e){ var b=e.target.closest&&e.target.closest('#hist .del'); if(!b) return; var i=+b.dataset.i; var h=[]; try{ h=JSON.parse(localStorage.getItem('vq_hist')||'[]'); }catch(x){} var x=h[i]; if(!x) return;
+    if(b.dataset.sure!=='1'){ b.dataset.sure='1'; b.textContent='בטוח? לחצו שוב'; setTimeout(function(){ if(b.isConnected){ b.dataset.sure=''; b.textContent='מחיקה'; } },3000); return; }
+    h.splice(i,1); try{ localStorage.setItem('vq_hist',JSON.stringify(h)); }catch(x2){} hist(); });
+  hist();
+})();
+</script>
+</body>
+</html>
